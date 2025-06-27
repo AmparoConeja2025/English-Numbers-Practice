@@ -308,7 +308,13 @@
             if ('speechSynthesis' in window) {
                 speechSynthesis.cancel();
                 
-                const utterance = new SpeechSynthesisUtterance(numbers[number].word);
+                // Usar pronunciaciones alternativas para palabras problematicas
+                let speechWord = numbers[number].word;
+                if (number === 8) {
+                    speechWord = 'ate'; // Suena identico pero mas claro
+                }
+                
+                const utterance = new SpeechSynthesisUtterance(speechWord);
                 
                 // Configuraciones especiales para numeros problematicos
                 if (number === 3 || number === 5 || number === 8) {
