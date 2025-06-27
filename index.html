@@ -198,7 +198,7 @@
             0: { word: 'zero', pronunciation: '/siro/' },
             1: { word: 'one', pronunciation: '/uan/' },
             2: { word: 'two', pronunciation: '/tu/' },
-            3: { word: 'three', pronunciation: '/zri/' },
+            3: { word: 'three', pronunciation: '/thri/' },
             4: { word: 'four', pronunciation: '/for/' },
             5: { word: 'five', pronunciation: '/faiv/' },
             6: { word: 'six', pronunciation: '/siks/' },
@@ -212,6 +212,8 @@
         let currentMode = 'learn';
         let practiceNumber = 0;
         let practiceType = 'typing';
+        let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        let practiceUsedNumbers = [];
 
         const numberDisplay = document.getElementById('number-display');
         const wordDisplay = document.getElementById('word-display');
@@ -240,6 +242,27 @@
         const feedback = document.getElementById('feedback');
 
         function generateRandomNumber() {
+            if (practiceAvailableNumbers.length > 0) {
+                const randomIndex = Math.floor(Math.random() * practiceAvailableNumbers.length);
+                const selectedNumber = practiceAvailableNumbers[randomIndex];
+                
+                // Actualizar las listas
+                const newAvailable = practiceAvailableNumbers.filter(num => num !== selectedNumber);
+                const newUsed = [...practiceUsedNumbers, selectedNumber];
+                
+                practiceAvailableNumbers = newAvailable;
+                practiceUsedNumbers = newUsed;
+                
+                // Si ya usamos todos, reiniciar el ciclo
+                if (practiceAvailableNumbers.length === 0) {
+                    practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                    practiceUsedNumbers = [];
+                }
+                
+                return selectedNumber;
+            }
+            
+            // Fallback (no deberia llegar aqui)
             return Math.floor(Math.random() * 11);
         }
 
@@ -390,6 +413,13 @@
             learnMode.style.display = 'none';
             practiceSelection.style.display = 'none';
             practiceMode.style.display = 'block';
+            
+            // Asegurar que el sistema anti-repeticion este listo
+            if (practiceAvailableNumbers.length === 0) {
+                practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                practiceUsedNumbers = [];
+            }
+            
             practiceNumber = generateRandomNumber();
             practiceNumberDisplay.textContent = practiceNumber;
             
