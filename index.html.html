@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Numbers Practice - Graphics Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .learning-gradient {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+        .practice-gradient {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        .number-display {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .word-display {
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(102, 126, 234, 0.6);
+        }
+        .btn-secondary {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            box-shadow: 0 4px 15px 0 rgba(240, 147, 251, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(240, 147, 251, 0.6);
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            box-shadow: 0 4px 15px 0 rgba(79, 172, 254, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(79, 172, 254, 0.6);
+        }
+        .choice-button {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+        .choice-button:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.6);
+            transform: translateY(-1px);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bounce {
+            animation: bounce 0.6s ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen gradient-bg p-4">
+        <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
+            <div class="learning-gradient p-6 text-center">
+                <h1 class="text-3xl font-bold text-white mb-2" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 English Numbers</h1>
+                <p class="text-white opacity-90">Learn numbers 0-10 with style!</p>
+            </div>
+            
+            <!-- Learning Mode -->
+            <div id="learn-mode" class="p-6">
+                <div class="text-center mb-8">
+                    <div id="number-display" class="text-8xl font-bold number-display mb-4 bounce">0</div>
+                    <div id="word-display" class="text-4xl font-semibold text-gray-800 mb-3 word-display">zero</div>
+                    <div id="pronunciation-display" class="text-xl text-gray-600 mb-6 italic">/siro/</div>
+                    <button id="speak-btn" class="btn-success text-white px-8 py-3 rounded-full font-semibold text-lg">
+                        🔊 Listen
+                    </button>
+                </div>
+
+                <div class="flex justify-center space-x-4 mb-8">
+                    <button id="prev-btn" class="btn-primary text-white px-6 py-3 rounded-xl font-medium">
+                        ← Previous
+                    </button>
+                    <span class="flex items-center text-gray-700 font-medium text-lg px-4">
+                        <span id="current-position">1</span> of 11
+                    </span>
+                    <button id="next-btn" class="btn-primary text-white px-6 py-3 rounded-xl font-medium">
+                        Next →
+                    </button>
+                </div>
+
+                <div class="text-center">
+                    <button id="start-practice-btn" class="btn-secondary text-white px-10 py-4 rounded-2xl font-bold text-xl">
+                        🚀 Start Practice
+                    </button>
+                </div>
+            </div>
+
+            <!-- Practice Type Selection -->
+            <div id="practice-selection" style="display: none;" class="p-6">
+                <div class="text-center mb-8">
+                    <div class="practice-gradient px-6 py-3 rounded-full text-white font-bold text-lg inline-block mb-6" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        🎯 Choose Practice Mode
+                    </div>
+                    <p class="text-xl text-gray-700 font-medium">How would you like to practice?</p>
+                </div>
+
+                <div class="space-y-6 mb-8">
+                    <button id="typing-practice-btn" class="w-full btn-success text-white py-5 rounded-2xl font-bold text-xl">
+                        ✍️ Type the Answer
+                        <div class="text-sm opacity-90 font-normal mt-1">See number → type the word</div>
+                    </button>
+                    <button id="multiple-choice-btn" class="w-full btn-secondary text-white py-5 rounded-2xl font-bold text-xl">
+                        👆 Multiple Choice
+                        <div class="text-sm opacity-90 font-normal mt-1">See number → click the word</div>
+                    </button>
+                </div>
+
+                <div class="text-center">
+                    <button id="back-from-selection-btn" class="bg-gray-500 text-white px-8 py-3 rounded-xl hover:bg-gray-600 font-medium">
+                        ← Back to Learning
+                    </button>
+                </div>
+            </div>
+
+            <!-- Practice Mode -->
+            <div id="practice-mode" style="display: none;" class="p-6">
+                <div class="text-center mb-8">
+                    <div class="practice-gradient px-6 py-3 rounded-full text-white font-bold text-lg inline-block mb-6" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        <span id="practice-mode-label">Practice Mode</span>
+                    </div>
+                    <div id="practice-number" class="text-8xl font-bold number-display mb-6 bounce">0</div>
+                    <p class="text-xl text-gray-700 font-medium mb-6">Type the English word:</p>
+                    
+                    <!-- Typing Practice -->
+                    <div id="typing-practice">
+                        <input 
+                            type="text" 
+                            id="answer-input" 
+                            class="w-full text-2xl text-center border-3 border-gray-300 rounded-2xl py-4 px-6 mb-6 focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-200 transition-all"
+                            placeholder="Type here..."
+                        >
+                        
+                        <button id="check-answer-btn" class="w-full btn-primary text-white py-4 rounded-2xl font-bold text-xl mb-4">
+                            ✨ Check Answer
+                        </button>
+                    </div>
+
+                    <!-- Multiple Choice Practice -->
+                    <div id="multiple-choice-practice" style="display: none;">
+                        <div class="grid grid-cols-2 gap-4 mb-6" id="choice-buttons">
+                            <!-- Choice buttons will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <div id="feedback" class="text-center p-4 rounded-2xl font-bold text-lg mb-6 hidden transition-all"></div>
+                </div>
+
+                <div class="text-center">
+                    <button id="back-to-learn-btn" class="bg-gray-500 text-white px-8 py-3 rounded-xl hover:bg-gray-600 font-medium">
+                        ← Back to Learning
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const numbers = {
+            0: { word: 'zero', pronunciation: '/siro/' },
+            1: { word: 'one', pronunciation: '/uan/' },
+            2: { word: 'two', pronunciation: '/tu/' },
+            3: { word: 'three', pronunciation: '/zri/' },
+            4: { word: 'four', pronunciation: '/for/' },
+            5: { word: 'five', pronunciation: '/faiv/' },
+            6: { word: 'six', pronunciation: '/siks/' },
+            7: { word: 'seven', pronunciation: '/seven/' },
+            8: { word: 'eight', pronunciation: '/eit/' },
+            9: { word: 'nine', pronunciation: '/nain/' },
+            10: { word: 'ten', pronunciation: '/ten/' }
+        };
+
+        let currentNumber = 0;
+        let currentMode = 'learn';
+        let practiceNumber = 0;
+        let practiceType = 'typing';
+
+        const numberDisplay = document.getElementById('number-display');
+        const wordDisplay = document.getElementById('word-display');
+        const pronunciationDisplay = document.getElementById('pronunciation-display');
+        const speakBtn = document.getElementById('speak-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        const learnMode = document.getElementById('learn-mode');
+        const practiceSelection = document.getElementById('practice-selection');
+        const practiceMode = document.getElementById('practice-mode');
+        
+        const startPracticeBtn = document.getElementById('start-practice-btn');
+        const typingPracticeBtn = document.getElementById('typing-practice-btn');
+        const multipleChoiceBtn = document.getElementById('multiple-choice-btn');
+        const backFromSelectionBtn = document.getElementById('back-from-selection-btn');
+        
+        const backToLearnBtn = document.getElementById('back-to-learn-btn');
+        const practiceNumberDisplay = document.getElementById('practice-number');
+        const practiceModeLabel = document.getElementById('practice-mode-label');
+        const typingPractice = document.getElementById('typing-practice');
+        const multipleChoicePractice = document.getElementById('multiple-choice-practice');
+        const answerInput = document.getElementById('answer-input');
+        const checkAnswerBtn = document.getElementById('check-answer-btn');
+        const choiceButtons = document.getElementById('choice-buttons');
+        const feedback = document.getElementById('feedback');
+
+        function generateRandomNumber() {
+            return Math.floor(Math.random() * 11);
+        }
+
+        function generateWrongOptions(correctAnswer) {
+            const allNumbers = Object.keys(numbers).map(Number);
+            const wrongOptions = allNumbers
+                .filter(num => num !== correctAnswer)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
+        }
+
+        function createMultipleChoiceButtons() {
+            const options = generateWrongOptions(practiceNumber);
+            choiceButtons.innerHTML = '';
+            
+            options.forEach((num) => {
+                const button = document.createElement('button');
+                button.textContent = numbers[num].word;
+                button.className = 'choice-button py-4 rounded-2xl font-bold text-lg transition-all';
+                button.addEventListener('click', () => handleMultipleChoiceAnswer(numbers[num].word));
+                choiceButtons.appendChild(button);
+            });
+        }
+
+        function handleMultipleChoiceAnswer(selectedWord) {
+            const correctAnswer = numbers[practiceNumber].word.toLowerCase();
+            
+            if (selectedWord.toLowerCase() === correctAnswer) {
+                showFeedback('✅ ¡Correcto! ¡Excelente!', true);
+                setTimeout(() => {
+                    practiceNumber = generateRandomNumber();
+                    practiceNumberDisplay.textContent = practiceNumber;
+                    createMultipleChoiceButtons();
+                    hideFeedback();
+                }, 1500);
+            } else {
+                showFeedback(`❌ ¡No del todo! La respuesta correcta es "${correctAnswer}"`, false);
+            }
+        }
+
+        function speakNumber(number) {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(numbers[number].word);
+                utterance.rate = 0.55;
+                utterance.volume = 1;
+                utterance.pitch = 1;
+                utterance.lang = 'en-US';
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function showFeedback(message, isCorrect) {
+            feedback.textContent = message;
+            feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-6 transition-all ${
+                isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            }`;
+            feedback.classList.remove('hidden');
+        }
+
+        function hideFeedback() {
+            feedback.classList.add('hidden');
+        }
+
+        function checkAnswer() {
+            const userAnswer = answerInput.value.toLowerCase().trim();
+            const correctAnswer = numbers[practiceNumber].word.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                showFeedback('✅ ¡Correcto! ¡Buen trabajo!', true);
+                setTimeout(() => {
+                    practiceNumber = generateRandomNumber();
+                    practiceNumberDisplay.textContent = practiceNumber;
+                    answerInput.value = '';
+                    hideFeedback();
+                }, 1500);
+            } else {
+                showFeedback(`❌ ¡Inténtalo de nuevo! La respuesta correcta es "${correctAnswer}"`, false);
+            }
+        }
+
+        function updateDisplay() {
+            numberDisplay.textContent = currentNumber;
+            wordDisplay.textContent = numbers[currentNumber].word;
+            pronunciationDisplay.textContent = numbers[currentNumber].pronunciation;
+            
+            const currentPosition = document.getElementById('current-position');
+            if (currentPosition) {
+                currentPosition.textContent = currentNumber + 1;
+            }
+            
+            numberDisplay.classList.remove('bounce');
+            setTimeout(() => numberDisplay.classList.add('bounce'), 10);
+            
+            prevBtn.disabled = currentNumber === 0;
+            nextBtn.disabled = currentNumber === 10;
+            
+            if (prevBtn.disabled) {
+                prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            
+            if (nextBtn.disabled) {
+                nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function showPracticeSelection() {
+            currentMode = 'selection';
+            learnMode.style.display = 'none';
+            practiceSelection.style.display = 'block';
+            practiceMode.style.display = 'none';
+        }
+
+        function switchToLearnMode() {
+            currentMode = 'learn';
+            learnMode.style.display = 'block';
+            practiceSelection.style.display = 'none';
+            practiceMode.style.display = 'none';
+            hideFeedback();
+            answerInput.value = '';
+        }
+
+        function startTypingPractice() {
+            practiceType = 'typing';
+            practiceModeLabel.textContent = '✍️ Typing Practice';
+            typingPractice.style.display = 'block';
+            multipleChoicePractice.style.display = 'none';
+            switchToPracticeMode();
+        }
+
+        function startMultipleChoicePractice() {
+            practiceType = 'multiple-choice';
+            practiceModeLabel.textContent = '👆 Multiple Choice';
+            typingPractice.style.display = 'none';
+            multipleChoicePractice.style.display = 'block';
+            switchToPracticeMode();
+        }
+
+        function switchToPracticeMode() {
+            currentMode = 'practice';
+            learnMode.style.display = 'none';
+            practiceSelection.style.display = 'none';
+            practiceMode.style.display = 'block';
+            practiceNumber = generateRandomNumber();
+            practiceNumberDisplay.textContent = practiceNumber;
+            
+            if (practiceType === 'multiple-choice') {
+                createMultipleChoiceButtons();
+            } else {
+                answerInput.value = '';
+                answerInput.focus();
+            }
+            hideFeedback();
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentNumber > 0) {
+                currentNumber--;
+                updateDisplay();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentNumber < 10) {
+                currentNumber++;
+                updateDisplay();
+            }
+        });
+
+        speakBtn.addEventListener('click', () => speakNumber(currentNumber));
+        startPracticeBtn.addEventListener('click', showPracticeSelection);
+        typingPracticeBtn.addEventListener('click', startTypingPractice);
+        multipleChoiceBtn.addEventListener('click', startMultipleChoicePractice);
+        backFromSelectionBtn.addEventListener('click', switchToLearnMode);
+        backToLearnBtn.addEventListener('click', switchToLearnMode);
+        checkAnswerBtn.addEventListener('click', checkAnswer);
+        
+        answerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        updateDisplay();
+    </script>
+</body>
+</html>
