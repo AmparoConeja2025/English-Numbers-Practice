@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Numbers Practice - Graphics Test</title> 
+    <title>Práctica de Números en Inglés</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .gradient-bg {
@@ -90,8 +90,8 @@
     <div class="min-h-screen gradient-bg p-4">
         <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
             <div class="learning-gradient p-6 text-center">
-                <h1 class="text-3xl font-bold text-white mb-2" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 English Numbers</h1>
-                <p class="text-white opacity-90">Learn numbers 0-10 with style!</p>
+                <h1 class="text-3xl font-bold text-white mb-2" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
+                <p class="text-white opacity-90">¡Aprende los números del 0 al 10 con estilo!</p>
             </div>
             
             <!-- Learning Mode -->
@@ -101,25 +101,25 @@
                     <div id="word-display" class="text-4xl font-semibold text-gray-800 mb-3 word-display">zero</div>
                     <div id="pronunciation-display" class="text-xl text-gray-600 mb-6 italic">/siro/</div>
                     <button id="speak-btn" class="btn-success text-white px-8 py-3 rounded-full font-semibold text-lg">
-                        🔊 Listen
+                        🔊 Escuchar
                     </button>
                 </div>
 
                 <div class="flex justify-center space-x-4 mb-8">
                     <button id="prev-btn" class="btn-primary text-white px-6 py-3 rounded-xl font-medium">
-                        ← Previous
+                        ← Anterior
                     </button>
                     <span class="flex items-center text-gray-700 font-medium text-lg px-4">
-                        <span id="current-position">1</span> of 11
+                        <span id="current-position">1</span> de 11
                     </span>
                     <button id="next-btn" class="btn-primary text-white px-6 py-3 rounded-xl font-medium">
-                        Next →
+                        Siguiente →
                     </button>
                 </div>
 
                 <div class="text-center">
                     <button id="start-practice-btn" class="btn-secondary text-white px-10 py-4 rounded-2xl font-bold text-xl">
-                        🚀 Start Practice
+                        🚀 Empezar Práctica
                     </button>
                 </div>
             </div>
@@ -128,25 +128,25 @@
             <div id="practice-selection" style="display: none;" class="p-6">
                 <div class="text-center mb-8">
                     <div class="practice-gradient px-6 py-3 rounded-full text-white font-bold text-lg inline-block mb-6" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                        🎯 Choose Practice Mode
+                        🎯 Elige el Modo de Práctica
                     </div>
-                    <p class="text-xl text-gray-700 font-medium">How would you like to practice?</p>
+                    <p class="text-xl text-gray-700 font-medium">¿Cómo te gustaría practicar?</p>
                 </div>
 
                 <div class="space-y-6 mb-8">
                     <button id="typing-practice-btn" class="w-full btn-success text-white py-5 rounded-2xl font-bold text-xl">
-                        ✍️ Type the Answer
-                        <div class="text-sm opacity-90 font-normal mt-1">See number → type the word</div>
+                        ✍️ Escribir la Respuesta
+                        <div class="text-sm opacity-90 font-normal mt-1">Ver número → escribir la palabra</div>
                     </button>
                     <button id="multiple-choice-btn" class="w-full btn-secondary text-white py-5 rounded-2xl font-bold text-xl">
-                        👆 Multiple Choice
-                        <div class="text-sm opacity-90 font-normal mt-1">See number → click the word</div>
+                        👆 Opción Múltiple
+                        <div class="text-sm opacity-90 font-normal mt-1">Ver número → hacer clic en la palabra</div>
                     </button>
                 </div>
 
                 <div class="text-center">
                     <button id="back-from-selection-btn" class="bg-gray-500 text-white px-8 py-3 rounded-xl hover:bg-gray-600 font-medium">
-                        ← Back to Learning
+                        ← Volver al Aprendizaje
                     </button>
                 </div>
             </div>
@@ -155,10 +155,10 @@
             <div id="practice-mode" style="display: none;" class="p-6">
                 <div class="text-center mb-8">
                     <div class="practice-gradient px-6 py-3 rounded-full text-white font-bold text-lg inline-block mb-6" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                        <span id="practice-mode-label">Practice Mode</span>
+                        <span id="practice-mode-label">Modo de Práctica</span>
                     </div>
                     <div id="practice-number" class="text-8xl font-bold number-display mb-6 bounce">0</div>
-                    <p class="text-xl text-gray-700 font-medium mb-6">Type the English word:</p>
+                    <p class="text-xl text-gray-700 font-medium mb-6">Escribe la palabra en inglés:</p>
                     
                     <!-- Typing Practice -->
                     <div id="typing-practice">
@@ -166,11 +166,11 @@
                             type="text" 
                             id="answer-input" 
                             class="w-full text-2xl text-center border-3 border-gray-300 rounded-2xl py-4 px-6 mb-6 focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-200 transition-all"
-                            placeholder="Type here..."
+                            placeholder="Escribir aquí..."
                         >
                         
                         <button id="check-answer-btn" class="w-full btn-primary text-white py-4 rounded-2xl font-bold text-xl mb-4">
-                            ✨ Check Answer
+                            ✨ Verificar Respuesta
                         </button>
                     </div>
 
@@ -186,7 +186,7 @@
 
                 <div class="text-center">
                     <button id="back-to-learn-btn" class="bg-gray-500 text-white px-8 py-3 rounded-xl hover:bg-gray-600 font-medium">
-                        ← Back to Learning
+                        ← Volver al Aprendizaje
                     </button>
                 </div>
             </div>
@@ -371,7 +371,7 @@
 
         function startTypingPractice() {
             practiceType = 'typing';
-            practiceModeLabel.textContent = '✍️ Typing Practice';
+            practiceModeLabel.textContent = '✍️ Práctica de Escritura';
             typingPractice.style.display = 'block';
             multipleChoicePractice.style.display = 'none';
             switchToPracticeMode();
@@ -379,7 +379,7 @@
 
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
-            practiceModeLabel.textContent = '👆 Multiple Choice';
+            practiceModeLabel.textContent = '👆 Opción Múltiple';
             typingPractice.style.display = 'none';
             multipleChoicePractice.style.display = 'block';
             switchToPracticeMode();
