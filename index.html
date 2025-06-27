@@ -309,11 +309,19 @@
                 speechSynthesis.cancel();
                 
                 const utterance = new SpeechSynthesisUtterance(numbers[number].word);
-                utterance.rate = 0.55;
-                utterance.volume = 1;
-                utterance.pitch = 1;
-                utterance.lang = 'en-US';
                 
+                // Configuraciones especiales para numeros problematicos
+                if (number === 3 || number === 5 || number === 8) {
+                    utterance.rate = 0.35;  // Mas lento para clarity
+                    utterance.pitch = 1.3;  // Tono mas alto
+                    utterance.volume = 1;
+                } else {
+                    utterance.rate = 0.55;  // Velocidad normal
+                    utterance.pitch = 1;    // Tono normal
+                    utterance.volume = 1;
+                }
+                
+                utterance.lang = 'en-US';
                 speechSynthesis.speak(utterance);
             }
         }
