@@ -18,13 +18,12 @@ const NumbersApp = () => {
   const [mode, setMode] = useState('learn');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentNumber, setCurrentNumber] = useState(null);
-  const [userInput, setUserInput] = useState('');
   const [feedback, setFeedback] = useState('');
   const [score, setScore] = useState(0);
   const [total, setTotal] = useState(0);
   const [options, setOptions] = useState([]);
   const [lastNumbers, setLastNumbers] = useState([]);
-  const [currentMode, setCurrentMode] = useState('writing');
+  const [currentMode, setCurrentMode] = useState('multiple');
   const [modeTransition, setModeTransition] = useState(false);
 
   // Función para hablar
@@ -71,27 +70,10 @@ const NumbersApp = () => {
     setCurrentIndex((prev) => (prev - 1 + numbers.length) % numbers.length);
   };
 
-  // Función para verificar respuesta
-  const checkAnswer = () => {
-    const correctAnswer = numbers.find(n => n.number === currentNumber);
-    const isCorrect = userInput.toLowerCase().trim() === correctAnswer.word;
-    
-    if (isCorrect) {
-      setScore(score + 1);
-      setFeedback('¡Correcto! 🎉');
-    } else {
-      setFeedback(`Incorrecto. La respuesta es: ${correctAnswer.word}`);
-    }
-    
-    setTotal(total + 1);
-    setTimeout(() => setFeedback(''), 2000);
-  };
-
   // Función para siguiente pregunta
   const nextQuestion = () => {
     const randomNum = getRandomNumber();
     setCurrentNumber(randomNum.number);
-    setUserInput('');
     setFeedback('');
     
     if (mode === 'multiple' || mode === 'audio') {
@@ -113,12 +95,24 @@ const NumbersApp = () => {
         setFeedback('¡Excelente elección! 🌟');
       } else if (mode === 'audio') {
         setFeedback('¡Perfecto oído! 🎵');
+      } else if (mode === 'mixed') {
+        if (currentMode === 'multiple') {
+          setFeedback('¡Excelente elección! 🌟');
+        } else {
+          setFeedback('¡Perfecto oído! 🎵');
+        }
       }
     } else {
       if (mode === 'multiple') {
         setFeedback(`No es correcto. El número ${currentNumber} es "${correctAnswer.word}"`);
       } else if (mode === 'audio') {
         setFeedback(`Incorrecto. Escuchaste "${correctAnswer.word}" (${currentNumber})`);
+      } else if (mode === 'mixed') {
+        if (currentMode === 'multiple') {
+          setFeedback(`No es correcto. El número ${currentNumber} es "${correctAnswer.word}"`);
+        } else {
+          setFeedback(`Incorrecto. Escuchaste "${correctAnswer.word}" (${currentNumber})`);
+        }
       }
     }
     
@@ -126,11 +120,11 @@ const NumbersApp = () => {
     setTimeout(() => setFeedback(''), 2500);
   };
 
-  // Modo mixto - alternar entre escritura y múltiple
+  // Modo mixto - alternar entre múltiple con palabras y múltiple con números
   const switchMixedMode = () => {
     setModeTransition(true);
     setTimeout(() => {
-      setCurrentMode(currentMode === 'writing' ? 'multiple' : 'writing');
+      setCurrentMode(currentMode === 'multiple' ? 'audio' : 'multiple');
       setModeTransition(false);
       nextQuestion();
     }, 800);
@@ -138,14 +132,14 @@ const NumbersApp = () => {
 
   // Inicializar preguntas cuando cambia el modo
   useEffect(() => {
-    if (mode === 'practice' || mode === 'multiple' || mode === 'audio' || mode === 'mixed') {
+    if (mode === 'multiple' || mode === 'audio' || mode === 'mixed') {
       nextQuestion();
     }
   }, [mode]);
 
-  // Auto-reproducir audio en modo audio
+  // Auto-reproducir audio en modo audio y en modo mixto cuando está en audio
   useEffect(() => {
-    if (mode === 'audio' && currentNumber !== null) {
+    if ((mode === 'audio' || (mode === 'mixed' && currentMode === 'audio')) && currentNumber !== null) {
       setTimeout(() => {
         const correctAnswer = numbers.find(n => n.number === currentNumber);
         if (correctAnswer) {
@@ -153,13 +147,13 @@ const NumbersApp = () => {
         }
       }, 500);
     }
-  }, [currentNumber, mode]);
+  }, [currentNumber, mode, currentMode]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 p-4 font-sans">
       <div className="max-w-md mx-auto">
         {/* Header */}
-        <div className="text-center mb-5">
+        <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
             🔢 Números en Inglés
           </h1>
@@ -169,10 +163,10 @@ const NumbersApp = () => {
         </div>
 
         {/* Botones de modo */}
-        <div className="grid grid-cols-2 gap-2 mb-5">
+        <div className="grid grid-cols-2 gap-3 mb-6">
           <button
             onClick={() => setMode('learn')}
-            className={`p-3 rounded-xl font-semibold transition-all duration-300 ${
+            className={`p-4 rounded-xl font-semibold transition-all duration-300 ${
               mode === 'learn'
                 ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transform scale-105'
                 : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
@@ -181,18 +175,18 @@ const NumbersApp = () => {
             📖 Aprender
           </button>
           <button
-            onClick={() => setMode('practice')}
-            className={`p-3 rounded-xl font-semibold transition-all duration-300 ${
-              mode === 'practice'
-                ? 'bg-gradient-to-r from-green-500 to-blue-600 text-white shadow-lg transform scale-105'
+            onClick={() => setMode('audio')}
+            className={`p-4 rounded-xl font-semibold transition-all duration-300 ${
+              mode === 'audio'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg transform scale-105'
                 : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
             }`}
           >
-            ✍️ Escritura
+            🎧 Audio
           </button>
           <button
             onClick={() => setMode('multiple')}
-            className={`p-3 rounded-xl font-semibold transition-all duration-300 ${
+            className={`p-4 rounded-xl font-semibold transition-all duration-300 ${
               mode === 'multiple'
                 ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg transform scale-105'
                 : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
@@ -201,58 +195,44 @@ const NumbersApp = () => {
             👆 Múltiple
           </button>
           <button
-            onClick={() => setMode('audio')}
-            className={`p-3 rounded-xl font-semibold transition-all duration-300 ${
-              mode === 'audio'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg transform scale-105'
-                : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
-            }`}
-          >
-            🎧 Audio
-          </button>
-        </div>
-
-        {/* Botón de modo mixto */}
-        <div className="text-center mb-5">
-          <button
             onClick={() => setMode('mixed')}
-            className={`px-5 py-2 rounded-xl font-semibold transition-all duration-300 ${
+            className={`p-4 rounded-xl font-semibold transition-all duration-300 ${
               mode === 'mixed'
                 ? 'bg-gradient-to-r from-pink-500 to-yellow-500 text-white shadow-lg transform scale-105'
                 : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
             }`}
           >
-            🎲 Modo Mixto
+            🎲 Mixto
           </button>
         </div>
 
         {/* Contenido principal */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-5 shadow-2xl border border-white/20">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20">
           {/* Modo Aprendizaje */}
           {mode === 'learn' && (
-            <div className="text-center mb-5">
-              <div className="text-6xl font-bold text-white mb-3 drop-shadow-lg">
+            <div className="text-center mb-8">
+              <div className="text-6xl font-bold text-white mb-4 drop-shadow-lg">
                 {numbers[currentIndex].number}
               </div>
-              <div className="text-xl text-blue-100 mb-3">
+              <div className="text-xl text-blue-100 mb-4">
                 {numbers[currentIndex].phonetic}
               </div>
               <button
                 onClick={speak}
-                className="bg-white/20 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 font-semibold mb-4"
+                className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl hover:bg-white/30 transition-all duration-300 font-semibold mb-6"
               >
                 🔊 Escuchar
               </button>
-              <div className="flex justify-center gap-3">
+              <div className="flex justify-center gap-4">
                 <button
                   onClick={prevNumber}
-                  className="bg-blue-500/80 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
+                  className="bg-blue-500/80 backdrop-blur-sm text-white px-6 py-3 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
                 >
                   ← Anterior
                 </button>
                 <button
                   onClick={nextNumber}
-                  className="bg-blue-500/80 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
+                  className="bg-blue-500/80 backdrop-blur-sm text-white px-6 py-3 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
                 >
                   Siguiente →
                 </button>
@@ -260,48 +240,18 @@ const NumbersApp = () => {
             </div>
           )}
 
-          {/* Modo Práctica de Escritura */}
-          {mode === 'practice' && (
-            <div className="text-center mb-5">
-              <div className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
-                {currentNumber}
-              </div>
-              <input
-                type="text"
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && checkAnswer()}
-                placeholder="Escribe el número en inglés..."
-                className="w-full p-3 text-lg rounded-xl text-center bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border-2 border-white/30 focus:border-white/60 focus:outline-none mb-4"
-                autoFocus
-              />
-              <button
-                onClick={checkAnswer}
-                className="bg-green-500/80 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-green-600/80 transition-all duration-300 font-semibold mr-3"
-              >
-                ✓ Verificar
-              </button>
-              <button
-                onClick={nextQuestion}
-                className="bg-blue-500/80 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
-              >
-                ⏭ Siguiente
-              </button>
-            </div>
-          )}
-
           {/* Modo Opción Múltiple y Audio */}
           {(mode === 'multiple' || mode === 'audio') && (
-            <div className="text-center mb-5">
+            <div className="text-center mb-8">
               <div className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
                 {mode === 'audio' ? '🎧' : currentNumber}
               </div>
-              <div className="grid grid-cols-2 gap-2 mb-4">
+              <div className="grid grid-cols-2 gap-3 mb-6">
                 {options.map((option, index) => (
                   <button
                     key={index}
                     onClick={() => handleOptionClick(option)}
-                    className="bg-white/20 backdrop-blur-sm text-white p-3 rounded-xl hover:bg-white/30 transition-all duration-300 font-semibold text-base"
+                    className="bg-white/20 backdrop-blur-sm text-white p-4 rounded-xl hover:bg-white/30 transition-all duration-300 font-semibold text-lg"
                   >
                     {mode === 'audio' ? option.number : option.word}
                   </button>
@@ -309,7 +259,7 @@ const NumbersApp = () => {
               </div>
               <button
                 onClick={nextQuestion}
-                className="bg-blue-500/80 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
+                className="bg-blue-500/80 backdrop-blur-sm text-white px-6 py-3 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
               >
                 ⏭ Siguiente
               </button>
@@ -318,58 +268,33 @@ const NumbersApp = () => {
 
           {/* Modo Mixto */}
           {mode === 'mixed' && (
-            <div className="text-center mb-5">
-              <div className="mb-3">
+            <div className="text-center mb-8">
+              <div className="mb-4">
                 <span className="bg-gradient-to-r from-pink-400 to-yellow-400 text-transparent bg-clip-text font-bold text-lg">
-                  Modo: {currentMode === 'writing' ? '✍️ Escritura' : '👆 Múltiple'}
+                  Modo: {currentMode === 'multiple' ? '👆 Múltiple' : '🎧 Audio'}
                 </span>
               </div>
               
               <div className={`transition-all duration-1600 ${modeTransition ? 'transform scale-110 opacity-75' : 'transform scale-100 opacity-100'}`}>
-                {currentMode === 'writing' ? (
-                  <div>
-                    <div className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
-                      {currentNumber}
-                    </div>
-                    <input
-                      type="text"
-                      value={userInput}
-                      onChange={(e) => setUserInput(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && checkAnswer()}
-                      placeholder="Escribe el número en inglés..."
-                      className="w-full p-3 text-lg rounded-xl text-center bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border-2 border-white/30 focus:border-white/60 focus:outline-none mb-4"
-                      autoFocus
-                    />
+                <div className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
+                  {currentMode === 'audio' ? '🎧' : currentNumber}
+                </div>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {options.map((option, index) => (
                     <button
-                      onClick={checkAnswer}
-                      className="bg-green-500/80 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-green-600/80 transition-all duration-300 font-semibold mr-3"
+                      key={index}
+                      onClick={() => handleOptionClick(option)}
+                      className="bg-white/20 backdrop-blur-sm text-white p-4 rounded-xl hover:bg-white/30 transition-all duration-300 font-semibold text-lg"
                     >
-                      ✓ Verificar
+                      {currentMode === 'audio' ? option.number : option.word}
                     </button>
-                  </div>
-                ) : (
-                  <div>
-                    <div className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
-                      {currentNumber}
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 mb-4">
-                      {options.map((option, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleOptionClick(option)}
-                          className="bg-white/20 backdrop-blur-sm text-white p-3 rounded-xl hover:bg-white/30 transition-all duration-300 font-semibold text-base"
-                        >
-                          {option.word}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  ))}
+                </div>
               </div>
               
               <button
                 onClick={switchMixedMode}
-                className="bg-gradient-to-r from-pink-500 to-yellow-500 text-white px-5 py-2 rounded-xl hover:from-pink-600 hover:to-yellow-600 transition-all duration-300 font-semibold"
+                className="bg-gradient-to-r from-pink-500 to-yellow-500 text-white px-6 py-3 rounded-xl hover:from-pink-600 hover:to-yellow-600 transition-all duration-300 font-semibold"
               >
                 🔄 Cambiar Modo
               </button>
@@ -379,7 +304,7 @@ const NumbersApp = () => {
           {/* Feedback */}
           {feedback && (
             <div className="text-center mt-4">
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 text-white font-semibold">
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 text-white font-semibold">
                 {feedback}
               </div>
             </div>
