@@ -142,6 +142,10 @@
                         👆 Opción Múltiple
                         <div class="text-sm opacity-90 font-normal mt-1">Ver número → hacer clic en la palabra</div>
                     </button>
+                    <button id="mixed-mode-btn" class="w-full btn-primary text-white py-5 rounded-2xl font-bold text-xl">
+                        🎲 Modo Mixto
+                        <div class="text-sm opacity-90 font-normal mt-1">¡Sorpresa! Cambia entre escribir y múltiple</div>
+                    </button>
                 </div>
 
                 <div class="text-center">
@@ -232,6 +236,7 @@
         const startPracticeBtn = document.getElementById('start-practice-btn');
         const typingPracticeBtn = document.getElementById('typing-practice-btn');
         const multipleChoiceBtn = document.getElementById('multiple-choice-btn');
+        const mixedModeBtn = document.getElementById('mixed-mode-btn');
         const backFromSelectionBtn = document.getElementById('back-from-selection-btn');
         
         const backToLearnBtn = document.getElementById('back-to-learn-btn');
@@ -299,7 +304,7 @@
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
                     practiceNumberDisplay.textContent = practiceNumber;
-                    createMultipleChoiceButtons();
+                    setupCurrentPracticeQuestion(); // Usar la nueva función
                     hideFeedback();
                 }, 1500);
             } else {
@@ -345,7 +350,7 @@
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
                     practiceNumberDisplay.textContent = practiceNumber;
-                    answerInput.value = '';
+                    setupCurrentPracticeQuestion(); // Usar la nueva función
                     hideFeedback();
                 }, 1500);
             } else {
@@ -401,17 +406,46 @@
         function startTypingPractice() {
             practiceType = 'typing';
             practiceModeLabel.textContent = '✍️ Práctica de Escritura';
-            typingPractice.style.display = 'block';
-            multipleChoicePractice.style.display = 'none';
             switchToPracticeMode();
         }
 
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
             practiceModeLabel.textContent = '👆 Opción Múltiple';
-            typingPractice.style.display = 'none';
-            multipleChoicePractice.style.display = 'block';
             switchToPracticeMode();
+        }
+
+        function startMixedMode() {
+            practiceType = 'mixed';
+            practiceModeLabel.textContent = '🎲 Modo Mixto';
+            switchToPracticeMode();
+        }
+
+        function setupCurrentPracticeQuestion() {
+            if (practiceType === 'mixed') {
+                // Elegir aleatoriamente entre typing y multiple-choice
+                const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
+                
+                if (randomType === 'typing') {
+                    typingPractice.style.display = 'block';
+                    multipleChoicePractice.style.display = 'none';
+                    answerInput.value = '';
+                    answerInput.focus();
+                } else {
+                    typingPractice.style.display = 'none';
+                    multipleChoicePractice.style.display = 'block';
+                    createMultipleChoiceButtons();
+                }
+            } else if (practiceType === 'multiple-choice') {
+                typingPractice.style.display = 'none';
+                multipleChoicePractice.style.display = 'block';
+                createMultipleChoiceButtons();
+            } else {
+                typingPractice.style.display = 'block';
+                multipleChoicePractice.style.display = 'none';
+                answerInput.value = '';
+                answerInput.focus();
+            }
         }
 
         function switchToPracticeMode() {
@@ -429,12 +463,8 @@
             practiceNumber = generateRandomNumber();
             practiceNumberDisplay.textContent = practiceNumber;
             
-            if (practiceType === 'multiple-choice') {
-                createMultipleChoiceButtons();
-            } else {
-                answerInput.value = '';
-                answerInput.focus();
-            }
+            // Usar la nueva función para configurar el tipo de pregunta
+            setupCurrentPracticeQuestion();
             hideFeedback();
         }
 
@@ -456,6 +486,7 @@
         startPracticeBtn.addEventListener('click', showPracticeSelection);
         typingPracticeBtn.addEventListener('click', startTypingPractice);
         multipleChoiceBtn.addEventListener('click', startMultipleChoicePractice);
+        mixedModeBtn.addEventListener('click', startMixedMode);
         backFromSelectionBtn.addEventListener('click', switchToLearnMode);
         backToLearnBtn.addEventListener('click', switchToLearnMode);
         checkAnswerBtn.addEventListener('click', checkAnswer);
