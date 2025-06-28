@@ -436,6 +436,7 @@
             if (mixedModeHistory.length === 0) {
                 const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
                 mixedModeHistory.push(randomType);
+                console.log('Primera pregunta, elegido:', randomType); // Debug
                 return randomType;
             }
             
@@ -451,16 +452,20 @@
                 }
             }
             
+            console.log('Último tipo:', lastType, 'Consecutivas:', consecutiveCount); // Debug
+            
             // Si ya llevamos el máximo de veces seguidas, cambiar forzosamente
             if (consecutiveCount >= mixedModeMaxSame) {
                 const newType = lastType === 'typing' ? 'multiple-choice' : 'typing';
                 mixedModeHistory.push(newType);
+                console.log('Cambio forzado a:', newType); // Debug
                 return newType;
             }
             
             // Si no, elegir aleatoriamente
             const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
             mixedModeHistory.push(randomType);
+            console.log('Elegido aleatoriamente:', randomType); // Debug
             
             // Mantener solo los últimos 10 intentos en el historial
             if (mixedModeHistory.length > 10) {
