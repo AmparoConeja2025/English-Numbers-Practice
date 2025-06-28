@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+<button id="audio-only-btn" class="w-full btn-audio text-white py-5 rounded-2xl font-bold text-xl">
+                        🎧 Solo Audio
+                        <div class="text-sm opacity-90 font-normal mt-1">Escuchar → elegir el número correcto</div>
+                    </button>
+                    <button id="mixed-mode-btn" class="w-full btn-mixed py-5 rounded-2xl<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -159,11 +163,11 @@
                         👆 Opción Múltiple
                         <div class="text-sm opacity-90 font-normal mt-1">Ver número → hacer clic en la palabra</div>
                     </button>
-                    <button id="audio-only-btn" class="w-full btn-primary text-white py-5 rounded-2xl font-bold text-xl">
+                    <button id="audio-only-btn" class="w-full btn-audio text-white py-5 rounded-2xl font-bold text-xl">
                         🎧 Solo Audio
                         <div class="text-sm opacity-90 font-normal mt-1">Escuchar → elegir el número correcto</div>
                     </button>
-                    <button id="mixed-mode-btn" class="w-full py-5 rounded-2xl font-bold text-xl text-white" style="background: linear-gradient(45deg, #a8edea, #fed6e3); color: #4a5568;">
+                    <button id="mixed-mode-btn" class="w-full btn-mixed py-5 rounded-2xl font-bold text-xl">
                         🎲 Modo Mixto
                         <div class="text-sm opacity-90 font-normal mt-1">¡Sorpresa! Cambia entre escribir y múltiple</div>
                     </button>
@@ -211,15 +215,14 @@
                     
                     <!-- Audio-Only Practice -->
                     <div id="audio-only-practice" style="display: none;">
-                        <div class="text-center mb-8">
-                            <div class="bg-gradient-to-br from-purple-400 to-blue-500 p-8 rounded-3xl mb-6">
-                                <button id="play-audio-btn" class="btn-success text-white px-12 py-6 rounded-full font-bold text-2xl mb-4">
-                                    🔊 Escuchar Número
+                        <div class="text-center mb-6">
+                            <div class="bg-gradient-to-br from-purple-400 to-blue-500 p-4 rounded-2xl mb-4">
+                                <button id="play-audio-btn" class="btn-success text-white px-8 py-4 rounded-full font-bold text-lg">
+                                    🔊 Escuchar
                                 </button>
-                                <p class="text-white text-lg opacity-90">Presiona para escuchar</p>
                             </div>
-                            <button id="repeat-audio-btn" class="bg-gray-600 text-white px-6 py-3 rounded-xl font-medium mb-6 hover:bg-gray-700 transition-all">
-                                🔄 Repetir Audio
+                            <button id="repeat-audio-btn" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-all">
+                                🔄 Repetir
                             </button>
                         </div>
                         
@@ -349,7 +352,7 @@
             options.forEach((num) => {
                 const button = document.createElement('button');
                 button.textContent = num;
-                button.className = 'choice-button py-6 rounded-2xl font-bold text-2xl transition-all';
+                button.className = 'choice-button py-4 rounded-2xl font-bold text-xl transition-all';
                 button.addEventListener('click', () => handleAudioOnlyAnswer(num));
                 numberChoiceButtons.appendChild(button);
             });
