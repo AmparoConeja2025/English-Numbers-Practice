@@ -300,6 +300,80 @@
             });
         }
 
+        // IMPROVED SPEECH FUNCTION - Clear audio settings
+        function speakNumber(number) {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(numbers[number].word);
+                
+                // Clear, consistent settings for all numbers
+                utterance.rate = 0.55;    // Good speed for learning
+                utterance.volume = 1;     // Full volume
+                utterance.pitch = 1;      // Natural pitch
+                utterance.lang = 'en-US'; // Clear American English
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function showFeedback(message, isCorrect) {
+            feedback.textContent = message;
+            feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-6 transition-all ${
+                isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            }`;
+            feedback.classList.remove('hidden');
+        }
+
+        function hideFeedback() {
+            feedback.classList.add('hidden');
+        }
+
+        function updateDisplay() {
+            numberDisplay.textContent = currentNumber;
+            wordDisplay.textContent = numbers[currentNumber].word;
+            pronunciationDisplay.textContent = numbers[currentNumber].pronunciation;
+            
+            const currentPosition = document.getElementById('current-position');
+            if (currentPosition) {
+                currentPosition.textContent = currentNumber + 1;
+            }
+            
+            numberDisplay.classList.remove('bounce');
+            setTimeout(() => numberDisplay.classList.add('bounce'), 10);
+            
+            prevBtn.disabled = currentNumber === 0;
+            nextBtn.disabled = currentNumber === 10;
+            
+            if (prevBtn.disabled) {
+                prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            
+            if (nextBtn.disabled) {
+                nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function showPracticeSelection() {
+            currentMode = 'selection';
+            learnMode.style.display = 'none';
+            practiceSelection.style.display = 'block';
+            practiceMode.style.display = 'none';
+        }
+
+        function switchToLearnMode() {
+            currentMode = 'learn';
+            learnMode.style.display = 'block';
+            practiceSelection.style.display = 'none';
+            practiceMode.style.display = 'none';
+            hideFeedback();
+            answerInput.value = '';
+        }
+
         function switchToPracticeMode() {
             currentMode = 'practice';
             learnMode.style.display = 'none';
