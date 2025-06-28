@@ -300,6 +300,26 @@
             });
         }
 
+        function switchToPracticeMode() {
+            currentMode = 'practice';
+            learnMode.style.display = 'none';
+            practiceSelection.style.display = 'none';
+            practiceMode.style.display = 'block';
+            
+            // Asegurar que el sistema anti-repeticion este listo
+            if (practiceAvailableNumbers.length === 0) {
+                practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                practiceUsedNumbers = [];
+            }
+            
+            practiceNumber = generateRandomNumber();
+            practiceNumberDisplay.textContent = practiceNumber;
+            
+            // Usar la nueva función para configurar el tipo de pregunta
+            setupCurrentPracticeQuestion();
+            hideFeedback();
+        }
+
         function handleMultipleChoiceAnswer(selectedWord) {
             const correctAnswer = numbers[practiceNumber].word.toLowerCase();
             
@@ -315,6 +335,25 @@
                 }, 1500);
             } else {
                 showFeedback(`❌ ¡No del todo! La respuesta correcta es "${correctAnswer}"`, false);
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = answerInput.value.toLowerCase().trim();
+            const correctAnswer = numbers[practiceNumber].word.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                showFeedback('✅ ¡Correcto! ¡Buen trabajo!', true);
+                setTimeout(() => {
+                    practiceNumber = generateRandomNumber();
+                    practiceNumberDisplay.textContent = practiceNumber;
+                    // Limpiar el campo ANTES de configurar la siguiente pregunta
+                    answerInput.value = '';
+                    setupCurrentPracticeQuestion();
+                    hideFeedback();
+                }, 1500);
+            } else {
+                showFeedback(`❌ ¡Inténtalo de nuevo! La respuesta correcta es "${correctAnswer}"`, false);
             }
         }
 
@@ -347,25 +386,6 @@
             feedback.classList.add('hidden');
         }
 
-        function checkAnswer() {
-            const userAnswer = answerInput.value.toLowerCase().trim();
-            const correctAnswer = numbers[practiceNumber].word.toLowerCase();
-            
-            if (userAnswer === correctAnswer) {
-                showFeedback('✅ ¡Correcto! ¡Buen trabajo!', true);
-                setTimeout(() => {
-                    practiceNumber = generateRandomNumber();
-                    practiceNumberDisplay.textContent = practiceNumber;
-                    // Limpiar el campo ANTES de configurar la siguiente pregunta
-                    answerInput.value = '';
-                    setupCurrentPracticeQuestion();
-                    hideFeedback();
-                }, 1500);
-            } else {
-                showFeedback(`❌ ¡Inténtalo de nuevo! La respuesta correcta es "${correctAnswer}"`, false);
-            }
-        }
-
         function updateDisplay() {
             numberDisplay.textContent = currentNumber;
             wordDisplay.textContent = numbers[currentNumber].word;
@@ -393,13 +413,6 @@
             } else {
                 nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
-        }
-
-        function showPracticeSelection() {
-            currentMode = 'selection';
-            learnMode.style.display = 'none';
-            practiceSelection.style.display = 'block';
-            practiceMode.style.display = 'none';
         }
 
         function switchToLearnMode() {
