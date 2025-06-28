@@ -308,7 +308,9 @@
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
                     practiceNumberDisplay.textContent = practiceNumber;
-                    setupCurrentPracticeQuestion(); // Usar la nueva función
+                    // Asegurar que el campo esté limpio antes de configurar
+                    answerInput.value = '';
+                    setupCurrentPracticeQuestion();
                     hideFeedback();
                 }, 1500);
             } else {
@@ -354,7 +356,9 @@
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
                     practiceNumberDisplay.textContent = practiceNumber;
-                    setupCurrentPracticeQuestion(); // Usar la nueva función
+                    // Limpiar el campo ANTES de configurar la siguiente pregunta
+                    answerInput.value = '';
+                    setupCurrentPracticeQuestion();
                     hideFeedback();
                 }, 1500);
             } else {
