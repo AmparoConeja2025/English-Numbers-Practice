@@ -84,6 +84,11 @@
             40% { transform: translateY(-10px); }
             60% { transform: translateY(-5px); }
         }
+        @keyframes coinFlip {
+            0% { transform: translate(-50%, -50%) rotateY(0deg) scale(0.3); opacity: 0; }
+            50% { transform: translate(-50%, -50%) rotateY(180deg) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) rotateY(360deg) scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -219,6 +224,7 @@
         let currentMode = 'learn';
         let practiceNumber = 0;
         let practiceType = 'typing';
+        let currentQuestionType = 'typing'; // Para rastrear el tipo actual en modo mixto
         let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let practiceUsedNumbers = [];
         
@@ -374,13 +380,137 @@
             answerInput.value = '';
         }
 
+        function chooseMixedModeType() {
+            // Si es la primera pregunta, elegir aleatoriamente
+            if (mixedModeHistory.length === 0) {
+                const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
+                mixedModeHistory.push(randomType);
+                console.log('Primera pregunta, elegido:', randomType); // Debug
+                return randomType;
+            }
+            
+            // Contar cuántas veces seguidas hemos usado el mismo tipo
+            const lastType = mixedModeHistory[mixedModeHistory.length - 1];
+            let consecutiveCount = 0;
+            
+            for (let i = mixedModeHistory.length - 1; i >= 0; i--) {
+                if (mixedModeHistory[i] === lastType) {
+                    consecutiveCount++;
+                } else {
+                    break;
+                }
+            }
+            
+            console.log('Último tipo:', lastType, 'Consecutivas:', consecutiveCount); // Debug
+            
+            // Si ya llevamos el máximo de veces seguidas, cambiar forzosamente
+            if (consecutiveCount >= mixedModeMaxSame) {
+                const newType = lastType === 'typing' ? 'multiple-choice' : 'typing';
+                mixedModeHistory.push(newType);
+                console.log('Cambio forzado a:', newType); // Debug
+                return newType;
+            }
+            
+            // Si no, elegir aleatoriamente
+            const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
+            mixedModeHistory.push(randomType);
+            console.log('Elegido aleatoriamente:', randomType); // Debug
+            
+            // Mantener solo los últimos 10 intentos en el historial
+            if (mixedModeHistory.length > 10) {
+                mixedModeHistory.shift();
+            }
+            
+            return randomType;
+        }
+
+        function showModeAnimation(modeType) {
+            // Crear elemento de animación
+            const animation = document.createElement('div');
+            animation.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+                background: rgba(102, 126, 234, 0.95);
+                color: white;
+                padding: 20px 40px;
+                border-radius: 20px;
+                font-size: 24px;
+                font-weight: bold;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                backdrop-filter: blur(10px);
+                animation: coinFlip 0.8s ease-out;
+            `;
+            
+            animation.innerHTML = modeType === 'typing' ? 
+                '🎯 ¡ESCRIBIR!<br><small>Escribe la respuesta</small>' : 
+                '🎲 ¡MÚLTIPLE!<br><small>Elige la opción</small>';
+            
+            document.body.appendChild(animation);
+            
+            // Remover después de la animación
+            setTimeout(() => {
+                if (animation.parentNode) {
+                    animation.parentNode.removeChild(animation);
+                }
+            }, 800);
+        }
+
+        // FUNCIÓN CLAVE FALTANTE: setupCurrentPracticeQuestion
+        function setupCurrentPracticeQuestion() {
+            // Determinar el tipo de pregunta según el modo
+            if (practiceType === 'mixed') {
+                currentQuestionType = chooseMixedModeType();
+                // Mostrar animación solo en modo mixto
+                showModeAnimation(currentQuestionType);
+                // Esperar a que termine la animación antes de configurar
+                setTimeout(() => {
+                    configurePracticeInterface(currentQuestionType);
+                }, 800);
+            } else {
+                currentQuestionType = practiceType;
+                configurePracticeInterface(currentQuestionType);
+            }
+        }
+
+        function configurePracticeInterface(questionType) {
+            // Limpiar estado anterior
+            answerInput.value = '';
+            
+            if (questionType === 'typing') {
+                // Mostrar interfaz de escritura
+                typingPractice.style.display = 'block';
+                multipleChoicePractice.style.display = 'none';
+                
+                // Cambiar el texto de instrucción
+                document.querySelector('#practice-mode p').textContent = 'Escribe la palabra en inglés:';
+                
+                // Enfocar el campo de texto
+                setTimeout(() => answerInput.focus(), 100);
+                
+            } else if (questionType === 'multiple-choice') {
+                // Mostrar interfaz de opción múltiple
+                typingPractice.style.display = 'none';
+                multipleChoicePractice.style.display = 'block';
+                
+                // Cambiar el texto de instrucción
+                document.querySelector('#practice-mode p').textContent = 'Selecciona la palabra correcta:';
+                
+                // Crear botones de opción múltiple
+                createMultipleChoiceButtons();
+            }
+        }
+
         function switchToPracticeMode() {
             currentMode = 'practice';
             learnMode.style.display = 'none';
             practiceSelection.style.display = 'none';
             practiceMode.style.display = 'block';
             
-            // Asegurar que el sistema anti-repeticion este listo
+            // Asegurar que el sistema anti-repetición esté listo
             if (practiceAvailableNumbers.length === 0) {
                 practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 practiceUsedNumbers = [];
@@ -389,7 +519,7 @@
             practiceNumber = generateRandomNumber();
             practiceNumberDisplay.textContent = practiceNumber;
             
-            // Usar la nueva función para configurar el tipo de pregunta
+            // Usar la función arreglada para configurar el tipo de pregunta
             setupCurrentPracticeQuestion();
             hideFeedback();
         }
@@ -402,8 +532,6 @@
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
                     practiceNumberDisplay.textContent = practiceNumber;
-                    // Asegurar que el campo esté limpio antes de configurar
-                    answerInput.value = '';
                     setupCurrentPracticeQuestion();
                     hideFeedback();
                 }, 1500);
@@ -421,81 +549,12 @@
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
                     practiceNumberDisplay.textContent = practiceNumber;
-                    // Limpiar el campo ANTES de configurar la siguiente pregunta
-                    answerInput.value = '';
                     setupCurrentPracticeQuestion();
                     hideFeedback();
                 }, 1500);
             } else {
                 showFeedback(`❌ ¡Inténtalo de nuevo! La respuesta correcta es "${correctAnswer}"`, false);
             }
-        }
-
-        // IMPROVED SPEECH FUNCTION - Clear audio settings
-        function speakNumber(number) {
-            if ('speechSynthesis' in window) {
-                speechSynthesis.cancel();
-                
-                const utterance = new SpeechSynthesisUtterance(numbers[number].word);
-                
-                // Clear, consistent settings for all numbers
-                utterance.rate = 0.55;    // Good speed for learning
-                utterance.volume = 1;     // Full volume
-                utterance.pitch = 1;      // Natural pitch
-                utterance.lang = 'en-US'; // Clear American English
-                
-                speechSynthesis.speak(utterance);
-            }
-        }
-
-        function showFeedback(message, isCorrect) {
-            feedback.textContent = message;
-            feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-6 transition-all ${
-                isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-            }`;
-            feedback.classList.remove('hidden');
-        }
-
-        function hideFeedback() {
-            feedback.classList.add('hidden');
-        }
-
-        function updateDisplay() {
-            numberDisplay.textContent = currentNumber;
-            wordDisplay.textContent = numbers[currentNumber].word;
-            pronunciationDisplay.textContent = numbers[currentNumber].pronunciation;
-            
-            const currentPosition = document.getElementById('current-position');
-            if (currentPosition) {
-                currentPosition.textContent = currentNumber + 1;
-            }
-            
-            numberDisplay.classList.remove('bounce');
-            setTimeout(() => numberDisplay.classList.add('bounce'), 10);
-            
-            prevBtn.disabled = currentNumber === 0;
-            nextBtn.disabled = currentNumber === 10;
-            
-            if (prevBtn.disabled) {
-                prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            } else {
-                prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-            
-            if (nextBtn.disabled) {
-                nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            } else {
-                nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-        }
-
-        function switchToLearnMode() {
-            currentMode = 'learn';
-            learnMode.style.display = 'block';
-            practiceSelection.style.display = 'none';
-            practiceMode.style.display = 'none';
-            hideFeedback();
-            answerInput.value = '';
         }
 
         function startTypingPractice() {
@@ -510,99 +569,6 @@
             switchToPracticeMode();
         }
 
-        function chooseMixedModeType() {
-            // Si es la primera pregunta, elegir aleatoriamente
-            if (mixedModeHistory.length === 0) {
-                const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
-                mixedModeHistory.push(randomType);
-                console.log('Primera pregunta, elegido:', randomType); // Debug
-                return randomType;
-            }
-            
-            // Contar cuántas veces seguidas hemos usado el mismo tipo
-            const lastType = mixedModeHistory[mixedModeHistory.length - 1];
-            let consecutiveCount = 0;
-            
-            for (let i = mixedModeHistory.length - 1; i >= 0; i--) {
-                if (mixedModeHistory[i] === lastType) {
-                    consecutiveCount++;
-                } else {
-                    break;
-                }
-            }
-            
-            console.log('Último tipo:', lastType, 'Consecutivas:', consecutiveCount); // Debug
-            
-            // Si ya llevamos el máximo de veces seguidas, cambiar forzosamente
-            if (consecutiveCount >= mixedModeMaxSame) {
-                const newType = lastType === 'typing' ? 'multiple-choice' : 'typing';
-                mixedModeHistory.push(newType);
-                console.log('Cambio forzado a:', newType); // Debug
-                return newType;
-            }
-            
-            // Si no, elegir aleatoriamente
-            const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
-            mixedModeHistory.push(randomType);
-            console.log('Elegido aleatoriamente:', randomType); // Debug
-            
-            // Mantener solo los últimos 10 intentos en el historial
-            if (mixedModeHistory.length > 10) {
-                mixedModeHistory.shift();
-            }
-            
-            return randomType;
-        }
-
-        function showModeAnimation(modeType) {
-            // Crear elemento de animación
-            const animation = document.createElement('div');
-            animation.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                z-index: 1000;
-                background: rgba(102, 126, 234, 0.95);
-                color: white;
-                padding: 20px 40px;
-                border-radius: 20px;
-                font-size: 24px;
-                font-weight: bold;
-                text-align: center;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                backdrop-filter: blur(10px);
-                animation: coinFlip 0.8s ease-out;
-            `;
-            
-            // Agregar animación CSS
-            if (!document.getElementById('coin-animation-style')) {
-                const style = document.createElement('style');
-                style.id = 'coin-animation-style';
-                style.textContent = `
-                    @keyframes coinFlip {
-                        0% { transform: translate(-50%, -50%) rotateY(0deg) scale(0.3); opacity: 0; }
-                        50% { transform: translate(-50%, -50%) rotateY(180deg) scale(1.1); opacity: 1; }
-                        100% { transform: translate(-50%, -50%) rotateY(360deg) scale(1); opacity: 1; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            animation.innerHTML = modeType === 'typing' ? 
-                '🎯 ¡ESCRIBIR!<br><small>Escribe la respuesta</small>' : 
-                '🎲 ¡MÚLTIPLE!<br><small>Elige la opción</small>';
-            
-            document.body.appendChild(animation);
-            
-            // Remover después de la animación
-            setTimeout(() => {
-                if (animation.parentNode) {
-                    animation.parentNode.removeChild(animation);
-                }
-            }, 800);
-        }
-
         function startMixedMode() {
             practiceType = 'mixed';
             practiceModeLabel.textContent = '🎲 Modo Mixto';
@@ -611,119 +577,7 @@
             switchToPracticeMode();
         }
 
-        function chooseMixedModeType() {
-            // Si es la primera pregunta, elegir aleatoriamente
-            if (mixedModeHistory.length === 0) {
-                const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
-                mixedModeHistory.push(randomType);
-                console.log('Primera pregunta, elegido:', randomType); // Debug
-                return randomType;
-            }
-            
-            // Contar cuántas veces seguidas hemos usado el mismo tipo
-            const lastType = mixedModeHistory[mixedModeHistory.length - 1];
-            let consecutiveCount = 0;
-            
-            for (let i = mixedModeHistory.length - 1; i >= 0; i--) {
-                if (mixedModeHistory[i] === lastType) {
-                    consecutiveCount++;
-                } else {
-                    break;
-                }
-            }
-            
-            console.log('Último tipo:', lastType, 'Consecutivas:', consecutiveCount); // Debug
-            
-            // Si ya llevamos el máximo de veces seguidas, cambiar forzosamente
-            if (consecutiveCount >= mixedModeMaxSame) {
-                const newType = lastType === 'typing' ? 'multiple-choice' : 'typing';
-                mixedModeHistory.push(newType);
-                console.log('Cambio forzado a:', newType); // Debug
-                return newType;
-            }
-            
-            // Si no, elegir aleatoriamente
-            const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
-            mixedModeHistory.push(randomType);
-            console.log('Elegido aleatoriamente:', randomType); // Debug
-            
-            // Mantener solo los últimos 10 intentos en el historial
-            if (mixedModeHistory.length > 10) {
-                mixedModeHistory.shift();
-            }
-            
-            return randomType;
-        }
-
-        function showModeAnimation(modeType) {
-            // Crear elemento de animación
-            const animation = document.createElement('div');
-            animation.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                z-index: 1000;
-                background: rgba(102, 126, 234, 0.95);
-                color: white;
-                padding: 20px 40px;
-                border-radius: 20px;
-                font-size: 24px;
-                font-weight: bold;
-                text-align: center;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                backdrop-filter: blur(10px);
-                animation: coinFlip 0.8s ease-out;
-            `;
-            
-            // Agregar animación CSS
-            if (!document.getElementById('coin-animation-style')) {
-                const style = document.createElement('style');
-                style.id = 'coin-animation-style';
-                style.textContent = `
-                    @keyframes coinFlip {
-                        0% { transform: translate(-50%, -50%) rotateY(0deg) scale(0.3); opacity: 0; }
-                        50% { transform: translate(-50%, -50%) rotateY(180deg) scale(1.1); opacity: 1; }
-                        100% { transform: translate(-50%, -50%) rotateY(360deg) scale(1); opacity: 1; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            animation.innerHTML = modeType === 'typing' ? 
-                '🎯 ¡ESCRIBIR!<br><small>Escribe la respuesta</small>' : 
-                '🎲 ¡MÚLTIPLE!<br><small>Elige la opción</small>';
-            
-            document.body.appendChild(animation);
-            
-            // Remover después de la animación
-            setTimeout(() => {
-                if (animation.parentNode) {
-                    animation.parentNode.removeChild(animation);
-                }
-            }, 800);
-        }
-
-        function switchToPracticeMode() {
-            currentMode = 'practice';
-            learnMode.style.display = 'none';
-            practiceSelection.style.display = 'none';
-            practiceMode.style.display = 'block';
-            
-            // Asegurar que el sistema anti-repeticion este listo
-            if (practiceAvailableNumbers.length === 0) {
-                practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                practiceUsedNumbers = [];
-            }
-            
-            practiceNumber = generateRandomNumber();
-            practiceNumberDisplay.textContent = practiceNumber;
-            
-            // Usar la nueva función para configurar el tipo de pregunta
-            setupCurrentPracticeQuestion();
-            hideFeedback();
-        }
-
+        // Event Listeners
         prevBtn.addEventListener('click', () => {
             if (currentNumber > 0) {
                 currentNumber--;
@@ -753,6 +607,7 @@
             }
         });
 
+        // Inicializar la app
         updateDisplay();
     </script>
 </body>
