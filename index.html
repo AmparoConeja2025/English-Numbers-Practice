@@ -423,6 +423,99 @@
             switchToPracticeMode();
         }
 
+        function chooseMixedModeType() {
+            // Si es la primera pregunta, elegir aleatoriamente
+            if (mixedModeHistory.length === 0) {
+                const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
+                mixedModeHistory.push(randomType);
+                console.log('Primera pregunta, elegido:', randomType); // Debug
+                return randomType;
+            }
+            
+            // Contar cuántas veces seguidas hemos usado el mismo tipo
+            const lastType = mixedModeHistory[mixedModeHistory.length - 1];
+            let consecutiveCount = 0;
+            
+            for (let i = mixedModeHistory.length - 1; i >= 0; i--) {
+                if (mixedModeHistory[i] === lastType) {
+                    consecutiveCount++;
+                } else {
+                    break;
+                }
+            }
+            
+            console.log('Último tipo:', lastType, 'Consecutivas:', consecutiveCount); // Debug
+            
+            // Si ya llevamos el máximo de veces seguidas, cambiar forzosamente
+            if (consecutiveCount >= mixedModeMaxSame) {
+                const newType = lastType === 'typing' ? 'multiple-choice' : 'typing';
+                mixedModeHistory.push(newType);
+                console.log('Cambio forzado a:', newType); // Debug
+                return newType;
+            }
+            
+            // Si no, elegir aleatoriamente
+            const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
+            mixedModeHistory.push(randomType);
+            console.log('Elegido aleatoriamente:', randomType); // Debug
+            
+            // Mantener solo los últimos 10 intentos en el historial
+            if (mixedModeHistory.length > 10) {
+                mixedModeHistory.shift();
+            }
+            
+            return randomType;
+        }
+
+        function showModeAnimation(modeType) {
+            // Crear elemento de animación
+            const animation = document.createElement('div');
+            animation.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+                background: rgba(102, 126, 234, 0.95);
+                color: white;
+                padding: 20px 40px;
+                border-radius: 20px;
+                font-size: 24px;
+                font-weight: bold;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                backdrop-filter: blur(10px);
+                animation: coinFlip 0.8s ease-out;
+            `;
+            
+            // Agregar animación CSS
+            if (!document.getElementById('coin-animation-style')) {
+                const style = document.createElement('style');
+                style.id = 'coin-animation-style';
+                style.textContent = `
+                    @keyframes coinFlip {
+                        0% { transform: translate(-50%, -50%) rotateY(0deg) scale(0.3); opacity: 0; }
+                        50% { transform: translate(-50%, -50%) rotateY(180deg) scale(1.1); opacity: 1; }
+                        100% { transform: translate(-50%, -50%) rotateY(360deg) scale(1); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            animation.innerHTML = modeType === 'typing' ? 
+                '🎯 ¡ESCRIBIR!<br><small>Escribe la respuesta</small>' : 
+                '🎲 ¡MÚLTIPLE!<br><small>Elige la opción</small>';
+            
+            document.body.appendChild(animation);
+            
+            // Remover después de la animación
+            setTimeout(() => {
+                if (animation.parentNode) {
+                    animation.parentNode.removeChild(animation);
+                }
+            }, 800);
+        }
+
         function startMixedMode() {
             practiceType = 'mixed';
             practiceModeLabel.textContent = '🎲 Modo Mixto';
