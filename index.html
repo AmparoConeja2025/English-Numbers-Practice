@@ -442,7 +442,7 @@
                 text-align: center;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.3);
                 backdrop-filter: blur(10px);
-                animation: coinFlip 0.8s ease-out;
+                animation: coinFlip 1.6s ease-out;
             `;
             
             animation.innerHTML = modeType === 'typing' ? 
@@ -456,7 +456,7 @@
                 if (animation.parentNode) {
                     animation.parentNode.removeChild(animation);
                 }
-            }, 800);
+            }, 1600);
         }
 
         // FUNCIÓN CLAVE FALTANTE: setupCurrentPracticeQuestion
@@ -469,7 +469,7 @@
                 // Esperar a que termine la animación antes de configurar
                 setTimeout(() => {
                     configurePracticeInterface(currentQuestionType);
-                }, 800);
+                }, 1600);
             } else {
                 currentQuestionType = practiceType;
                 configurePracticeInterface(currentQuestionType);
