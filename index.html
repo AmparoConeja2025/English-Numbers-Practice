@@ -157,7 +157,10 @@
                     <div class="practice-gradient px-6 py-3 rounded-full text-white font-bold text-lg inline-block mb-6" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
                         <span id="practice-mode-label">Modo de Práctica</span>
                     </div>
-                    <div id="practice-number" class="text-8xl font-bold number-display mb-6 bounce">0</div>
+                    <div id="practice-number" class="text-8xl font-bold number-display mb-4 bounce">0</div>
+                    <button class="btn-success text-white px-6 py-2 rounded-full font-semibold mb-6" onclick="speakNumber(practiceNumber)">
+                        🔊 Escuchar
+                    </button>
                     <p class="text-xl text-gray-700 font-medium mb-6">Escribe la palabra en inglés:</p>
                     
                     <!-- Typing Practice -->
@@ -166,7 +169,7 @@
                             type="text" 
                             id="answer-input" 
                             class="w-full text-2xl text-center border-3 border-gray-300 rounded-2xl py-4 px-6 mb-6 focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-200 transition-all"
-                            placeholder="Escribir aquí..."
+                            placeholder="Escribe aquí..."
                         >
                         
                         <button id="check-answer-btn" class="w-full btn-primary text-white py-4 rounded-2xl font-bold text-xl mb-4">
@@ -198,7 +201,7 @@
             0: { word: 'zero', pronunciation: '/siro/' },
             1: { word: 'one', pronunciation: '/uan/' },
             2: { word: 'two', pronunciation: '/tu/' },
-            3: { word: 'three', pronunciation: '/zri/' },
+            3: { word: 'three', pronunciation: '/thri/' },
             4: { word: 'four', pronunciation: '/for/' },
             5: { word: 'five', pronunciation: '/faiv/' },
             6: { word: 'six', pronunciation: '/siks/' },
