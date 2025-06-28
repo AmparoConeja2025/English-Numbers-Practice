@@ -110,13 +110,10 @@
                     </button>
                 </div>
 
-                <div class="flex justify-center space-x-4 mb-8">
+                <div class="flex justify-center space-x-8 mb-8">
                     <button id="prev-btn" class="btn-primary text-white px-6 py-3 rounded-xl font-medium">
                         ← Anterior
                     </button>
-                    <span class="flex items-center text-gray-700 font-medium text-lg px-4">
-                        <span id="current-position">1</span>&nbsp;de 11
-                    </span>
                     <button id="next-btn" class="btn-primary text-white px-6 py-3 rounded-xl font-medium">
                         Siguiente →
                     </button>
@@ -339,11 +336,6 @@
             numberDisplay.textContent = currentNumber;
             wordDisplay.textContent = numbers[currentNumber].word;
             pronunciationDisplay.textContent = numbers[currentNumber].pronunciation;
-            
-            const currentPosition = document.getElementById('current-position');
-            if (currentPosition) {
-                currentPosition.textContent = currentNumber + 1;
-            }
             
             numberDisplay.classList.remove('bounce');
             setTimeout(() => numberDisplay.classList.add('bounce'), 10);
