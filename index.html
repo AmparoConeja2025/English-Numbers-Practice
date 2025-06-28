@@ -1,8 +1,4 @@
-<button id="audio-only-btn" class="w-full btn-audio text-white py-5 rounded-2xl font-bold text-xl">
-                        🎧 Solo Audio
-                        <div class="text-sm opacity-90 font-normal mt-1">Escuchar → elegir el número correcto</div>
-                    </button>
-                    <button id="mixed-mode-btn" class="w-full btn-mixed py-5 rounded-2xl<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -57,6 +53,10 @@
             background: linear-gradient(45deg, #4facfe, #00f2fe);
             box-shadow: 0 4px 15px 0 rgba(79, 172, 254, 0.4);
             transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(79, 172, 254, 0.6);
         }
         .btn-audio {
             background: linear-gradient(45deg, #667eea, #764ba2);
@@ -163,7 +163,7 @@
                         👆 Opción Múltiple
                         <div class="text-sm opacity-90 font-normal mt-1">Ver número → hacer clic en la palabra</div>
                     </button>
-                    <button id="audio-only-btn" class="w-full btn-audio text-white py-5 rounded-2xl font-bold text-xl">
+                    <button id="audio-only-btn" class="w-full btn-primary text-white py-5 rounded-2xl font-bold text-xl">
                         🎧 Solo Audio
                         <div class="text-sm opacity-90 font-normal mt-1">Escuchar → elegir el número correcto</div>
                     </button>
@@ -187,7 +187,7 @@
                         <span id="practice-mode-label">Modo de Práctica</span>
                     </div>
                     <div id="practice-number" class="text-8xl font-bold number-display mb-4 bounce">0</div>
-                    <button class="btn-success text-white px-6 py-2 rounded-full font-semibold mb-6" onclick="speakNumber(practiceNumber)">
+                    <button id="practice-audio-btn" class="btn-success text-white px-6 py-2 rounded-full font-semibold mb-6">
                         🔊 Escuchar
                     </button>
                     <p class="text-xl text-gray-700 font-medium mb-6">Escribe la palabra en inglés:</p>
@@ -210,24 +210,6 @@
                     <div id="multiple-choice-practice" style="display: none;">
                         <div class="grid grid-cols-2 gap-4 mb-6" id="choice-buttons">
                             <!-- Choice buttons will be generated here -->
-                        </div>
-                    </div>
-                    
-                    <!-- Audio-Only Practice -->
-                    <div id="audio-only-practice" style="display: none;">
-                        <div class="text-center mb-6">
-                            <div class="bg-gradient-to-br from-purple-400 to-blue-500 p-4 rounded-2xl mb-4">
-                                <button id="play-audio-btn" class="btn-success text-white px-8 py-4 rounded-full font-bold text-lg">
-                                    🔊 Escuchar
-                                </button>
-                            </div>
-                            <button id="repeat-audio-btn" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-all">
-                                🔄 Repetir
-                            </button>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4 mb-6" id="number-choice-buttons">
-                            <!-- Number choice buttons will be generated here -->
                         </div>
                     </div>
                     
@@ -293,13 +275,10 @@
         const practiceModeLabel = document.getElementById('practice-mode-label');
         const typingPractice = document.getElementById('typing-practice');
         const multipleChoicePractice = document.getElementById('multiple-choice-practice');
-        const audioOnlyPractice = document.getElementById('audio-only-practice');
         const answerInput = document.getElementById('answer-input');
         const checkAnswerBtn = document.getElementById('check-answer-btn');
         const choiceButtons = document.getElementById('choice-buttons');
-        const numberChoiceButtons = document.getElementById('number-choice-buttons');
-        const playAudioBtn = document.getElementById('play-audio-btn');
-        const repeatAudioBtn = document.getElementById('repeat-audio-btn');
+        const practiceAudioBtn = document.getElementById('practice-audio-btn');
         const feedback = document.getElementById('feedback');
 
         function generateRandomNumber() {
@@ -336,6 +315,7 @@
             return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
         }
 
+        // Para audio-only: generar opciones de números en lugar de palabras
         function generateWrongNumberOptions(correctAnswer) {
             const allNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
             const wrongOptions = allNumbers
@@ -343,19 +323,6 @@
                 .sort(() => Math.random() - 0.5)
                 .slice(0, 3);
             return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
-        }
-
-        function createNumberChoiceButtons() {
-            const options = generateWrongNumberOptions(practiceNumber);
-            numberChoiceButtons.innerHTML = '';
-            
-            options.forEach((num) => {
-                const button = document.createElement('button');
-                button.textContent = num;
-                button.className = 'choice-button py-4 rounded-2xl font-bold text-xl transition-all';
-                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
-                numberChoiceButtons.appendChild(button);
-            });
         }
 
         function createMultipleChoiceButtons() {
@@ -367,6 +334,20 @@
                 button.textContent = numbers[num].word;
                 button.className = 'choice-button py-4 rounded-2xl font-bold text-lg transition-all';
                 button.addEventListener('click', () => handleMultipleChoiceAnswer(numbers[num].word));
+                choiceButtons.appendChild(button);
+            });
+        }
+
+        // Para audio-only: crear botones con números
+        function createAudioOnlyChoiceButtons() {
+            const options = generateWrongNumberOptions(practiceNumber);
+            choiceButtons.innerHTML = '';
+            
+            options.forEach((num) => {
+                const button = document.createElement('button');
+                button.textContent = num;
+                button.className = 'choice-button py-4 rounded-2xl font-bold text-2xl transition-all';
+                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
                 choiceButtons.appendChild(button);
             });
         }
@@ -519,7 +500,7 @@
             }, 1600);
         }
 
-        // FUNCIÓN CLAVE FALTANTE: setupCurrentPracticeQuestion
+        // FUNCIÓN CLAVE: setupCurrentPracticeQuestion
         function setupCurrentPracticeQuestion() {
             // Determinar el tipo de pregunta según el modo
             if (practiceType === 'mixed') {
@@ -544,10 +525,10 @@
                 // Mostrar interfaz de escritura
                 typingPractice.style.display = 'block';
                 multipleChoicePractice.style.display = 'none';
-                audioOnlyPractice.style.display = 'none';
                 
                 // Mostrar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'block';
+                practiceAudioBtn.style.display = 'block';
                 document.querySelector('#practice-mode p').textContent = 'Escribe la palabra en inglés:';
                 
                 // Enfocar el campo de texto
@@ -557,28 +538,28 @@
                 // Mostrar interfaz de opción múltiple
                 typingPractice.style.display = 'none';
                 multipleChoicePractice.style.display = 'block';
-                audioOnlyPractice.style.display = 'none';
                 
                 // Mostrar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'block';
+                practiceAudioBtn.style.display = 'block';
                 document.querySelector('#practice-mode p').textContent = 'Selecciona la palabra correcta:';
                 
                 // Crear botones de opción múltiple
                 createMultipleChoiceButtons();
                 
             } else if (questionType === 'audio-only') {
-                // Mostrar interfaz de solo audio
+                // Mostrar interfaz de solo audio - AQUÍ ESTÁ LA MAGIA
                 typingPractice.style.display = 'none';
-                multipleChoicePractice.style.display = 'none';
-                audioOnlyPractice.style.display = 'block';
+                multipleChoicePractice.style.display = 'block'; // Usar la misma interfaz pero con números
                 
-                // Ocultar el número y cambiar instrucción
+                // OCULTAR el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'none';
+                practiceAudioBtn.style.display = 'block';
                 document.querySelector('#practice-mode p').textContent = 'Escucha y elige el número correcto:';
                 
-                // Crear botones de números y reproducir audio automáticamente
-                createNumberChoiceButtons();
-                setTimeout(() => playPracticeNumberAudio(), 500);
+                // Crear botones con números y reproducir audio automáticamente
+                createAudioOnlyChoiceButtons();
+                setTimeout(() => speakNumber(practiceNumber), 500);
             }
         }
 
@@ -597,7 +578,7 @@
             practiceNumber = generateRandomNumber();
             practiceNumberDisplay.textContent = practiceNumber;
             
-            // Usar la función arreglada para configurar el tipo de pregunta
+            // Usar la función para configurar el tipo de pregunta
             setupCurrentPracticeQuestion();
             hideFeedback();
         }
@@ -607,41 +588,6 @@
             
             if (selectedWord.toLowerCase() === correctAnswer) {
                 showFeedback('✅ ¡Correcto! ¡Excelente!', true);
-                setTimeout(() => {
-                    practiceNumber = generateRandomNumber();
-                    practiceNumberDisplay.textContent = practiceNumber;
-                    setupCurrentPracticeQuestion();
-                    hideFeedback();
-                }, 1500);
-            } else {
-                showFeedback(`❌ ¡No del todo! La respuesta correcta es "${correctAnswer}"`, false);
-            }
-        }
-
-        function handleAudioOnlyAnswer(selectedNumber) {
-            if (selectedNumber === practiceNumber) {
-                showFeedback('✅ ¡Correcto! ¡Excelente oído!', true);
-                setTimeout(() => {
-                    practiceNumber = generateRandomNumber();
-                    practiceNumberDisplay.textContent = practiceNumber;
-                    setupCurrentPracticeQuestion();
-                    hideFeedback();
-                }, 1500);
-            } else {
-                showFeedback(`❌ ¡No del todo! El número correcto era "${practiceNumber}"`, false);
-            }
-        }
-
-        function playPracticeNumberAudio() {
-            speakNumber(practiceNumber);
-        }
-
-        function checkAnswer() {
-            const userAnswer = answerInput.value.toLowerCase().trim();
-            const correctAnswer = numbers[practiceNumber].word.toLowerCase();
-            
-            if (userAnswer === correctAnswer) {
-                showFeedback('✅ ¡Correcto! ¡Buen trabajo!', true);
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
                     practiceNumberDisplay.textContent = practiceNumber;
@@ -665,17 +611,17 @@
             switchToPracticeMode();
         }
 
+        function startAudioOnlyPractice() {
+            practiceType = 'audio-only';
+            practiceModeLabel.textContent = '🎧 Práctica Solo Audio';
+            switchToPracticeMode();
+        }
+
         function startMixedMode() {
             practiceType = 'mixed';
             practiceModeLabel.textContent = '🎲 Modo Mixto';
             // Limpiar historial cuando empezamos modo mixto
             mixedModeHistory = [];
-            switchToPracticeMode();
-        }
-
-        function startAudioOnlyPractice() {
-            practiceType = 'audio-only';
-            practiceModeLabel.textContent = '🎧 Práctica Solo Audio';
             switchToPracticeMode();
         }
 
@@ -704,9 +650,8 @@
         backToLearnBtn.addEventListener('click', switchToLearnMode);
         checkAnswerBtn.addEventListener('click', checkAnswer);
         
-        // Audio-only event listeners
-        playAudioBtn.addEventListener('click', playPracticeNumberAudio);
-        repeatAudioBtn.addEventListener('click', playPracticeNumberAudio);
+        // Audio practice button
+        practiceAudioBtn.addEventListener('click', () => speakNumber(practiceNumber));
         
         answerInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -718,4 +663,35 @@
         updateDisplay();
     </script>
 </body>
-</html>
+</html>No del todo! La respuesta correcta es "${correctAnswer}"`, false);
+            }
+        }
+
+        function handleAudioOnlyAnswer(selectedNumber) {
+            if (selectedNumber === practiceNumber) {
+                showFeedback('✅ ¡Correcto! ¡Excelente oído!', true);
+                setTimeout(() => {
+                    practiceNumber = generateRandomNumber();
+                    practiceNumberDisplay.textContent = practiceNumber;
+                    setupCurrentPracticeQuestion();
+                    hideFeedback();
+                }, 1500);
+            } else {
+                showFeedback(`❌ ¡No del todo! El número correcto era "${practiceNumber}"`, false);
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = answerInput.value.toLowerCase().trim();
+            const correctAnswer = numbers[practiceNumber].word.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                showFeedback('✅ ¡Correcto! ¡Buen trabajo!', true);
+                setTimeout(() => {
+                    practiceNumber = generateRandomNumber();
+                    practiceNumberDisplay.textContent = practiceNumber;
+                    setupCurrentPracticeQuestion();
+                    hideFeedback();
+                }, 1500);
+            } else {
+                showFeedback(`❌ ¡
