@@ -1,4 +1,174 @@
-{/* Botones de modo */}
+import React, { useState, useEffect } from 'react';
+
+const NumbersApp = () => {
+  const numbers = [
+    { number: 0, word: 'zero', phonetic: '/ˈzɪəroʊ/' },
+    { number: 1, word: 'one', phonetic: '/wʌn/' },
+    { number: 2, word: 'two', phonetic: '/tuː/' },
+    { number: 3, word: 'three', phonetic: '/θriː/' },
+    { number: 4, word: 'four', phonetic: '/fɔːr/' },
+    { number: 5, word: 'five', phonetic: '/faɪv/' },
+    { number: 6, word: 'six', phonetic: '/sɪks/' },
+    { number: 7, word: 'seven', phonetic: '/ˈsevən/' },
+    { number: 8, word: 'eight', phonetic: '/eɪt/' },
+    { number: 9, word: 'nine', phonetic: '/naɪn/' },
+    { number: 10, word: 'ten', phonetic: '/ten/' }
+  ];
+
+  const [mode, setMode] = useState('learn');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentNumber, setCurrentNumber] = useState(null);
+  const [userInput, setUserInput] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [score, setScore] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [options, setOptions] = useState([]);
+  const [lastNumbers, setLastNumbers] = useState([]);
+  const [currentMode, setCurrentMode] = useState('writing');
+  const [modeTransition, setModeTransition] = useState(false);
+
+  // Función para hablar
+  const speak = (text = null) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text || numbers[currentIndex].word);
+      utterance.rate = 0.55;
+      utterance.lang = 'en-US';
+      setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+      }, 100);
+    }
+  };
+
+  // Función para obtener número aleatorio evitando repeticiones
+  const getRandomNumber = () => {
+    let availableNumbers = numbers.filter(num => !lastNumbers.includes(num.number));
+    
+    if (availableNumbers.length === 0) {
+      setLastNumbers([]);
+      availableNumbers = numbers;
+    }
+    
+    const randomNum = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+    setLastNumbers(prev => [...prev.slice(-2), randomNum.number]);
+    return randomNum;
+  };
+
+  // Función para generar opciones múltiples
+  const generateOptions = (correct, isAudioMode = false) => {
+    const wrongOptions = numbers.filter(n => n.number !== correct.number);
+    const shuffled = wrongOptions.sort(() => 0.5 - Math.random()).slice(0, 3);
+    const allOptions = [correct, ...shuffled].sort(() => 0.5 - Math.random());
+    return allOptions;
+  };
+
+  // Modo aprendizaje - navegación
+  const nextNumber = () => {
+    setCurrentIndex((prev) => (prev + 1) % numbers.length);
+  };
+
+  const prevNumber = () => {
+    setCurrentIndex((prev) => (prev - 1 + numbers.length) % numbers.length);
+  };
+
+  // Función para verificar respuesta
+  const checkAnswer = () => {
+    const correctAnswer = numbers.find(n => n.number === currentNumber);
+    const isCorrect = userInput.toLowerCase().trim() === correctAnswer.word;
+    
+    if (isCorrect) {
+      setScore(score + 1);
+      setFeedback('¡Correcto! 🎉');
+    } else {
+      setFeedback(`Incorrecto. La respuesta es: ${correctAnswer.word}`);
+    }
+    
+    setTotal(total + 1);
+    setTimeout(() => setFeedback(''), 2000);
+  };
+
+  // Función para siguiente pregunta
+  const nextQuestion = () => {
+    const randomNum = getRandomNumber();
+    setCurrentNumber(randomNum.number);
+    setUserInput('');
+    setFeedback('');
+    
+    if (mode === 'multiple' || mode === 'audio') {
+      setOptions(generateOptions(randomNum, mode === 'audio'));
+      if (mode === 'audio') {
+        setTimeout(() => speak(randomNum.word), 500);
+      }
+    }
+  };
+
+  // Función para manejar clics en opciones múltiples
+  const handleOptionClick = (selectedOption) => {
+    const correctAnswer = numbers.find(n => n.number === currentNumber);
+    const isCorrect = selectedOption.number === correctAnswer.number;
+    
+    if (isCorrect) {
+      setScore(score + 1);
+      if (mode === 'multiple') {
+        setFeedback('¡Excelente elección! 🌟');
+      } else if (mode === 'audio') {
+        setFeedback('¡Perfecto oído! 🎵');
+      }
+    } else {
+      if (mode === 'multiple') {
+        setFeedback(`No es correcto. El número ${currentNumber} es "${correctAnswer.word}"`);
+      } else if (mode === 'audio') {
+        setFeedback(`Incorrecto. Escuchaste "${correctAnswer.word}" (${currentNumber})`);
+      }
+    }
+    
+    setTotal(total + 1);
+    setTimeout(() => setFeedback(''), 2500);
+  };
+
+  // Modo mixto - alternar entre escritura y múltiple
+  const switchMixedMode = () => {
+    setModeTransition(true);
+    setTimeout(() => {
+      setCurrentMode(currentMode === 'writing' ? 'multiple' : 'writing');
+      setModeTransition(false);
+      nextQuestion();
+    }, 800);
+  };
+
+  // Inicializar preguntas cuando cambia el modo
+  useEffect(() => {
+    if (mode === 'practice' || mode === 'multiple' || mode === 'audio' || mode === 'mixed') {
+      nextQuestion();
+    }
+  }, [mode]);
+
+  // Auto-reproducir audio en modo audio
+  useEffect(() => {
+    if (mode === 'audio' && currentNumber !== null) {
+      setTimeout(() => {
+        const correctAnswer = numbers.find(n => n.number === currentNumber);
+        if (correctAnswer) {
+          speak(correctAnswer.word);
+        }
+      }, 500);
+    }
+  }, [currentNumber, mode]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 p-4 font-sans">
+      <div className="max-w-md mx-auto">
+        {/* Header */}
+        <div className="text-center mb-5">
+          <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
+            🔢 Números en Inglés
+          </h1>
+          <div className="text-white/80 text-sm">
+            Score: {score}/{total} {total > 0 && `(${Math.round((score/total)*100)}%)`}
+          </div>
+        </div>
+
+        {/* Botones de modo */}
         <div className="grid grid-cols-2 gap-2 mb-5">
           <button
             onClick={() => setMode('learn')}
@@ -41,3 +211,183 @@
             🎧 Audio
           </button>
         </div>
+
+        {/* Botón de modo mixto */}
+        <div className="text-center mb-5">
+          <button
+            onClick={() => setMode('mixed')}
+            className={`px-5 py-2 rounded-xl font-semibold transition-all duration-300 ${
+              mode === 'mixed'
+                ? 'bg-gradient-to-r from-pink-500 to-yellow-500 text-white shadow-lg transform scale-105'
+                : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
+            }`}
+          >
+            🎲 Modo Mixto
+          </button>
+        </div>
+
+        {/* Contenido principal */}
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-5 shadow-2xl border border-white/20">
+          {/* Modo Aprendizaje */}
+          {mode === 'learn' && (
+            <div className="text-center mb-5">
+              <div className="text-6xl font-bold text-white mb-3 drop-shadow-lg">
+                {numbers[currentIndex].number}
+              </div>
+              <div className="text-xl text-blue-100 mb-3">
+                {numbers[currentIndex].phonetic}
+              </div>
+              <button
+                onClick={speak}
+                className="bg-white/20 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 font-semibold mb-4"
+              >
+                🔊 Escuchar
+              </button>
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={prevNumber}
+                  className="bg-blue-500/80 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
+                >
+                  ← Anterior
+                </button>
+                <button
+                  onClick={nextNumber}
+                  className="bg-blue-500/80 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Modo Práctica de Escritura */}
+          {mode === 'practice' && (
+            <div className="text-center mb-5">
+              <div className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
+                {currentNumber}
+              </div>
+              <input
+                type="text"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && checkAnswer()}
+                placeholder="Escribe el número en inglés..."
+                className="w-full p-3 text-lg rounded-xl text-center bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border-2 border-white/30 focus:border-white/60 focus:outline-none mb-4"
+                autoFocus
+              />
+              <button
+                onClick={checkAnswer}
+                className="bg-green-500/80 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-green-600/80 transition-all duration-300 font-semibold mr-3"
+              >
+                ✓ Verificar
+              </button>
+              <button
+                onClick={nextQuestion}
+                className="bg-blue-500/80 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
+              >
+                ⏭ Siguiente
+              </button>
+            </div>
+          )}
+
+          {/* Modo Opción Múltiple y Audio */}
+          {(mode === 'multiple' || mode === 'audio') && (
+            <div className="text-center mb-5">
+              <div className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
+                {mode === 'audio' ? '🎧' : currentNumber}
+              </div>
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                {options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleOptionClick(option)}
+                    className="bg-white/20 backdrop-blur-sm text-white p-3 rounded-xl hover:bg-white/30 transition-all duration-300 font-semibold text-base"
+                  >
+                    {mode === 'audio' ? option.number : option.word}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={nextQuestion}
+                className="bg-blue-500/80 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-blue-600/80 transition-all duration-300 font-semibold"
+              >
+                ⏭ Siguiente
+              </button>
+            </div>
+          )}
+
+          {/* Modo Mixto */}
+          {mode === 'mixed' && (
+            <div className="text-center mb-5">
+              <div className="mb-3">
+                <span className="bg-gradient-to-r from-pink-400 to-yellow-400 text-transparent bg-clip-text font-bold text-lg">
+                  Modo: {currentMode === 'writing' ? '✍️ Escritura' : '👆 Múltiple'}
+                </span>
+              </div>
+              
+              <div className={`transition-all duration-1600 ${modeTransition ? 'transform scale-110 opacity-75' : 'transform scale-100 opacity-100'}`}>
+                {currentMode === 'writing' ? (
+                  <div>
+                    <div className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
+                      {currentNumber}
+                    </div>
+                    <input
+                      type="text"
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && checkAnswer()}
+                      placeholder="Escribe el número en inglés..."
+                      className="w-full p-3 text-lg rounded-xl text-center bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border-2 border-white/30 focus:border-white/60 focus:outline-none mb-4"
+                      autoFocus
+                    />
+                    <button
+                      onClick={checkAnswer}
+                      className="bg-green-500/80 backdrop-blur-sm text-white px-5 py-2 rounded-xl hover:bg-green-600/80 transition-all duration-300 font-semibold mr-3"
+                    >
+                      ✓ Verificar
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
+                      {currentNumber}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      {options.map((option, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleOptionClick(option)}
+                          className="bg-white/20 backdrop-blur-sm text-white p-3 rounded-xl hover:bg-white/30 transition-all duration-300 font-semibold text-base"
+                        >
+                          {option.word}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <button
+                onClick={switchMixedMode}
+                className="bg-gradient-to-r from-pink-500 to-yellow-500 text-white px-5 py-2 rounded-xl hover:from-pink-600 hover:to-yellow-600 transition-all duration-300 font-semibold"
+              >
+                🔄 Cambiar Modo
+              </button>
+            </div>
+          )}
+
+          {/* Feedback */}
+          {feedback && (
+            <div className="text-center mt-4">
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 text-white font-semibold">
+                {feedback}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default NumbersApp;
