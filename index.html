@@ -221,6 +221,10 @@
         let practiceType = 'typing';
         let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let practiceUsedNumbers = [];
+        
+        // Sistema para asegurar variedad en modo mixto
+        let mixedModeHistory = [];
+        let mixedModeMaxSame = 2; // Máximo 2 veces seguidas el mismo modo
 
         const numberDisplay = document.getElementById('number-display');
         const wordDisplay = document.getElementById('word-display');
@@ -418,34 +422,97 @@
         function startMixedMode() {
             practiceType = 'mixed';
             practiceModeLabel.textContent = '🎲 Modo Mixto';
+            // Limpiar historial cuando empezamos modo mixto
+            mixedModeHistory = [];
             switchToPracticeMode();
         }
 
-        function setupCurrentPracticeQuestion() {
-            if (practiceType === 'mixed') {
-                // Elegir aleatoriamente entre typing y multiple-choice
+        function chooseMixedModeType() {
+            // Si es la primera pregunta, elegir aleatoriamente
+            if (mixedModeHistory.length === 0) {
                 const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
-                
-                if (randomType === 'typing') {
-                    typingPractice.style.display = 'block';
-                    multipleChoicePractice.style.display = 'none';
-                    answerInput.value = '';
-                    answerInput.focus();
-                } else {
-                    typingPractice.style.display = 'none';
-                    multipleChoicePractice.style.display = 'block';
-                    createMultipleChoiceButtons();
-                }
-            } else if (practiceType === 'multiple-choice') {
-                typingPractice.style.display = 'none';
-                multipleChoicePractice.style.display = 'block';
-                createMultipleChoiceButtons();
-            } else {
-                typingPractice.style.display = 'block';
-                multipleChoicePractice.style.display = 'none';
-                answerInput.value = '';
-                answerInput.focus();
+                mixedModeHistory.push(randomType);
+                return randomType;
             }
+            
+            // Contar cuántas veces seguidas hemos usado el mismo tipo
+            const lastType = mixedModeHistory[mixedModeHistory.length - 1];
+            let consecutiveCount = 0;
+            
+            for (let i = mixedModeHistory.length - 1; i >= 0; i--) {
+                if (mixedModeHistory[i] === lastType) {
+                    consecutiveCount++;
+                } else {
+                    break;
+                }
+            }
+            
+            // Si ya llevamos el máximo de veces seguidas, cambiar forzosamente
+            if (consecutiveCount >= mixedModeMaxSame) {
+                const newType = lastType === 'typing' ? 'multiple-choice' : 'typing';
+                mixedModeHistory.push(newType);
+                return newType;
+            }
+            
+            // Si no, elegir aleatoriamente
+            const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
+            mixedModeHistory.push(randomType);
+            
+            // Mantener solo los últimos 10 intentos en el historial
+            if (mixedModeHistory.length > 10) {
+                mixedModeHistory.shift();
+            }
+            
+            return randomType;
+        }
+
+        function showModeAnimation(modeType) {
+            // Crear elemento de animación
+            const animation = document.createElement('div');
+            animation.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+                background: rgba(102, 126, 234, 0.95);
+                color: white;
+                padding: 20px 40px;
+                border-radius: 20px;
+                font-size: 24px;
+                font-weight: bold;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                backdrop-filter: blur(10px);
+                animation: coinFlip 0.8s ease-out;
+            `;
+            
+            // Agregar animación CSS
+            if (!document.getElementById('coin-animation-style')) {
+                const style = document.createElement('style');
+                style.id = 'coin-animation-style';
+                style.textContent = `
+                    @keyframes coinFlip {
+                        0% { transform: translate(-50%, -50%) rotateY(0deg) scale(0.3); opacity: 0; }
+                        50% { transform: translate(-50%, -50%) rotateY(180deg) scale(1.1); opacity: 1; }
+                        100% { transform: translate(-50%, -50%) rotateY(360deg) scale(1); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            animation.innerHTML = modeType === 'typing' ? 
+                '🎯 ¡ESCRIBIR!<br><small>Escribe la respuesta</small>' : 
+                '🎲 ¡MÚLTIPLE!<br><small>Elige la opción</small>';
+            
+            document.body.appendChild(animation);
+            
+            // Remover después de la animación
+            setTimeout(() => {
+                if (animation.parentNode) {
+                    animation.parentNode.removeChild(animation);
+                }
+            }, 800);
         }
 
         function switchToPracticeMode() {
