@@ -54,24 +54,9 @@
             box-shadow: 0 4px 15px 0 rgba(79, 172, 254, 0.4);
             transition: all 0.3s ease;
         }
-        .btn-audio {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-        }
-        .btn-audio:hover {
+        .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px 0 rgba(102, 126, 234, 0.6);
-        }
-        .btn-mixed {
-            background: linear-gradient(45deg, #a8edea, #fed6e3);
-            color: #4a5568;
-            box-shadow: 0 4px 15px 0 rgba(168, 237, 234, 0.4);
-            transition: all 0.3s ease;
-        }
-        .btn-mixed:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px 0 rgba(168, 237, 234, 0.6);
+            box-shadow: 0 8px 25px 0 rgba(79, 172, 254, 0.6);
         }
         .choice-button {
             background: rgba(255, 255, 255, 0.8);
@@ -98,11 +83,6 @@
             0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
             40% { transform: translateY(-10px); }
             60% { transform: translateY(-5px); }
-        }
-        @keyframes scaleIn {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
     </style>
 </head>
@@ -151,10 +131,6 @@
                 </div>
 
                 <div class="space-y-6 mb-8">
-                    <button id="typing-practice-btn" class="w-full btn-success text-white py-5 rounded-2xl font-bold text-xl">
-                        ✍️ Escribir la Respuesta
-                        <div class="text-sm opacity-90 font-normal mt-1">Ver número → escribir la palabra</div>
-                    </button>
                     <button id="multiple-choice-btn" class="w-full btn-secondary text-white py-5 rounded-2xl font-bold text-xl">
                         👆 Opción Múltiple
                         <div class="text-sm opacity-90 font-normal mt-1">Ver número → hacer clic en la palabra</div>
@@ -162,10 +138,6 @@
                     <button id="audio-only-btn" class="w-full btn-primary text-white py-5 rounded-2xl font-bold text-xl">
                         🎧 Solo Audio
                         <div class="text-sm opacity-90 font-normal mt-1">Escuchar → elegir el número correcto</div>
-                    </button>
-                    <button id="mixed-mode-btn" class="w-full py-5 rounded-2xl font-bold text-xl text-white" style="background: linear-gradient(45deg, #a8edea, #fed6e3); color: #4a5568;">
-                        🎲 Modo Mixto
-                        <div class="text-sm opacity-90 font-normal mt-1">¡Sorpresa! Cambia entre escribir y múltiple</div>
                     </button>
                 </div>
 
@@ -186,24 +158,10 @@
                     <button class="btn-success text-white px-6 py-2 rounded-full font-semibold mb-6" onclick="speakNumber(practiceNumber)">
                         🔊 Escuchar
                     </button>
-                    <p class="text-xl text-gray-700 font-medium mb-6">Escribe la palabra en inglés:</p>
+                    <p class="text-xl text-gray-700 font-medium mb-6">Selecciona la palabra correcta:</p>
                     
-                    <!-- Typing Practice -->
-                    <div id="typing-practice">
-                        <input 
-                            type="text" 
-                            id="answer-input" 
-                            class="w-full text-2xl text-center border-3 border-gray-300 rounded-2xl py-4 px-6 mb-6 focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-200 transition-all"
-                            placeholder="Escribe aquí..."
-                        >
-                        
-                        <button id="check-answer-btn" class="w-full btn-primary text-white py-4 rounded-2xl font-bold text-xl mb-4">
-                            ✨ Verificar Respuesta
-                        </button>
-                    </div>
-
                     <!-- Multiple Choice Practice -->
-                    <div id="multiple-choice-practice" style="display: none;">
+                    <div id="multiple-choice-practice">
                         <div class="grid grid-cols-2 gap-4 mb-6" id="choice-buttons">
                             <!-- Choice buttons will be generated here -->
                         </div>
@@ -258,14 +216,9 @@
         let currentNumber = 0;
         let currentMode = 'learn';
         let practiceNumber = 0;
-        let practiceType = 'typing';
-        let currentQuestionType = 'typing'; // Para rastrear el tipo actual en modo mixto
+        let practiceType = 'multiple-choice';
         let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let practiceUsedNumbers = [];
-        
-        // Sistema para asegurar variedad en modo mixto
-        let mixedModeHistory = [];
-        let mixedModeMaxSame = 2; // Máximo 2 veces seguidas el mismo modo
 
         const numberDisplay = document.getElementById('number-display');
         const wordDisplay = document.getElementById('word-display');
@@ -279,20 +232,15 @@
         const practiceMode = document.getElementById('practice-mode');
         
         const startPracticeBtn = document.getElementById('start-practice-btn');
-        const typingPracticeBtn = document.getElementById('typing-practice-btn');
         const multipleChoiceBtn = document.getElementById('multiple-choice-btn');
         const audioOnlyBtn = document.getElementById('audio-only-btn');
-        const mixedModeBtn = document.getElementById('mixed-mode-btn');
         const backFromSelectionBtn = document.getElementById('back-from-selection-btn');
         
         const backToLearnBtn = document.getElementById('back-to-learn-btn');
         const practiceNumberDisplay = document.getElementById('practice-number');
         const practiceModeLabel = document.getElementById('practice-mode-label');
-        const typingPractice = document.getElementById('typing-practice');
         const multipleChoicePractice = document.getElementById('multiple-choice-practice');
         const audioOnlyPractice = document.getElementById('audio-only-practice');
-        const answerInput = document.getElementById('answer-input');
-        const checkAnswerBtn = document.getElementById('check-answer-btn');
         const choiceButtons = document.getElementById('choice-buttons');
         const numberChoiceButtons = document.getElementById('number-choice-buttons');
         const playAudioBtn = document.getElementById('play-audio-btn');
@@ -434,125 +382,11 @@
             practiceSelection.style.display = 'none';
             practiceMode.style.display = 'none';
             hideFeedback();
-            answerInput.value = '';
-        }
-
-        function chooseMixedModeType() {
-            // Si es la primera pregunta, elegir aleatoriamente
-            if (mixedModeHistory.length === 0) {
-                const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
-                mixedModeHistory.push(randomType);
-                console.log('Primera pregunta, elegido:', randomType); // Debug
-                return randomType;
-            }
-            
-            // Contar cuántas veces seguidas hemos usado el mismo tipo
-            const lastType = mixedModeHistory[mixedModeHistory.length - 1];
-            let consecutiveCount = 0;
-            
-            for (let i = mixedModeHistory.length - 1; i >= 0; i--) {
-                if (mixedModeHistory[i] === lastType) {
-                    consecutiveCount++;
-                } else {
-                    break;
-                }
-            }
-            
-            console.log('Último tipo:', lastType, 'Consecutivas:', consecutiveCount); // Debug
-            
-            // Si ya llevamos el máximo de veces seguidas, cambiar forzosamente
-            if (consecutiveCount >= mixedModeMaxSame) {
-                const newType = lastType === 'typing' ? 'multiple-choice' : 'typing';
-                mixedModeHistory.push(newType);
-                console.log('Cambio forzado a:', newType); // Debug
-                return newType;
-            }
-            
-            // Si no, elegir aleatoriamente
-            const randomType = Math.random() < 0.5 ? 'typing' : 'multiple-choice';
-            mixedModeHistory.push(randomType);
-            console.log('Elegido aleatoriamente:', randomType); // Debug
-            
-            // Mantener solo los últimos 10 intentos en el historial
-            if (mixedModeHistory.length > 10) {
-                mixedModeHistory.shift();
-            }
-            
-            return randomType;
-        }
-
-        function showModeAnimation(modeType) {
-            // Crear elemento de animación
-            const animation = document.createElement('div');
-            animation.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                z-index: 1000;
-                background: rgba(102, 126, 234, 0.95);
-                color: white;
-                padding: 20px 40px;
-                border-radius: 20px;
-                font-size: 24px;
-                font-weight: bold;
-                text-align: center;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                backdrop-filter: blur(10px);
-                animation: scaleIn 1.6s ease-out;
-            `;
-            
-            animation.innerHTML = modeType === 'typing' ? 
-                '🎯 ¡ESCRIBIR!<br><small>Escribe la respuesta</small>' : 
-                '🎲 ¡MÚLTIPLE!<br><small>Elige la opción</small>';
-            
-            document.body.appendChild(animation);
-            
-            // Remover después de la animación
-            setTimeout(() => {
-                if (animation.parentNode) {
-                    animation.parentNode.removeChild(animation);
-                }
-            }, 1600);
-        }
-
-        // FUNCIÓN CLAVE FALTANTE: setupCurrentPracticeQuestion
-        function setupCurrentPracticeQuestion() {
-            // Determinar el tipo de pregunta según el modo
-            if (practiceType === 'mixed') {
-                currentQuestionType = chooseMixedModeType();
-                // Mostrar animación solo en modo mixto
-                showModeAnimation(currentQuestionType);
-                // Esperar a que termine la animación antes de configurar
-                setTimeout(() => {
-                    configurePracticeInterface(currentQuestionType);
-                }, 1600);
-            } else {
-                currentQuestionType = practiceType;
-                configurePracticeInterface(currentQuestionType);
-            }
         }
 
         function configurePracticeInterface(questionType) {
-            // Limpiar estado anterior
-            answerInput.value = '';
-            
-            if (questionType === 'typing') {
-                // Mostrar interfaz de escritura
-                typingPractice.style.display = 'block';
-                multipleChoicePractice.style.display = 'none';
-                audioOnlyPractice.style.display = 'none';
-                
-                // Mostrar el número y cambiar instrucción
-                practiceNumberDisplay.style.display = 'block';
-                document.querySelector('#practice-mode p').textContent = 'Escribe la palabra en inglés:';
-                
-                // Enfocar el campo de texto
-                setTimeout(() => answerInput.focus(), 100);
-                
-            } else if (questionType === 'multiple-choice') {
+            if (questionType === 'multiple-choice') {
                 // Mostrar interfaz de opción múltiple
-                typingPractice.style.display = 'none';
                 multipleChoicePractice.style.display = 'block';
                 audioOnlyPractice.style.display = 'none';
                 
@@ -565,7 +399,6 @@
                 
             } else if (questionType === 'audio-only') {
                 // Mostrar interfaz de solo audio
-                typingPractice.style.display = 'none';
                 multipleChoicePractice.style.display = 'none';
                 audioOnlyPractice.style.display = 'block';
                 
@@ -594,8 +427,8 @@
             practiceNumber = generateRandomNumber();
             practiceNumberDisplay.textContent = practiceNumber;
             
-            // Usar la función arreglada para configurar el tipo de pregunta
-            setupCurrentPracticeQuestion();
+            // Configurar interfaz según el tipo de práctica
+            configurePracticeInterface(practiceType);
             hideFeedback();
         }
 
@@ -607,7 +440,7 @@
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
                     practiceNumberDisplay.textContent = practiceNumber;
-                    setupCurrentPracticeQuestion();
+                    configurePracticeInterface(practiceType);
                     hideFeedback();
                 }, 1500);
             } else {
@@ -621,7 +454,7 @@
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
                     practiceNumberDisplay.textContent = practiceNumber;
-                    setupCurrentPracticeQuestion();
+                    configurePracticeInterface(practiceType);
                     hideFeedback();
                 }, 1500);
             } else {
@@ -633,40 +466,9 @@
             speakNumber(practiceNumber);
         }
 
-        function checkAnswer() {
-            const userAnswer = answerInput.value.toLowerCase().trim();
-            const correctAnswer = numbers[practiceNumber].word.toLowerCase();
-            
-            if (userAnswer === correctAnswer) {
-                showFeedback('✅ ¡Correcto! ¡Buen trabajo!', true);
-                setTimeout(() => {
-                    practiceNumber = generateRandomNumber();
-                    practiceNumberDisplay.textContent = practiceNumber;
-                    setupCurrentPracticeQuestion();
-                    hideFeedback();
-                }, 1500);
-            } else {
-                showFeedback(`❌ ¡Inténtalo de nuevo! La respuesta correcta es "${correctAnswer}"`, false);
-            }
-        }
-
-        function startTypingPractice() {
-            practiceType = 'typing';
-            practiceModeLabel.textContent = '✍️ Práctica de Escritura';
-            switchToPracticeMode();
-        }
-
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
             practiceModeLabel.textContent = '👆 Opción Múltiple';
-            switchToPracticeMode();
-        }
-
-        function startMixedMode() {
-            practiceType = 'mixed';
-            practiceModeLabel.textContent = '🎲 Modo Mixto';
-            // Limpiar historial cuando empezamos modo mixto
-            mixedModeHistory = [];
             switchToPracticeMode();
         }
 
@@ -693,23 +495,14 @@
 
         speakBtn.addEventListener('click', () => speakNumber(currentNumber));
         startPracticeBtn.addEventListener('click', showPracticeSelection);
-        typingPracticeBtn.addEventListener('click', startTypingPractice);
         multipleChoiceBtn.addEventListener('click', startMultipleChoicePractice);
         audioOnlyBtn.addEventListener('click', startAudioOnlyPractice);
-        mixedModeBtn.addEventListener('click', startMixedMode);
         backFromSelectionBtn.addEventListener('click', switchToLearnMode);
         backToLearnBtn.addEventListener('click', switchToLearnMode);
-        checkAnswerBtn.addEventListener('click', checkAnswer);
         
         // Audio-only event listeners
         playAudioBtn.addEventListener('click', playPracticeNumberAudio);
         repeatAudioBtn.addEventListener('click', playPracticeNumberAudio);
-        
-        answerInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                checkAnswer();
-            }
-        });
 
         // Inicializar la app
         updateDisplay();
