@@ -234,28 +234,26 @@
         const feedback = document.getElementById('feedback');
 
         function generateRandomNumber() {
-            if (practiceAvailableNumbers.length > 0) {
-                const randomIndex = Math.floor(Math.random() * practiceAvailableNumbers.length);
-                const selectedNumber = practiceAvailableNumbers[randomIndex];
-                
-                // Actualizar las listas
-                const newAvailable = practiceAvailableNumbers.filter(num => num !== selectedNumber);
-                const newUsed = [...practiceUsedNumbers, selectedNumber];
-                
-                practiceAvailableNumbers = newAvailable;
-                practiceUsedNumbers = newUsed;
-                
-                // Si ya usamos todos, reiniciar el ciclo
-                if (practiceAvailableNumbers.length === 0) {
-                    practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                    practiceUsedNumbers = [];
-                }
-                
-                return selectedNumber;
+            // Si no hay números disponibles, reiniciar el ciclo
+            if (practiceAvailableNumbers.length === 0) {
+                practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                practiceUsedNumbers = [];
+                console.log('🔄 Ciclo reiniciado - todos los números disponibles de nuevo');
             }
             
-            // Fallback (no deberia llegar aqui)
-            return Math.floor(Math.random() * 11);
+            // Seleccionar un número aleatorio de los disponibles
+            const randomIndex = Math.floor(Math.random() * practiceAvailableNumbers.length);
+            const selectedNumber = practiceAvailableNumbers[randomIndex];
+            
+            // Remover el número seleccionado de disponibles y agregarlo a usados
+            practiceAvailableNumbers.splice(randomIndex, 1);
+            practiceUsedNumbers.push(selectedNumber);
+            
+            console.log(`🎯 Número seleccionado: ${selectedNumber}`);
+            console.log(`📋 Disponibles restantes: [${practiceAvailableNumbers.join(', ')}]`);
+            console.log(`✅ Usados en este ciclo: [${practiceUsedNumbers.join(', ')}]`);
+            
+            return selectedNumber;
         }
 
         function generateWrongOptions(correctAnswer) {
