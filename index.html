@@ -302,6 +302,19 @@
             });
         }
 
+        function createAudioChoiceButtons() {
+            const options = generateWrongNumberOptions(practiceNumber);
+            choiceButtons.innerHTML = '';
+            
+            options.forEach((num) => {
+                const button = document.createElement('button');
+                button.textContent = num;
+                button.className = 'choice-button py-3 rounded-2xl font-bold text-base transition-all';
+                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
+                choiceButtons.appendChild(button);
+            });
+        }
+
         // IMPROVED SPEECH FUNCTION - Clear audio settings
         function speakNumber(number) {
             if ('speechSynthesis' in window) {
@@ -384,16 +397,16 @@
                 createMultipleChoiceButtons();
                 
             } else if (questionType === 'audio-only') {
-                // Mostrar interfaz de solo audio (igual layout que múltiple)
-                multipleChoicePractice.style.display = 'none';
-                audioOnlyPractice.style.display = 'block';
+                // Mostrar interfaz de solo audio usando la misma interfaz múltiple
+                multipleChoicePractice.style.display = 'block';
+                audioOnlyPractice.style.display = 'none';
                 
                 // Ocultar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'none';
                 document.querySelector('#practice-mode p').textContent = 'Escucha y elige el número correcto:';
                 
-                // Crear botones de números y reproducir audio automáticamente
-                createNumberChoiceButtons();
+                // Crear botones de números en la misma interfaz
+                createAudioChoiceButtons();
                 setTimeout(() => playPracticeNumberAudio(), 500);
             }
         }
