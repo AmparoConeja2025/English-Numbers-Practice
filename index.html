@@ -21,6 +21,11 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
+        
+        /* 📱 PREVENT ACCIDENTAL ZOOM ON ALL BUTTONS */
+        button {
+            touch-action: manipulation;
+        }
         .number-display {
             background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
@@ -119,7 +124,7 @@
                 </div>
 
                 <div class="text-center">
-                    <button id="start-practice-btn" class="btn-secondary text-white px-8 py-3 rounded-2xl font-bold text-lg" style="touch-action: manipulation;">
+                    <button id="start-practice-btn" class="btn-secondary text-white px-8 py-3 rounded-2xl font-bold text-lg">
                         🚀 Empezar Práctica
                     </button>
                 </div>
