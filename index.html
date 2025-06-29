@@ -350,19 +350,44 @@
             { text: '¡Brutal, lo dominas!', emoji: '🔥', colors: 'rgba(220, 38, 38, 0.95)' }
         ];
 
+        let availableCelebrations = [...celebrationMessages];
+        let usedCelebrations = [];
+
+        function getRandomCelebration() {
+            // Si no hay celebraciones disponibles, reiniciar el ciclo
+            if (availableCelebrations.length === 0) {
+                availableCelebrations = [...celebrationMessages];
+                usedCelebrations = [];
+                console.log('🎉 Celebraciones reiniciadas - todas disponibles de nuevo');
+            }
+            
+            // Seleccionar una celebración aleatoria de las disponibles
+            const randomIndex = Math.floor(Math.random() * availableCelebrations.length);
+            const selectedCelebration = availableCelebrations[randomIndex];
+            
+            // Remover de disponibles y agregar a usadas
+            availableCelebrations.splice(randomIndex, 1);
+            usedCelebrations.push(selectedCelebration);
+            
+            console.log(`🎊 Celebración: ${selectedCelebration.text}`);
+            console.log(`🎭 Disponibles: ${availableCelebrations.length}, Usadas: ${usedCelebrations.length}`);
+            
+            return selectedCelebration;
+        }
+
         function showCelebrationAnimation() {
-            // Get random celebration message
-            const randomMessage = celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
+            // Get unique celebration message
+            const celebration = getRandomCelebration();
             
             // Create animation element
-            const celebration = document.createElement('div');
-            celebration.style.cssText = `
+            const animationEl = document.createElement('div');
+            animationEl.style.cssText = `
                 position: fixed;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
                 z-index: 1000;
-                background: ${randomMessage.colors};
+                background: ${celebration.colors};
                 color: white;
                 padding: 20px 40px;
                 border-radius: 20px;
@@ -374,18 +399,16 @@
                 animation: celebrationScale 1.2s ease-out;
             `;
             
-            celebration.innerHTML = `${randomMessage.emoji}<br><span style="font-size: 18px;">${randomMessage.text}</span>`;
+            animationEl.innerHTML = `${celebration.emoji}<br><span style="font-size: 18px;">${celebration.text}</span>`;
             
-            document.body.appendChild(celebration);
+            document.body.appendChild(animationEl);
             
             // Remove after animation
             setTimeout(() => {
-                if (celebration.parentNode) {
-                    celebration.parentNode.removeChild(celebration);
+                if (animationEl.parentNode) {
+                    animationEl.parentNode.removeChild(animationEl);
                 }
             }, 1200);
-            
-            console.log(`🎉 Celebration: ${randomMessage.text}`);
         }
 
         function generateRandomNumber() {
