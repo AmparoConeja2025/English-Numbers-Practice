@@ -169,14 +169,6 @@
                     
                     <!-- Audio-Only Practice -->
                     <div id="audio-only-practice" style="display: none;">
-                        <div class="text-center mb-4">
-                            <div class="bg-gradient-to-br from-purple-400 to-blue-500 p-4 rounded-2xl mb-4">
-                                <button id="play-audio-btn" class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base">
-                                    🔊 Escuchar
-                                </button>
-                            </div>
-                        </div>
-                        
                         <div class="grid grid-cols-2 gap-3 mb-5" id="number-choice-buttons">
                             <!-- Number choice buttons will be generated here -->
                         </div>
@@ -239,7 +231,6 @@
         const audioOnlyPractice = document.getElementById('audio-only-practice');
         const choiceButtons = document.getElementById('choice-buttons');
         const numberChoiceButtons = document.getElementById('number-choice-buttons');
-        const playAudioBtn = document.getElementById('play-audio-btn');
         const feedback = document.getElementById('feedback');
 
         function generateRandomNumber() {
@@ -393,7 +384,7 @@
                 createMultipleChoiceButtons();
                 
             } else if (questionType === 'audio-only') {
-                // Mostrar interfaz de solo audio
+                // Mostrar interfaz de solo audio (igual layout que múltiple)
                 multipleChoicePractice.style.display = 'none';
                 audioOnlyPractice.style.display = 'block';
                 
@@ -494,9 +485,6 @@
         audioOnlyBtn.addEventListener('click', startAudioOnlyPractice);
         backFromSelectionBtn.addEventListener('click', switchToLearnMode);
         backToLearnBtn.addEventListener('click', switchToLearnMode);
-        
-        // Audio-only event listeners
-        playAudioBtn.addEventListener('click', playPracticeNumberAudio);
 
         // Inicializar la app
         updateDisplay();
