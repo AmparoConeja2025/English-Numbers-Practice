@@ -489,32 +489,36 @@
             if (selectedWord.toLowerCase() === correctAnswer) {
                 updateSessionStats(true); // 📊 Track correct answer
                 showFeedback('✅ ¡Correcto! ¡Excelente!', true);
-                setTimeout(() => {
-                    practiceNumber = generateRandomNumber();
-                    practiceNumberDisplay.textContent = practiceNumber;
-                    configurePracticeInterface(practiceType);
-                    hideFeedback();
-                }, 1500);
             } else {
                 updateSessionStats(false); // 📊 Track incorrect answer
                 showFeedback(`❌ ¡No del todo! La respuesta correcta es "${correctAnswer}"`, false);
             }
+            
+            // ⏰ SIEMPRE continuar después de 1.5 segundos
+            setTimeout(() => {
+                practiceNumber = generateRandomNumber();
+                practiceNumberDisplay.textContent = practiceNumber;
+                configurePracticeInterface(practiceType);
+                hideFeedback();
+            }, 1500);
         }
 
         function handleAudioOnlyAnswer(selectedNumber) {
             if (selectedNumber === practiceNumber) {
                 updateSessionStats(true); // 📊 Track correct answer
                 showFeedback('✅ ¡Correcto! ¡Excelente oído!', true);
-                setTimeout(() => {
-                    practiceNumber = generateRandomNumber();
-                    practiceNumberDisplay.textContent = practiceNumber;
-                    configurePracticeInterface(practiceType);
-                    hideFeedback();
-                }, 1500);
             } else {
                 updateSessionStats(false); // 📊 Track incorrect answer
                 showFeedback(`❌ ¡No del todo! El número correcto era "${practiceNumber}"`, false);
             }
+            
+            // ⏰ SIEMPRE continuar después de 1.5 segundos
+            setTimeout(() => {
+                practiceNumber = generateRandomNumber();
+                practiceNumberDisplay.textContent = practiceNumber;
+                configurePracticeInterface(practiceType);
+                hideFeedback();
+            }, 1500);
         }
 
         function playPracticeNumberAudio() {
