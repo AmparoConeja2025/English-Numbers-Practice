@@ -93,6 +93,11 @@
             40% { transform: translateY(-10px); }
             60% { transform: translateY(-5px); }
         }
+        @keyframes celebrationScale {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -152,7 +157,7 @@
 
                 <div class="text-center">
                     <button id="back-from-selection-btn" class="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 font-medium text-sm">
-                        ← Volver al Aprendizaje
+                        ← Página Principal
                     </button>
                 </div>
             </div>
@@ -330,6 +335,56 @@
             percentageTextEl.className = 'font-bold text-sm text-gray-600';
             
             console.log('📊 Stats reset for new session');
+        }
+
+        // 🎉 CELEBRATION ANIMATION SYSTEM
+        const celebrationMessages = [
+            { text: '¡Correcto, buen oído!', emoji: '🎧', colors: 'rgba(34, 197, 94, 0.95)' },
+            { text: '¡Dale pues, buen trabajo!', emoji: '💪', colors: 'rgba(59, 130, 246, 0.95)' },
+            { text: '¡Excelente, sigue así!', emoji: '⭐', colors: 'rgba(168, 85, 247, 0.95)' },
+            { text: '¡Qué bien, lo tienes!', emoji: '🎯', colors: 'rgba(236, 72, 153, 0.95)' },
+            { text: '¡Perfecto, eres un crack!', emoji: '🏆', colors: 'rgba(245, 158, 11, 0.95)' },
+            { text: '¡Increíble, vas súper bien!', emoji: '🚀', colors: 'rgba(20, 184, 166, 0.95)' },
+            { text: '¡Genial, qué inteligente!', emoji: '🧠', colors: 'rgba(139, 69, 19, 0.95)' },
+            { text: '¡Brutal, lo dominas!', emoji: '🔥', colors: 'rgba(220, 38, 38, 0.95)' }
+        ];
+
+        function showCelebrationAnimation() {
+            // Get random celebration message
+            const randomMessage = celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
+            
+            // Create animation element
+            const celebration = document.createElement('div');
+            celebration.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+                background: ${randomMessage.colors};
+                color: white;
+                padding: 20px 40px;
+                border-radius: 20px;
+                font-size: 24px;
+                font-weight: bold;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                backdrop-filter: blur(10px);
+                animation: celebrationScale 1.2s ease-out;
+            `;
+            
+            celebration.innerHTML = `${randomMessage.emoji}<br><span style="font-size: 18px;">${randomMessage.text}</span>`;
+            
+            document.body.appendChild(celebration);
+            
+            // Remove after animation
+            setTimeout(() => {
+                if (celebration.parentNode) {
+                    celebration.parentNode.removeChild(celebration);
+                }
+            }, 1200);
+            
+            console.log(`🎉 Celebration: ${randomMessage.text}`);
         }
 
         function generateRandomNumber() {
@@ -536,6 +591,7 @@
             
             if (selectedWord.toLowerCase() === correctAnswer) {
                 updateSessionStats(true); // 📊 Track correct answer
+                showCelebrationAnimation(); // 🎉 Show celebration!
                 showFeedback('✅ ¡Correcto! ¡Excelente!', true);
             } else {
                 updateSessionStats(false); // 📊 Track incorrect answer
@@ -554,6 +610,7 @@
         function handleAudioOnlyAnswer(selectedNumber) {
             if (selectedNumber === practiceNumber) {
                 updateSessionStats(true); // 📊 Track correct answer
+                showCelebrationAnimation(); // 🎉 Show celebration!
                 showFeedback('✅ ¡Correcto! ¡Excelente oído!', true);
             } else {
                 updateSessionStats(false); // 📊 Track incorrect answer
