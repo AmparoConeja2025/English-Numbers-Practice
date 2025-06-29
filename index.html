@@ -156,7 +156,7 @@
                     </div>
                     
                     <!-- 📊 TRACKING DISPLAY -->
-                    <div class="flex justify-center space-x-4 mb-4">
+                    <div class="flex justify-center space-x-3 mb-4">
                         <div class="bg-green-100 px-3 py-1 rounded-full">
                             <span class="text-green-800 font-bold text-sm">✅ <span id="correct-count">0</span></span>
                         </div>
@@ -165,6 +165,9 @@
                         </div>
                         <div class="bg-blue-100 px-3 py-1 rounded-full">
                             <span class="text-blue-800 font-bold text-sm">📊 <span id="total-count">0</span></span>
+                        </div>
+                        <div id="percentage-pill" class="px-3 py-1 rounded-full">
+                            <span id="percentage-text" class="font-bold text-sm">📈 <span id="percentage-count">0</span>%</span>
                         </div>
                     </div>
                     
@@ -258,6 +261,9 @@
         const correctCountEl = document.getElementById('correct-count');
         const incorrectCountEl = document.getElementById('incorrect-count');
         const totalCountEl = document.getElementById('total-count');
+        const percentageCountEl = document.getElementById('percentage-count');
+        const percentagePillEl = document.getElementById('percentage-pill');
+        const percentageTextEl = document.getElementById('percentage-text');
 
         // 📊 TRACKING FUNCTIONS
         function updateSessionStats(isCorrect) {
@@ -268,12 +274,39 @@
             }
             sessionStats.total++;
             
+            // Calculate percentage
+            const percentage = sessionStats.total > 0 ? 
+                Math.round((sessionStats.correct / sessionStats.total) * 100) : 0;
+            
             // Update display
             correctCountEl.textContent = sessionStats.correct;
             incorrectCountEl.textContent = sessionStats.incorrect;
             totalCountEl.textContent = sessionStats.total;
+            percentageCountEl.textContent = percentage;
             
-            console.log(`📊 Stats: ✅${sessionStats.correct} ❌${sessionStats.incorrect} 📊${sessionStats.total}`);
+            // Update percentage color dynamically
+            updatePercentageColor(percentage);
+            
+            console.log(`📊 Stats: ✅${sessionStats.correct} ❌${sessionStats.incorrect} 📊${sessionStats.total} 📈${percentage}%`);
+        }
+        
+        function updatePercentageColor(percentage) {
+            // Remove existing classes
+            percentagePillEl.className = 'px-3 py-1 rounded-full';
+            
+            if (percentage >= 80) {
+                // 🟢 Green for 80%+
+                percentagePillEl.classList.add('bg-green-100');
+                percentageTextEl.className = 'font-bold text-sm text-green-800';
+            } else if (percentage >= 60) {
+                // 🟡 Yellow for 60-79%
+                percentagePillEl.classList.add('bg-yellow-100');
+                percentageTextEl.className = 'font-bold text-sm text-yellow-800';
+            } else {
+                // 🔴 Red for <60%
+                percentagePillEl.classList.add('bg-red-100');
+                percentageTextEl.className = 'font-bold text-sm text-red-800';
+            }
         }
         
         function resetSessionStats() {
@@ -281,6 +314,12 @@
             correctCountEl.textContent = '0';
             incorrectCountEl.textContent = '0';
             totalCountEl.textContent = '0';
+            percentageCountEl.textContent = '0';
+            
+            // Reset percentage to neutral color
+            percentagePillEl.className = 'px-3 py-1 rounded-full bg-gray-100';
+            percentageTextEl.className = 'font-bold text-sm text-gray-600';
+            
             console.log('📊 Stats reset for new session');
         }
 
