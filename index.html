@@ -151,9 +151,23 @@
             <!-- Practice Mode -->
             <div id="practice-mode" style="display: none;" class="p-5">
                 <div class="text-center mb-6">
-                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-5" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-3" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
                         <span id="practice-mode-label">Modo de Práctica</span>
                     </div>
+                    
+                    <!-- 📊 TRACKING DISPLAY -->
+                    <div class="flex justify-center space-x-4 mb-4">
+                        <div class="bg-green-100 px-3 py-1 rounded-full">
+                            <span class="text-green-800 font-bold text-sm">✅ <span id="correct-count">0</span></span>
+                        </div>
+                        <div class="bg-red-100 px-3 py-1 rounded-full">
+                            <span class="text-red-800 font-bold text-sm">❌ <span id="incorrect-count">0</span></span>
+                        </div>
+                        <div class="bg-blue-100 px-3 py-1 rounded-full">
+                            <span class="text-blue-800 font-bold text-sm">📊 <span id="total-count">0</span></span>
+                        </div>
+                    </div>
+                    
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
                     <button class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base mb-5" onclick="speakNumber(practiceNumber)">
                         🔊 Escuchar
@@ -207,6 +221,13 @@
         let practiceType = 'multiple-choice';
         let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let practiceUsedNumbers = [];
+        
+        // 📊 TRACKING VARIABLES
+        let sessionStats = {
+            correct: 0,
+            incorrect: 0,
+            total: 0
+        };
 
         const numberDisplay = document.getElementById('number-display');
         const wordDisplay = document.getElementById('word-display');
@@ -232,6 +253,36 @@
         const choiceButtons = document.getElementById('choice-buttons');
         const numberChoiceButtons = document.getElementById('number-choice-buttons');
         const feedback = document.getElementById('feedback');
+        
+        // 📊 TRACKING ELEMENTS
+        const correctCountEl = document.getElementById('correct-count');
+        const incorrectCountEl = document.getElementById('incorrect-count');
+        const totalCountEl = document.getElementById('total-count');
+
+        // 📊 TRACKING FUNCTIONS
+        function updateSessionStats(isCorrect) {
+            if (isCorrect) {
+                sessionStats.correct++;
+            } else {
+                sessionStats.incorrect++;
+            }
+            sessionStats.total++;
+            
+            // Update display
+            correctCountEl.textContent = sessionStats.correct;
+            incorrectCountEl.textContent = sessionStats.incorrect;
+            totalCountEl.textContent = sessionStats.total;
+            
+            console.log(`📊 Stats: ✅${sessionStats.correct} ❌${sessionStats.incorrect} 📊${sessionStats.total}`);
+        }
+        
+        function resetSessionStats() {
+            sessionStats = { correct: 0, incorrect: 0, total: 0 };
+            correctCountEl.textContent = '0';
+            incorrectCountEl.textContent = '0';
+            totalCountEl.textContent = '0';
+            console.log('📊 Stats reset for new session');
+        }
 
         function generateRandomNumber() {
             // Si no hay números disponibles, reiniciar el ciclo
@@ -415,6 +466,9 @@
             practiceSelection.style.display = 'none';
             practiceMode.style.display = 'block';
             
+            // 📊 Reset stats for new practice session
+            resetSessionStats();
+            
             // Asegurar que el sistema anti-repetición esté listo
             if (practiceAvailableNumbers.length === 0) {
                 practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -433,6 +487,7 @@
             const correctAnswer = numbers[practiceNumber].word.toLowerCase();
             
             if (selectedWord.toLowerCase() === correctAnswer) {
+                updateSessionStats(true); // 📊 Track correct answer
                 showFeedback('✅ ¡Correcto! ¡Excelente!', true);
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
@@ -441,12 +496,14 @@
                     hideFeedback();
                 }, 1500);
             } else {
+                updateSessionStats(false); // 📊 Track incorrect answer
                 showFeedback(`❌ ¡No del todo! La respuesta correcta es "${correctAnswer}"`, false);
             }
         }
 
         function handleAudioOnlyAnswer(selectedNumber) {
             if (selectedNumber === practiceNumber) {
+                updateSessionStats(true); // 📊 Track correct answer
                 showFeedback('✅ ¡Correcto! ¡Excelente oído!', true);
                 setTimeout(() => {
                     practiceNumber = generateRandomNumber();
@@ -455,6 +512,7 @@
                     hideFeedback();
                 }, 1500);
             } else {
+                updateSessionStats(false); // 📊 Track incorrect answer
                 showFeedback(`❌ ¡No del todo! El número correcto era "${practiceNumber}"`, false);
             }
         }
