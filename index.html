@@ -155,9 +155,6 @@
                         <span id="practice-mode-label">Modo de Práctica</span>
                     </div>
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                    <button class="btn-success text-white px-5 py-2 rounded-full font-semibold mb-5 text-sm" onclick="speakNumber(practiceNumber)">
-                        🔊 Escuchar
-                    </button>
                     <p class="text-lg text-gray-700 font-medium mb-5">Selecciona la palabra correcta:</p>
                     
                     <!-- Multiple Choice Practice -->
@@ -169,16 +166,12 @@
                     
                     <!-- Audio-Only Practice -->
                     <div id="audio-only-practice" style="display: none;">
-                        <div class="text-center mb-6">
-                            <div class="bg-gradient-to-br from-purple-400 to-blue-500 p-6 rounded-3xl mb-5">
-                                <button id="play-audio-btn" class="btn-success text-white px-10 py-5 rounded-full font-bold text-xl mb-3">
+                        <div class="text-center mb-4">
+                            <div class="bg-gradient-to-br from-purple-400 to-blue-500 p-4 rounded-2xl mb-4">
+                                <button id="play-audio-btn" class="btn-success text-white px-8 py-4 rounded-full font-bold text-lg">
                                     🔊 Escuchar Número
                                 </button>
-                                <p class="text-white text-base opacity-90">Presiona para escuchar</p>
                             </div>
-                            <button id="repeat-audio-btn" class="bg-gray-600 text-white px-5 py-2 rounded-xl font-medium mb-5 hover:bg-gray-700 transition-all text-sm">
-                                🔄 Repetir Audio
-                            </button>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-3 mb-5" id="number-choice-buttons">
@@ -244,7 +237,6 @@
         const choiceButtons = document.getElementById('choice-buttons');
         const numberChoiceButtons = document.getElementById('number-choice-buttons');
         const playAudioBtn = document.getElementById('play-audio-btn');
-        const repeatAudioBtn = document.getElementById('repeat-audio-btn');
         const feedback = document.getElementById('feedback');
 
         function generateRandomNumber() {
@@ -502,7 +494,6 @@
         
         // Audio-only event listeners
         playAudioBtn.addEventListener('click', playPracticeNumberAudio);
-        repeatAudioBtn.addEventListener('click', playPracticeNumberAudio);
 
         // Inicializar la app
         updateDisplay();
