@@ -490,23 +490,47 @@
                 choiceButtons.appendChild(button);
             });
         }
-
-        // IMPROVED SPEECH FUNCTION - Clear audio settings
-        function speakNumber(number) {
-            if ('speechSynthesis' in window) {
-                speechSynthesis.cancel();
-                
-                const utterance = new SpeechSynthesisUtterance(numbers[number].word);
-                
-                // Clear, consistent settings for all numbers
-                utterance.rate = 0.55;    // Good speed for learning
-                utterance.volume = 1;     // Full volume
-                utterance.pitch = 1;      // Natural pitch
-                utterance.lang = 'en-US'; // Clear American English
-                
-                speechSynthesis.speak(utterance);
-            }
+/ 🔒 FUNCIÓN SEGURA QUE LLAMA AL SERVIDOR LOCAL
+async function speakNumberSecure(number) {
+    try {
+        const word = numbers[number].word;
+        console.log('🔒 Calling secure server for:', word);
+        
+        const response = await fetch('http://localhost:3000/speech', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ word: word })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Reproducir audio desde base64
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const audioBuffer = Uint8Array.from(atob(data.audio), c => c.charCodeAt(0));
+            const audioData = await audioContext.decodeAudioData(audioBuffer.buffer);
+            const source = audioContext.createBufferSource();
+            source.buffer = audioData;
+            source.connect(audioContext.destination);
+            source.start();
+            
+            console.log('✅ Secure Azure speech success');
+        } else {
+            throw new Error('Server error');
         }
+    } catch (error) {
+        console.log('🔄 Fallback to browser TTS');
+        speakNumber(number); // Fallback
+    }
+}
+        // IMPROVED SPEECH FUNCTION - Clear audio settings
+ // IMPROVED SPEECH FUNCTION - Secure server first, fallback second
+function speakNumber(number) {
+    // 🔒 TRY SECURE SERVER FIRST
+    speakNumberSecure(number);
+}
 
         function showFeedback(message, isCorrect) {
             feedback.textContent = message;
