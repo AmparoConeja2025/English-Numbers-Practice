@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+Hola nena<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -496,7 +496,7 @@ async function speakNumberSecure(number) {
         const word = numbers[number].word;
         console.log('🔒 Calling secure server for:', word);
         
-        const response = await fetch('http://localhost:3000/speech', {
+        const response = await fetch(`https://azure-tts-server.onrender.com/speech`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
