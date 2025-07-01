@@ -692,6 +692,8 @@
                 practiceNumberDisplay.textContent = practiceNumber;
                 configurePracticeInterface(practiceType);
                 hideFeedback();
+                // Auto-play del nuevo número
+                speakNumber(practiceNumber);
             }, 1500);
         }
 
@@ -709,7 +711,8 @@
                 practiceNumber = generateRandomNumber();
                 practiceNumberDisplay.textContent = practiceNumber;
                 configurePracticeInterface(practiceType);
-                hideFeedback();
+                hideFeedback();// Auto-play del nuevo número
+                speakNumber(practiceNumber);
             }, 1500);
         }
 
@@ -721,12 +724,29 @@
             practiceType = 'multiple-choice';
             practiceModeLabel.textContent = '👆 Opción Múltiple';
             switchToPracticeMode();
+            speakNumber(practiceNumber);
+            function startMultipleChoicePractice() {
+    practiceType = 'multiple-choice';
+    practiceModeLabel.textContent = '🔥 Opción Múltiple';
+    switchToPracticeMode();
+    
+    // Auto-play del primer número
+    speakNumber(practiceNumber);
+}
         }
 
         function startAudioOnlyPractice() {
             practiceType = 'audio-only';
             practiceModeLabel.textContent = '🎧 Práctica Solo Audio';
             switchToPracticeMode();
+            function startAudioOnlyPractice() {
+    practiceType = 'audio-only';
+    practiceModeLabel.textContent = '🎧 Práctica Solo Audio';
+    switchToPracticeMode();
+    
+    // Auto-play del primer número
+    speakNumber(practiceNumber);
+}
         }
 
         // 🔄 PRUEBA DE CONEXIÓN AL SERVIDOR
