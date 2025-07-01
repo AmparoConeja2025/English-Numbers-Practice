@@ -320,6 +320,18 @@
                     
                     const audioUrl = URL.createObjectURL(audioBlob);
                     const audio = new Audio(audioUrl);
+                    audio.onended = () => {
+
+
+                    // 🔊 OPTIMIZACIÓN DE VOLUMEN PARA IPHONE
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    audio.volume = 1.0;
+                    audio.preload = 'auto';
+                    audio.setAttribute('playsinline', true);
+                    audio.setAttribute('webkit-playsinline', true);
+                } else {
+                    audio.volume = 1.0;
+                }
                     
                     audio.onended = () => {
                         URL.revokeObjectURL(audioUrl);
