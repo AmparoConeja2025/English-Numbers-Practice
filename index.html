@@ -361,6 +361,16 @@
                 azureStatusEl.textContent = '⚠️ Usando TTS del navegador';
                 isCurrentlySpeaking = false;
                 speakNumberFallback(number);
+                } catch (error) {
+                console.log('❌ Fallback a TTS navegador:', error.message);
+                azureStatusEl.textContent = '⚠️ Usando TTS del navegador';
+                isCurrentlySpeaking = false;
+                speakNumberFallback(number);
+    
+                // Quitar animación del botón en caso de error
+                speakBtn.classList.remove('listening');
+                speakBtn.textContent = '🔊 Escuchar';
+}
             }
         }
 
