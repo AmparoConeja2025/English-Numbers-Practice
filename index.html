@@ -320,7 +320,7 @@
                     
                     const audioUrl = URL.createObjectURL(audioBlob);
                     const audio = new Audio(audioUrl);
-                    
+                    audio.load(); // Preload agresivo para reducir latencia
                     audio.onended = () => {
                         URL.revokeObjectURL(audioUrl);
                         isCurrentlySpeaking = false;
