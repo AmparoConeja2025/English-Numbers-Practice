@@ -28,7 +28,15 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
-        
+       .listening {
+            animation: pulse 0.5s ease-in-out infinite alternate;
+            background-color: #ff6b35 !important;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(1.05); opacity: 0.8; }
+        } 
         button {
             touch-action: manipulation;
         }
@@ -298,6 +306,9 @@
             }
             
             isCurrentlySpeaking = true;
+            // Activar animación del botón
+            speakBtn.classList.add('listening');
+            speakBtn.textContent = '🎵 Escuchando...';
             const word = numbers[number].word;
             console.log('🔒 Llamando servidor seguro para:', word);
             
@@ -322,6 +333,10 @@
                     const audio = new Audio(audioUrl);
                     audio.load(); // Preload agresivo para reducir latencia
                     audio.onended = () => {
+                        // Quitar animación del botón
+                    speakBtn.classList.remove('listening');
+                    speakBtn.textContent = '🔊 Escuchar';
+                    };
                         URL.revokeObjectURL(audioUrl);
                         isCurrentlySpeaking = false;
                         console.log('✅ Azure TTS completado para:', word);
