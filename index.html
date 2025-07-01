@@ -322,21 +322,16 @@
                     const audio = new Audio(audioUrl);
                     audio.onended = () => {
 
-// 🔊 AMPLIFICACIÓN INTELIGENTE PARA IPHONE
+// 🔊 OPTIMIZACIÓN DE VOLUMEN PARA IPHONE  
                 if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
                     audio.volume = 1.0;
                     audio.preload = 'auto';
                     audio.setAttribute('playsinline', true);
                     audio.setAttribute('webkit-playsinline', true);
                     
-                    // Web Audio API para amplificación sin distorsión
-                    audio.addEventListener('loadeddata', () => {
-                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        const source = audioContext.createMediaElementSource(audio);
-                        const gainNode = audioContext.createGain();
-                        gainNode.gain.value = 1.8; // 180% boost seguro
-                        source.connect(gainNode);
-                        gainNode.connect(audioContext.destination);
+                    // Boost simple sin Web Audio API
+                    audio.addEventListener('canplay', () => {
+                        audio.volume = 1.0; // Asegurar volumen máximo
                     });
                 } else {
                     audio.volume = 1.0;
