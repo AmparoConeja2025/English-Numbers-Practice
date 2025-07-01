@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <!-- 
-🏆 VERSION: v1.0.0-STABLE 
+🏆 VERSION: v1.0.0-STABLE
 📅 DATE: 2025-07-01-15:00
 ✅ STATUS: GOLDEN VERSION - Azure TTS Perfect
 🔊 FEATURES: Azure TTS, Responsive, Professional Audio
@@ -320,22 +320,6 @@
                     
                     const audioUrl = URL.createObjectURL(audioBlob);
                     const audio = new Audio(audioUrl);
-                    audio.onended = () => {
-
-// 🔊 OPTIMIZACIÓN DE VOLUMEN PARA IPHONE  
-                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                    audio.volume = 1.0;
-                    audio.preload = 'auto';
-                    audio.setAttribute('playsinline', true);
-                    audio.setAttribute('webkit-playsinline', true);
-                    
-                    // Boost simple sin Web Audio API
-                    audio.addEventListener('canplay', () => {
-                        audio.volume = 1.0; // Asegurar volumen máximo
-                    });
-                } else {
-                    audio.volume = 1.0;
-                }
                     
                     audio.onended = () => {
                         URL.revokeObjectURL(audioUrl);
