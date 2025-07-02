@@ -243,6 +243,25 @@
             10: { word: 'ten', pronunciation: '/ten/' }
         };
 
+        // 🎭 SISTEMA DE VOCES MÚLTIPLES AZURE
+const azureVoices = [
+    'aria',     // 🎭 Mujer - Voz clara y profesional
+    'guy',      // 🎙️ Hombre - Voz profunda y amigable  
+    'jenny',    // ✨ Mujer - Voz dulce y energética
+    'jason',    // 💪 Hombre - Voz confiable y clara
+    'emma',     // 🌟 Mujer - Voz natural y moderna
+    'robert'    // 🎯 Hombre - Voz cálida y profesional
+];
+let currentVoiceIndex = 0; // Índice rotativo para las voces
+
+// 🎪 Función para obtener la próxima voz en rotación
+function getNextVoice() {
+    const voice = azureVoices[currentVoiceIndex];
+    currentVoiceIndex = (currentVoiceIndex + 1) % azureVoices.length;
+    console.log(`🎭 Próxima voz seleccionada: ${voice}`);
+    return voice;
+}
+
         let currentNumber = 0;
         let currentMode = 'learn';
         let practiceNumber = 0;
@@ -307,7 +326,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ word: word })
+                    body: JSON.stringify({ word: word, voice: getNextVoice() })
                 });
                 
                 if (response.ok) {
