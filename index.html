@@ -118,6 +118,9 @@
                     <button id="speak-btn" class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base">
                         🔊 Escuchar
                     </button>
+                    <button id="voice-btn" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-base ml-3" onclick="switchVoice()">
+                  🎭 Voice: Adam
+                    </button>
                 </div>
 
                 <div class="flex justify-center space-x-6 mb-6">
@@ -234,6 +237,7 @@
         };
 
         let currentNumber = 0;
+        let currentVoice = 'adam';
         let currentMode = 'learn';
         let practiceNumber = 0;
         let practiceType = 'multiple-choice';
@@ -490,46 +494,24 @@
                 choiceButtons.appendChild(button);
             });
         }
-/ 🔒 FUNCIÓN SEGURA QUE LLAMA AL SERVIDOR LOCAL
-async function speakNumberSecure(number) {
-    try {
-        const word = numbers[number].word;
-        console.log('🔒 Calling secure server for:', word);
-        
-        const response = await fetch('http://localhost:3000/speech', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ word: word })
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            
-            // Reproducir audio desde base64
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const audioBuffer = Uint8Array.from(atob(data.audio), c => c.charCodeAt(0));
-            const audioData = await audioContext.decodeAudioData(audioBuffer.buffer);
-            const source = audioContext.createBufferSource();
-            source.buffer = audioData;
-            source.connect(audioContext.destination);
-            source.start();
-            
-            console.log('✅ Secure Azure speech success');
-        } else {
-            throw new Error('Server error');
-        }
-    } catch (error) {
-        console.log('🔄 Fallback to browser TTS');
-        speakNumber(number); // Fallback
-    }
-}
-        // IMPROVED SPEECH FUNCTION - Clear audio settings
- // IMPROVED SPEECH FUNCTION - Secure server first, fallback second
+// MP3 AUDIO SYSTEM - Adam & Rachel voices
 function speakNumber(number) {
-    // 🔒 TRY SECURE SERVER FIRST
-    speakNumberSecure(number);
+    const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
+    
+    const audio = new Audio(audioFile);
+    audio.play().catch(error => {
+        console.error('Error playing audio:', error);
+    });
+}
+
+// Voice switching function
+function switchVoice() {
+    currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
+    const voiceBtn = document.getElementById('voice-btn');
+    if (voiceBtn) {
+        voiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+    }
+    console.log(`Voice switched to: ${currentVoice}`);
 }
 
         function showFeedback(message, isCorrect) {
