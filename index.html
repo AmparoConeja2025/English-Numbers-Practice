@@ -3,441 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Numbers Practice - Adam MP3 Test</title>
+    <title>English Numbers Practice</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
         }
 
         .container {
             background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
             border-radius: 20px;
-            padding: 30px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 400px;
+            max-width: 500px;
             width: 100%;
         }
 
         h1 {
             color: #333;
-            margin-bottom: 10px;
-            font-size: 2em;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .subtitle {
-            color: #666;
+        .mode-selection {
             margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-
-        .mode-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
         }
 
         .mode-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 15px 25px;
+            margin: 10px;
             border-radius: 25px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 16px;
             transition: all 0.3s ease;
-            min-width: 80px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .mode-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
         .mode-btn.active {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            transform: scale(1.05);
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            transform: translateY(-2px);
         }
 
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .game-area {
+            margin-top: 30px;
         }
 
-        .btn {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            min-width: 120px;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn.pause {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-        }
-
-        .btn.stop {
-            background: linear-gradient(135deg, #ff9a9e, #fecfef);
-        }
-
-        .current-number {
+        .number-display {
             font-size: 4em;
             font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
+            color: #667eea;
+            margin: 20px 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .status {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            font-size: 1.1em;
+        .control-btn {
+            background: linear-gradient(45deg, #51cf66, #40c057);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .audio-status {
             margin-top: 20px;
-        }
-
-        .stat-item {
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #667eea;
-            display: block;
-        }
-
-        .stat-label {
+            font-size: 16px;
             color: #666;
-            font-size: 0.9em;
         }
 
-        .audio-test {
-            background: rgba(76, 175, 80, 0.1);
-            border: 2px dashed #4caf50;
-            border-radius: 15px;
-            padding: 15px;
-            margin: 20px 0;
-            color: #2e7d32;
-            font-weight: bold;
+        .voice-indicator {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #888;
+            font-style: italic;
         }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .current-number {
-                font-size: 3em;
-            }
-            
-            .btn {
-                padding: 12px 20px;
-                font-size: 1em;
-                min-width: 100px;
-            }
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .success-message {
+            color: #27ae60;
+            margin-top: 10px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎵 Numbers Practice</h1>
-        <p class="subtitle">Adam MP3 Test Version</p>
+        <h1>🎵 English Numbers Practice</h1>
         
-        <div class="audio-test">
-            🎧 Testing MP3 Audio System - Adam Voice Only
+        <div class="mode-selection">
+            <button class="mode-btn active" onclick="setMode(1)">Mode 1: 0-1</button>
+            <button class="mode-btn" onclick="setMode(2)">Mode 2: 0-2</button>
+            <button class="mode-btn" onclick="setMode(3)">Mode 3: 0-3</button>
+            <button class="mode-btn" onclick="setMode(4)">Mode 4: 0-5</button>
+            <button class="mode-btn" onclick="setMode(5)">Mode 5: 0-10</button>
         </div>
 
-        <div class="mode-selector">
-            <button class="mode-btn active" data-mode="1">Mode 1</button>
-            <button class="mode-btn" data-mode="2">Mode 2</button>
-            <button class="mode-btn" data-mode="3">Mode 3</button>
-            <button class="mode-btn" data-mode="4">Mode 4</button>
-            <button class="mode-btn" data-mode="5">Mode 5</button>
+        <div class="game-area">
+            <div class="number-display" id="numberDisplay">0</div>
+            <button class="control-btn" onclick="playNumber()" id="playBtn">🔊 Play</button>
+            <button class="control-btn" onclick="nextNumber()">➡️ Next</button>
+            <button class="control-btn" onclick="resetGame()">🔄 Reset</button>
+            
+            <div class="voice-indicator" id="voiceIndicator">Voice: Adam</div>
+            <div class="audio-status" id="audioStatus">Ready to play!</div>
         </div>
 
-        <div class="current-number" id="currentNumber">0</div>
-
-        <div class="controls">
-            <button class="btn" id="playBtn">▶️ Play</button>
-            <button class="btn pause" id="pauseBtn">⏸️ Pause</button>
-            <button class="btn stop" id="stopBtn">⏹️ Stop</button>
-        </div>
-
-        <div class="status" id="status">
-            🎵 Ready to test Adam's voice! Click Play to start.
-        </div>
-
-        <div class="stats">
-            <div class="stat-item">
-                <span class="stat-value" id="currentMode">1</span>
-                <span class="stat-label">Current Mode</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-value" id="numbersPlayed">0</span>
-                <span class="stat-label">Numbers Played</span>
-            </div>
-        </div>
+        <!-- Audio elemento oculto -->
+        <audio id="audioPlayer" style="display: none;"></audio>
     </div>
 
     <script>
-        class NumbersPracticeMP3 {
-            constructor() {
-                this.currentMode = 1;
-                this.currentNumber = 0;
-                this.isPlaying = false;
-                this.isPaused = false;
-                this.interval = null;
-                this.numbersPlayed = 0;
-                this.currentAudio = null;
-                
-                this.initializeElements();
-                this.setupEventListeners();
-                this.generateNumbers();
-            }
+        let currentMode = 1;
+        let currentNumber = 0;
+        let maxNumber = 1;
+        let currentVoice = 'adam';
+        
+        const audioPlayer = document.getElementById('audioPlayer');
+        const numberDisplay = document.getElementById('numberDisplay');
+        const audioStatus = document.getElementById('audioStatus');
+        const playBtn = document.getElementById('playBtn');
+        const voiceIndicator = document.getElementById('voiceIndicator');
 
-            initializeElements() {
-                this.currentNumberEl = document.getElementById('currentNumber');
-                this.statusEl = document.getElementById('status');
-                this.currentModeEl = document.getElementById('currentMode');
-                this.numbersPlayedEl = document.getElementById('numbersPlayed');
-                this.playBtn = document.getElementById('playBtn');
-                this.pauseBtn = document.getElementById('pauseBtn');
-                this.stopBtn = document.getElementById('stopBtn');
-                this.modeButtons = document.querySelectorAll('.mode-btn');
-            }
+        // Configurar los rangos por modo
+        const modeRanges = {
+            1: 1,
+            2: 2,
+            3: 3,
+            4: 5,
+            5: 10
+        };
 
-            setupEventListeners() {
-                this.playBtn.addEventListener('click', () => this.togglePlay());
-                this.pauseBtn.addEventListener('click', () => this.pausePlay());
-                this.stopBtn.addEventListener('click', () => this.stopPlay());
-
-                this.modeButtons.forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const mode = parseInt(e.target.dataset.mode);
-                        this.setMode(mode);
-                    });
-                });
-            }
-
-            generateNumbers() {
-                // For testing with Adam, we'll use numbers 0-10
-                const modes = {
-                    1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                    2: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-                    3: [0, 2, 4, 6, 8, 10, 1, 3, 5, 7, 9],
-                    4: [1, 3, 5, 7, 9, 0, 2, 4, 6, 8, 10],
-                    5: [5, 0, 10, 2, 8, 1, 9, 3, 7, 4, 6]
-                };
-                
-                this.numbers = modes;
-                this.currentNumbers = [...this.numbers[this.currentMode]];
-            }
-
-            setMode(mode) {
-                if (this.isPlaying) {
-                    this.stopPlay();
-                }
-                
-                this.currentMode = mode;
-                this.currentModeEl.textContent = mode;
-                
-                // Update mode button styles
-                this.modeButtons.forEach(btn => {
-                    if (parseInt(btn.dataset.mode) === mode) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-                
-                this.generateNumbers();
-                this.currentNumbers = [...this.numbers[this.currentMode]];
-                this.currentNumber = this.currentNumbers[0];
-                this.currentNumberEl.textContent = this.currentNumber;
-                this.statusEl.innerHTML = `🎵 Mode ${mode} selected. Ready to practice with Adam's voice!`;
-                this.numbersPlayed = 0;
-                this.numbersPlayedEl.textContent = this.numbersPlayed;
-            }
-
-            async playAudio(number) {
-                try {
-                    // Stop any currently playing audio
-                    if (this.currentAudio) {
-                        this.currentAudio.pause();
-                        this.currentAudio.currentTime = 0;
-                    }
-
-                    // Create new audio element for Adam's voice
-                    const audioPath = `/audio/adam/adam_${number}.mp3`;
-                    this.currentAudio = new Audio(audioPath);
-                    
-                    // Set up audio event listeners
-                    this.currentAudio.addEventListener('canplaythrough', () => {
-                        this.statusEl.innerHTML = `🎵 Playing: ${number} (Adam's voice)`;
-                    });
-
-                    this.currentAudio.addEventListener('error', (e) => {
-                        console.error('Audio error:', e);
-                        this.statusEl.innerHTML = `❌ Audio error for ${number}. Check if adam_${number}.mp3 exists.`;
-                    });
-
-                    this.currentAudio.addEventListener('ended', () => {
-                        this.statusEl.innerHTML = `✅ Completed: ${number}`;
-                    });
-
-                    // Play the audio
-                    await this.currentAudio.play();
-                    
-                } catch (error) {
-                    console.error('Error playing audio:', error);
-                    this.statusEl.innerHTML = `❌ Failed to play ${number}. Audio file may not exist.`;
-                }
-            }
-
-            async togglePlay() {
-                if (this.isPlaying && !this.isPaused) {
-                    this.pausePlay();
-                } else if (this.isPaused) {
-                    this.resumePlay();
-                } else {
-                    this.startPlay();
-                }
-            }
-
-            async startPlay() {
-                this.isPlaying = true;
-                this.isPaused = false;
-                this.playBtn.innerHTML = '⏸️ Pause';
-                this.statusEl.innerHTML = '🎵 Starting Adam MP3 test...';
-                
-                this.currentNumbers = [...this.numbers[this.currentMode]];
-                await this.playNextNumber();
-            }
-
-            async playNextNumber() {
-                if (!this.isPlaying || this.isPaused || this.currentNumbers.length === 0) {
-                    if (this.currentNumbers.length === 0) {
-                        this.completeSession();
-                    }
-                    return;
-                }
-
-                this.currentNumber = this.currentNumbers.shift();
-                this.currentNumberEl.textContent = this.currentNumber;
-                this.numbersPlayed++;
-                this.numbersPlayedEl.textContent = this.numbersPlayed;
-
-                await this.playAudio(this.currentNumber);
-
-                // Wait 2 seconds before next number
-                this.interval = setTimeout(() => {
-                    this.playNextNumber();
-                }, 2000);
-            }
-
-            pausePlay() {
-                this.isPaused = true;
-                this.playBtn.innerHTML = '▶️ Resume';
-                if (this.currentAudio) {
-                    this.currentAudio.pause();
-                }
-                if (this.interval) {
-                    clearTimeout(this.interval);
-                }
-                this.statusEl.innerHTML = '⏸️ Paused - Click Resume to continue';
-            }
-
-            resumePlay() {
-                this.isPaused = false;
-                this.playBtn.innerHTML = '⏸️ Pause';
-                this.statusEl.innerHTML = '🎵 Resuming...';
-                this.playNextNumber();
-            }
-
-            stopPlay() {
-                this.isPlaying = false;
-                this.isPaused = false;
-                this.playBtn.innerHTML = '▶️ Play';
-                
-                if (this.currentAudio) {
-                    this.currentAudio.pause();
-                    this.currentAudio.currentTime = 0;
-                }
-                
-                if (this.interval) {
-                    clearTimeout(this.interval);
-                }
-                
-                this.currentNumbers = [...this.numbers[this.currentMode]];
-                this.currentNumber = this.currentNumbers[0];
-                this.currentNumberEl.textContent = this.currentNumber;
-                this.statusEl.innerHTML = '⏹️ Stopped. Ready to start again with Adam\'s voice!';
-                this.numbersPlayed = 0;
-                this.numbersPlayedEl.textContent = this.numbersPlayed;
-            }
-
-            completeSession() {
-                this.isPlaying = false;
-                this.playBtn.innerHTML = '▶️ Play';
-                this.statusEl.innerHTML = `🎉 Mode ${this.currentMode} completed! Adam's voice test successful!`;
-                
-                // Reset for next session
-                setTimeout(() => {
-                    this.currentNumbers = [...this.numbers[this.currentMode]];
-                    this.currentNumber = this.currentNumbers[0];
-                    this.currentNumberEl.textContent = this.currentNumber;
-                    this.statusEl.innerHTML = '🎵 Ready for another round with Adam!';
-                    this.numbersPlayed = 0;
-                    this.numbersPlayedEl.textContent = this.numbersPlayed;
-                }, 3000);
-            }
+        function setMode(mode) {
+            currentMode = mode;
+            maxNumber = modeRanges[mode];
+            currentNumber = 0;
+            
+            // Actualizar botones de modo
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Actualizar display
+            numberDisplay.textContent = currentNumber;
+            audioStatus.textContent = `Mode ${mode}: Numbers 0-${maxNumber}`;
+            
+            console.log(`Mode ${mode} selected: 0-${maxNumber}`);
         }
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', () => {
-            new NumbersPracticeMP3();
+        function playNumber() {
+            const audioFile = `audio/${currentVoice}/${currentVoice}_${currentNumber}.mp3`;
+            
+            console.log(`Attempting to play: ${audioFile}`);
+            audioStatus.textContent = `Playing ${currentNumber}...`;
+            playBtn.disabled = true;
+            
+            // Configurar el reproductor
+            audioPlayer.src = audioFile;
+            audioPlayer.load();
+            
+            // Manejar eventos de audio
+            audioPlayer.onloadeddata = () => {
+                console.log(`Audio loaded successfully: ${audioFile}`);
+                audioPlayer.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                    audioStatus.textContent = `Error playing ${currentNumber}`;
+                    audioStatus.className = 'error-message';
+                    playBtn.disabled = false;
+                });
+            };
+            
+            audioPlayer.onended = () => {
+                console.log('Audio playback ended');
+                audioStatus.textContent = `Finished playing ${currentNumber}`;
+                audioStatus.className = 'success-message';
+                playBtn.disabled = false;
+            };
+            
+            audioPlayer.onerror = (error) => {
+                console.error('Audio error:', error);
+                audioStatus.textContent = `Audio file not found: ${currentNumber}`;
+                audioStatus.className = 'error-message';
+                playBtn.disabled = false;
+            };
+        }
+
+        function nextNumber() {
+            currentNumber++;
+            if (currentNumber > maxNumber) {
+                currentNumber = 0;
+            }
+            
+            numberDisplay.textContent = currentNumber;
+            audioStatus.textContent = `Ready to play ${currentNumber}`;
+            audioStatus.className = 'audio-status';
+            
+            console.log(`Next number: ${currentNumber}`);
+        }
+
+        function resetGame() {
+            currentNumber = 0;
+            numberDisplay.textContent = currentNumber;
+            audioStatus.textContent = `Reset to ${currentNumber}`;
+            audioStatus.className = 'audio-status';
+            playBtn.disabled = false;
+            
+            console.log('Game reset');
+        }
+
+        // Función para cambiar voz (para implementar Rachel después)
+        function switchVoice() {
+            currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
+            voiceIndicator.textContent = `Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+            console.log(`Voice switched to: ${currentVoice}`);
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('English Numbers Practice - MP3 Version Loaded');
+            setMode(1);
         });
     </script>
 </body>
