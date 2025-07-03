@@ -140,7 +140,8 @@
             <button class="control-btn" onclick="nextNumber()">➡️ Next</button>
             <button class="control-btn" onclick="resetGame()">🔄 Reset</button>
             
-            <div class="voice-indicator" id="voiceIndicator">Voice: Adam</div>
+            <button class="control-btn" onclick="switchVoice()" id="voiceBtn">🎭 Voice: Adam</button>
+            <div class="voice-indicator" id="voiceIndicator">Click to switch voices</div>
             <div class="audio-status" id="audioStatus">Ready to play!</div>
         </div>
 
@@ -251,6 +252,7 @@
         function switchVoice() {
             currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
             voiceIndicator.textContent = `Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+            document.getElementById('voiceBtn').textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
             console.log(`Voice switched to: ${currentVoice}`);
         }
 
