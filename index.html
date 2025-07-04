@@ -481,7 +481,7 @@
                 choiceButtons.appendChild(button);
             });
         }
-
+Not any on
         function createAudioChoiceButtons() {
             const options = generateWrongNumberOptions(practiceNumber);
             choiceButtons.innerHTML = '';
@@ -517,7 +517,8 @@ function speakNumber(number) {
     const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
     
     const audio = new Audio(audioFile);
-    audio.play().catch(error => {
+    unlockAudio(); // Asegurar unlock
+audio.play().catch(error => {
         console.error('Error playing audio:', error);
     });
 }
@@ -674,9 +675,12 @@ function switchVoice() {
             }, 1500);
         }
 
-        function playPracticeNumberAudio() {
-            speakNumber(practiceNumber);
-        }
+       function playPracticeNumberAudio() {
+    unlockAudio(); // Asegurar unlock antes de audio automático
+    setTimeout(() => {
+        speakNumber(practiceNumber);
+    }, 100); // Pequeño delay para móviles
+}
 
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
