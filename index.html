@@ -708,7 +708,19 @@ function switchVoice() {
             }
         });
 
-        speakBtn.addEventListener('click', () => speakNumber(currentNumber));
+        speakBtn.addEventListener('click', () => {
+    // Cambiar a gris
+    speakBtn.style.background = '#9CA3AF';
+    speakBtn.style.transform = 'scale(0.95)';
+    
+    speakNumber(currentNumber);
+    
+    // Volver al color original después de 2 segundos
+    setTimeout(() => {
+        speakBtn.style.background = '';
+        speakBtn.style.transform = '';
+    }, 2000);
+});
         startPracticeBtn.addEventListener('click', showPracticeSelection);
         multipleChoiceBtn.addEventListener('click', startMultipleChoicePractice);
         audioOnlyBtn.addEventListener('click', startAudioOnlyPractice);
