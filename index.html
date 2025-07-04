@@ -15,6 +15,9 @@
         .practice-gradient {
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
         }
+        .level-gradient {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
         .glass-card {
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px);
@@ -67,6 +70,20 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px 0 rgba(79, 172, 254, 0.6);
         }
+        .btn-level {
+            background: linear-gradient(45deg, #ff9a56, #ff6a6a);
+            box-shadow: 0 4px 15px 0 rgba(255, 154, 86, 0.4);
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+        .btn-level:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(255, 154, 86, 0.6);
+        }
+        .btn-level.active {
+            background: linear-gradient(45deg, #48cc6c, #2dd65b);
+            box-shadow: 0 4px 15px 0 rgba(72, 204, 108, 0.6);
+        }
         .choice-button {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(5px);
@@ -107,11 +124,26 @@
         <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
             <div class="learning-gradient p-5 text-center">
                 <h1 class="text-2xl font-bold text-white mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
-                <p class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">¡Aprende los números del 0 al 10 con estilo!</p>
+                <p id="subtitle" class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">¡Aprende los números del 0 al 10 con estilo!</p>
             </div>
             
             <!-- Learning Mode -->
             <div id="learn-mode" class="p-5">
+                <!-- 🎯 LEVEL SELECTOR -->
+                <div class="text-center mb-6">
+                    <div class="level-gradient px-4 py-2 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        📈 Selecciona tu Nivel
+                    </div>
+                    <div class="flex justify-center space-x-3 mb-4">
+                        <button id="beginner-btn" class="btn-level active text-white px-4 py-2 rounded-xl font-bold text-sm">
+                            🌱 Principiante (0-10)
+                        </button>
+                        <button id="intermediate-btn" class="btn-level text-white px-4 py-2 rounded-xl font-bold text-sm">
+                            🚀 Intermedio (0-20)
+                        </button>
+                    </div>
+                </div>
+
                 <div class="text-center mb-6">
                     <div id="number-display" class="text-7xl font-bold number-display mb-3 bounce">0</div>
                     <div id="word-display" class="text-3xl font-semibold text-gray-800 mb-2 word-display">zero</div>
@@ -143,8 +175,11 @@
             <!-- Practice Type Selection -->
             <div id="practice-selection" style="display: none;" class="p-5">
                 <div class="text-center mb-6">
-                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-5" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-3" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
                         🎯 Elige el Modo de Práctica
+                    </div>
+                    <div id="level-indicator" class="level-gradient px-4 py-1 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        🌱 Nivel Principiante (0-10)
                     </div>
                     <p class="text-lg text-gray-700 font-medium">¿Cómo te gustaría practicar?</p>
                 </div>
@@ -170,8 +205,11 @@
             <!-- Practice Mode -->
             <div id="practice-mode" style="display: none;" class="p-5">
                 <div class="text-center mb-6">
-                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-3" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-2" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
                         <span id="practice-mode-label">Modo de Práctica</span>
+                    </div>
+                    <div id="practice-level-indicator" class="level-gradient px-4 py-1 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        🌱 Nivel Principiante (0-10)
                     </div>
                     
                     <!-- 📊 TRACKING DISPLAY -->
@@ -234,12 +272,23 @@
             7: { word: 'seven', pronunciation: '/seven/' },
             8: { word: 'eight', pronunciation: '/eit/' },
             9: { word: 'nine', pronunciation: '/nain/' },
-            10: { word: 'ten', pronunciation: '/ten/' }
+            10: { word: 'ten', pronunciation: '/ten/' },
+            11: { word: 'eleven', pronunciation: '/iléven/' },
+            12: { word: 'twelve', pronunciation: '/tuélv/' },
+            13: { word: 'thirteen', pronunciation: '/thirtín/' },
+            14: { word: 'fourteen', pronunciation: '/fortín/' },
+            15: { word: 'fifteen', pronunciation: '/fiftín/' },
+            16: { word: 'sixteen', pronunciation: '/sikstín/' },
+            17: { word: 'seventeen', pronunciation: '/seventín/' },
+            18: { word: 'eighteen', pronunciation: '/eitín/' },
+            19: { word: 'nineteen', pronunciation: '/naintín/' },
+            20: { word: 'twenty', pronunciation: '/tuénti/' }
         };
 
         let currentNumber = 0;
         let currentVoice = 'adam';
         let currentMode = 'learn';
+        let currentLevel = 'beginner'; // 'beginner' (0-10) or 'intermediate' (0-20)
         let practiceNumber = 0;
         let practiceType = 'multiple-choice';
         let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -258,10 +307,16 @@
         const speakBtn = document.getElementById('speak-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
+        const subtitle = document.getElementById('subtitle');
         
         const learnMode = document.getElementById('learn-mode');
         const practiceSelection = document.getElementById('practice-selection');
         const practiceMode = document.getElementById('practice-mode');
+        
+        const beginnerBtn = document.getElementById('beginner-btn');
+        const intermediateBtn = document.getElementById('intermediate-btn');
+        const levelIndicator = document.getElementById('level-indicator');
+        const practiceLevelIndicator = document.getElementById('practice-level-indicator');
         
         const startPracticeBtn = document.getElementById('start-practice-btn');
         const multipleChoiceBtn = document.getElementById('multiple-choice-btn');
@@ -284,6 +339,47 @@
         const percentageCountEl = document.getElementById('percentage-count');
         const percentagePillEl = document.getElementById('percentage-pill');
         const percentageTextEl = document.getElementById('percentage-text');
+
+        // 🎯 LEVEL MANAGEMENT
+        function getNumberRange() {
+            return currentLevel === 'beginner' ? 
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : 
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+        }
+
+        function getMaxNumber() {
+            return currentLevel === 'beginner' ? 10 : 20;
+        }
+
+        function updateLevelDisplay() {
+            const isIntermediate = currentLevel === 'intermediate';
+            const range = isIntermediate ? '0-20' : '0-10';
+            const emoji = isIntermediate ? '🚀' : '🌱';
+            const levelName = isIntermediate ? 'Intermedio' : 'Principiante';
+            
+            subtitle.textContent = `¡Aprende los números del ${range} con estilo!`;
+            levelIndicator.innerHTML = `${emoji} Nivel ${levelName} (${range})`;
+            practiceLevelIndicator.innerHTML = `${emoji} Nivel ${levelName} (${range})`;
+            
+            // Update button active states
+            beginnerBtn.classList.toggle('active', currentLevel === 'beginner');
+            intermediateBtn.classList.toggle('active', currentLevel === 'intermediate');
+            
+            // Reset practice numbers for new level
+            practiceAvailableNumbers = getNumberRange();
+            practiceUsedNumbers = [];
+        }
+
+        function switchLevel(level) {
+            currentLevel = level;
+            updateLevelDisplay();
+            
+            // Reset to first number when switching levels
+            currentNumber = 0;
+            updateDisplay();
+            
+            console.log(`🎯 Switched to ${level} level: ${getNumberRange()}`);
+        }
 
         // 📊 TRACKING FUNCTIONS
         function updateSessionStats(isCorrect) {
@@ -419,7 +515,7 @@
         function generateRandomNumber() {
             // Si no hay números disponibles, reiniciar el ciclo
             if (practiceAvailableNumbers.length === 0) {
-                practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                practiceAvailableNumbers = getNumberRange();
                 practiceUsedNumbers = [];
                 console.log('🔄 Ciclo reiniciado - todos los números disponibles de nuevo');
             }
@@ -440,7 +536,7 @@
         }
 
         function generateWrongOptions(correctAnswer) {
-            const allNumbers = Object.keys(numbers).map(Number);
+            const allNumbers = getNumberRange();
             const wrongOptions = allNumbers
                 .filter(num => num !== correctAnswer)
                 .sort(() => Math.random() - 0.5)
@@ -449,7 +545,7 @@
         }
 
         function generateWrongNumberOptions(correctAnswer) {
-            const allNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            const allNumbers = getNumberRange();
             const wrongOptions = allNumbers
                 .filter(num => num !== correctAnswer)
                 .sort(() => Math.random() - 0.5)
@@ -496,43 +592,42 @@
             });
         }
         
-// MP3 AUDIO SYSTEM - Adam & Rachel voices
+        // MP3 AUDIO SYSTEM - Adam & Rachel voices
         // Audio unlock para móviles
-let audioUnlocked = false;
+        let audioUnlocked = false;
 
-function unlockAudio() {
-    if (!audioUnlocked) {
-        const audio = new Audio();
-        audio.play().then(() => {
-            audioUnlocked = true;
-        }).catch(() => {});
-    }
-}
+        function unlockAudio() {
+            if (!audioUnlocked) {
+                const audio = new Audio();
+                audio.play().then(() => {
+                    audioUnlocked = true;
+                }).catch(() => {});
+            }
+        }
 
- // Unlock audio en primera interacción
-document.addEventListener('click', unlockAudio, { once: true });
-document.addEventListener('touchstart', unlockAudio, { once: true });       
-// Unlock audio en primera interacción
+        // Unlock audio en primera interacción
+        document.addEventListener('click', unlockAudio, { once: true });
+        document.addEventListener('touchstart', unlockAudio, { once: true });       
 
-function speakNumber(number) {
-    const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
-    
-    const audio = new Audio(audioFile);
-    unlockAudio(); // Asegurar unlock
-audio.play().catch(error => {
-        console.error('Error playing audio:', error);
-    });
-}
+        function speakNumber(number) {
+            const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
+            
+            const audio = new Audio(audioFile);
+            unlockAudio(); // Asegurar unlock
+            audio.play().catch(error => {
+                console.error('Error playing audio:', error);
+            });
+        }
 
-// Voice switching function
-function switchVoice() {
-    currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
-    const voiceBtn = document.getElementById('voice-btn');
-    if (voiceBtn) {
-        voiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
-    }
-    console.log(`Voice switched to: ${currentVoice}`);
-}
+        // Voice switching function
+        function switchVoice() {
+            currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
+            const voiceBtn = document.getElementById('voice-btn');
+            if (voiceBtn) {
+                voiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+            }
+            console.log(`Voice switched to: ${currentVoice}`);
+        }
 
         function showFeedback(message, isCorrect) {
             feedback.textContent = message;
@@ -554,8 +649,9 @@ function switchVoice() {
             numberDisplay.classList.remove('bounce');
             setTimeout(() => numberDisplay.classList.add('bounce'), 10);
             
+            const maxNum = getMaxNumber();
             prevBtn.disabled = currentNumber === 0;
-            nextBtn.disabled = currentNumber === 10;
+            nextBtn.disabled = currentNumber === maxNum;
             
             if (prevBtn.disabled) {
                 prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
@@ -622,11 +718,9 @@ function switchVoice() {
             // 📊 Reset stats for new practice session
             resetSessionStats();
             
-            // Asegurar que el sistema anti-repetición esté listo
-            if (practiceAvailableNumbers.length === 0) {
-                practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                practiceUsedNumbers = [];
-            }
+            // Asegurar que el sistema anti-repetición esté listo con el nivel actual
+            practiceAvailableNumbers = getNumberRange();
+            practiceUsedNumbers = [];
             
             practiceNumber = generateRandomNumber();
             practiceNumberDisplay.textContent = practiceNumber;
@@ -676,10 +770,10 @@ function switchVoice() {
             }, 1500);
         }
 
-       function playPracticeNumberAudio() {
-    unlockAudio(); // Asegurar unlock antes de audio automático
-   speakNumber(practiceNumber);
-       }
+        function playPracticeNumberAudio() {
+            unlockAudio(); // Asegurar unlock antes de audio automático
+            speakNumber(practiceNumber);
+        }
 
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
@@ -702,25 +796,31 @@ function switchVoice() {
         });
 
         nextBtn.addEventListener('click', () => {
-            if (currentNumber < 10) {
+            const maxNum = getMaxNumber();
+            if (currentNumber < maxNum) {
                 currentNumber++;
                 updateDisplay();
             }
         });
 
         speakBtn.addEventListener('click', () => {
-    // Cambiar a gris
-    speakBtn.style.background = '#9CA3AF';
-    speakBtn.style.transform = 'scale(0.95)';
-    
-    speakNumber(currentNumber);
-    
-    // Volver al color original después de 2 segundos
-    setTimeout(() => {
-        speakBtn.style.background = '';
-        speakBtn.style.transform = '';
-    }, 2000);
-});
+            // Cambiar a gris
+            speakBtn.style.background = '#9CA3AF';
+            speakBtn.style.transform = 'scale(0.95)';
+            
+            speakNumber(currentNumber);
+            
+            // Volver al color original después de 2 segundos
+            setTimeout(() => {
+                speakBtn.style.background = '';
+                speakBtn.style.transform = '';
+            }, 2000);
+        });
+
+        // Level selection event listeners
+        beginnerBtn.addEventListener('click', () => switchLevel('beginner'));
+        intermediateBtn.addEventListener('click', () => switchLevel('intermediate'));
+
         startPracticeBtn.addEventListener('click', showPracticeSelection);
         multipleChoiceBtn.addEventListener('click', startMultipleChoicePractice);
         audioOnlyBtn.addEventListener('click', startAudioOnlyPractice);
@@ -728,6 +828,7 @@ function switchVoice() {
         backToLearnBtn.addEventListener('click', switchToLearnMode);
 
         // Inicializar la app
+        updateLevelDisplay();
         updateDisplay();
     </script>
 </body>
