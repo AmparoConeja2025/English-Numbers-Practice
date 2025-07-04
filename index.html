@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+Teléfono la entrada<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -494,7 +494,25 @@
                 choiceButtons.appendChild(button);
             });
         }
+        
 // MP3 AUDIO SYSTEM - Adam & Rachel voices
+        // Audio unlock para móviles
+let audioUnlocked = false;
+
+function unlockAudio() {
+    if (!audioUnlocked) {
+        const audio = new Audio();
+        audio.play().then(() => {
+            audioUnlocked = true;
+        }).catch(() => {});
+    }
+}
+
+ // Unlock audio en primera interacción
+document.addEventListener('click', unlockAudio, { once: true });
+document.addEventListener('touchstart', unlockAudio, { once: true });       
+// Unlock audio en primera interacción
+
 function speakNumber(number) {
     const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
     
