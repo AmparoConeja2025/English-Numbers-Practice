@@ -150,11 +150,11 @@
                 </div>
 
                 <div class="space-y-5 mb-6">
-                    <button id="multiple-choice-btn" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-4 rounded-2xl font-bold text-lg transition-colors">
+                    <button id="multiple-choice-btn" class="w-full btn-secondary text-white py-4 rounded-2xl font-bold text-lg">
                         👆 Opción Múltiple
                         <div class="text-xs opacity-90 font-normal mt-1">Ver número → hacer clic en la palabra</div>
                     </button>
-                    <button id="audio-only-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-2xl font-bold text-lg transition-colors">
+                    <button id="audio-only-btn" class="w-full btn-primary text-white py-4 rounded-2xl font-bold text-lg">
                         🎧 Solo Audio
                         <div class="text-xs opacity-90 font-normal mt-1">Escuchar → elegir el número correcto</div>
                     </button>
@@ -191,7 +191,7 @@
                     </div>
                     
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                    <button id="practice-speak-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full font-semibold text-base mb-5 transition-colors" onclick="speakNumber(practiceNumber)">
+                    <button class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base mb-5" onclick="speakNumber(practiceNumber)">
                         🔊 Escuchar
                     </button>
                     <p class="text-lg text-gray-700 font-medium mb-5">Selecciona la palabra correcta:</p>
@@ -276,7 +276,6 @@
         const choiceButtons = document.getElementById('choice-buttons');
         const numberChoiceButtons = document.getElementById('number-choice-buttons');
         const feedback = document.getElementById('feedback');
-        const practiceSpeakBtn = document.getElementById('practice-speak-btn');
         
         // 📊 TRACKING ELEMENTS
         const correctCountEl = document.getElementById('correct-count');
@@ -497,42 +496,43 @@
             });
         }
         
-        // MP3 AUDIO SYSTEM - Adam & Rachel voices
+// MP3 AUDIO SYSTEM - Adam & Rachel voices
         // Audio unlock para móviles
-        let audioUnlocked = false;
+let audioUnlocked = false;
 
-        function unlockAudio() {
-            if (!audioUnlocked) {
-                const audio = new Audio();
-                audio.play().then(() => {
-                    audioUnlocked = true;
-                }).catch(() => {});
-            }
-        }
+function unlockAudio() {
+    if (!audioUnlocked) {
+        const audio = new Audio();
+        audio.play().then(() => {
+            audioUnlocked = true;
+        }).catch(() => {});
+    }
+}
 
-        // Unlock audio en primera interacción
-        document.addEventListener('click', unlockAudio, { once: true });
-        document.addEventListener('touchstart', unlockAudio, { once: true });       
+ // Unlock audio en primera interacción
+document.addEventListener('click', unlockAudio, { once: true });
+document.addEventListener('touchstart', unlockAudio, { once: true });       
+// Unlock audio en primera interacción
 
-        function speakNumber(number) {
-            const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
-            
-            const audio = new Audio(audioFile);
-            unlockAudio(); // Asegurar unlock
-            audio.play().catch(error => {
-                console.error('Error playing audio:', error);
-            });
-        }
+function speakNumber(number) {
+    const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
+    
+    const audio = new Audio(audioFile);
+    unlockAudio(); // Asegurar unlock
+audio.play().catch(error => {
+        console.error('Error playing audio:', error);
+    });
+}
 
-        // Voice switching function
-        function switchVoice() {
-            currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
-            const voiceBtn = document.getElementById('voice-btn');
-            if (voiceBtn) {
-                voiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
-            }
-            console.log(`Voice switched to: ${currentVoice}`);
-        }
+// Voice switching function
+function switchVoice() {
+    currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
+    const voiceBtn = document.getElementById('voice-btn');
+    if (voiceBtn) {
+        voiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+    }
+    console.log(`Voice switched to: ${currentVoice}`);
+}
 
         function showFeedback(message, isCorrect) {
             feedback.textContent = message;
@@ -593,6 +593,18 @@
                 
                 // Mostrar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'block';
+                document.querySelector('#practice-mode p').textContent = 'Selecciona la palabra correcta:';
+                
+                // Crear botones de opción múltiple
+                createMultipleChoiceButtons();
+                
+            } else if (questionType === 'audio-only') {
+                // Mostrar interfaz de solo audio usando la misma interfaz múltiple
+                multipleChoicePractice.style.display = 'block';
+                audioOnlyPractice.style.display = 'none';
+                
+                // Ocultar el número y cambiar instrucción
+                practiceNumberDisplay.style.display = 'none';
                 document.querySelector('#practice-mode p').textContent = 'Escucha y elige el número correcto:';
                 
                 // Crear botones de números en la misma interfaz
@@ -664,10 +676,10 @@
             }, 1500);
         }
 
-        function playPracticeNumberAudio() {
-            unlockAudio(); // Asegurar unlock antes de audio automático
-            speakNumber(practiceNumber);
-        }
+       function playPracticeNumberAudio() {
+    unlockAudio(); // Asegurar unlock antes de audio automático
+   speakNumber(practiceNumber);
+       }
 
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
@@ -696,36 +708,19 @@
             }
         });
 
-        // 🎨 BOTÓN PRINCIPAL CON FEEDBACK GRIS DIVERTIDO
         speakBtn.addEventListener('click', () => {
-            // Cambiar a gris
-            speakBtn.style.background = '#9CA3AF';
-            speakBtn.style.transform = 'scale(0.95)';
-            
-            speakNumber(currentNumber);
-            
-            // Volver al color original después de 2 segundos
-            setTimeout(() => {
-                speakBtn.style.background = '';
-                speakBtn.style.transform = '';
-            }, 2000);
-        });
-
-        // 🎨 BOTÓN DE PRÁCTICA CON FEEDBACK NARANJA DIVERTIDO
-        practiceSpeakBtn.addEventListener('click', () => {
-            // Cambiar a naranja más oscuro
-            practiceSpeakBtn.style.background = '#EA580C';
-            practiceSpeakBtn.style.transform = 'scale(0.95)';
-            
-            speakNumber(practiceNumber);
-            
-            // Volver al color original después de 2 segundos
-            setTimeout(() => {
-                practiceSpeakBtn.style.background = '';
-                practiceSpeakBtn.style.transform = '';
-            }, 2000);
-        });
-
+    // Cambiar a gris
+    speakBtn.style.background = '#9CA3AF';
+    speakBtn.style.transform = 'scale(0.95)';
+    
+    speakNumber(currentNumber);
+    
+    // Volver al color original después de 2 segundos
+    setTimeout(() => {
+        speakBtn.style.background = '';
+        speakBtn.style.transform = '';
+    }, 2000);
+});
         startPracticeBtn.addEventListener('click', showPracticeSelection);
         multipleChoiceBtn.addEventListener('click', startMultipleChoicePractice);
         audioOnlyBtn.addEventListener('click', startAudioOnlyPractice);
@@ -736,16 +731,4 @@
         updateDisplay();
     </script>
 </body>
-</html>textContent = 'Selecciona la palabra correcta:';
-                
-                // Crear botones de opción múltiple
-                createMultipleChoiceButtons();
-                
-            } else if (questionType === 'audio-only') {
-                // Mostrar interfaz de solo audio usando la misma interfaz múltiple
-                multipleChoicePractice.style.display = 'block';
-                audioOnlyPractice.style.display = 'none';
-                
-                // Ocultar el número y cambiar instrucción
-                practiceNumberDisplay.style.display = 'none';
-                document.querySelector('#practice-mode p').
+</html>
