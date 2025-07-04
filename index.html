@@ -677,10 +677,7 @@ function switchVoice() {
 
        function playPracticeNumberAudio() {
     unlockAudio(); // Asegurar unlock antes de audio automático
-    setTimeout(() => {
-        speakNumber(practiceNumber);
-    }, 100); // Pequeño delay para móviles
-}
+   speakNumber(practiceNumber);
 
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
