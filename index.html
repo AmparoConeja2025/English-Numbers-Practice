@@ -229,7 +229,7 @@
                     </div>
                     
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                    <button class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base mb-5" onclick="speakNumber(practiceNumber)">
+                    <button id="practice-audio-btn" class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base mb-5" onclick="speakNumber(practiceNumber)">
                         🔊 Escuchar
                     </button>
                     <p class="text-lg text-gray-700 font-medium mb-5">Selecciona la palabra correcta:</p>
@@ -692,7 +692,10 @@
                 document.querySelector('#practice-mode p').textContent = 'Selecciona la palabra correcta:';
                 
                 // Crear botones de opción múltiple
-                createMultipleChoiceButtons();
+                createMultipleChoiceButtons();// Restaurar botón a "Escuchar" en modo múltiple
+                const audioBtn = document.getElementById('practice-audio-btn');
+                audioBtn.innerHTML = '🔊 Escuchar';
+                audioBtn.className = 'btn-success text-white px-6 py-2 rounded-full font-semibold text-base mb-5';
                 
             } else if (questionType === 'audio-only') {
                 // Mostrar interfaz de solo audio usando la misma interfaz múltiple
@@ -705,7 +708,10 @@
                 
                 // Crear botones de números en la misma interfaz
                 createAudioChoiceButtons();
-                setTimeout(() => playPracticeNumberAudio(), 500);
+                setTimeout(() => playPracticeNumberAudio(), 500); // Cambiar botón a "Siguiente" y hacerlo más prominente
+const audioBtn = document.getElementById('practice-audio-btn');
+audioBtn.innerHTML = '▶️ Siguiente';
+audioBtn.className = 'btn-success text-white px-8 py-3 rounded-full font-bold text-lg mb-5';
             }
         }
 
