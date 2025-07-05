@@ -761,13 +761,13 @@
             }
             
             // ⏰ SIEMPRE continuar después de 1.5 segundos
-          //  setTimeout(() => {
-            //    practiceNumber = generateRandomNumber();
-            //    practiceNumberDisplay.textContent = practiceNumber;
-           //     configurePracticeInterface(practiceType);
-            //    hideFeedback();
-        //    }, 1500);
-    //  }
+            setTimeout(() => {
+                practiceNumber = generateRandomNumber();
+                practiceNumberDisplay.textContent = practiceNumber;
+               configurePracticeInterface(practiceType);
+            hideFeedback();
+           }, 1500);
+      }
 
         function handleAudioOnlyAnswer(selectedNumber) {
             if (selectedNumber === practiceNumber) {
