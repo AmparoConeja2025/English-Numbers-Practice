@@ -770,10 +770,12 @@
             }, 1500);
         }
 
-        function playPracticeNumberAudio() {
-            unlockAudio(); // Asegurar unlock antes de audio automático
-            speakNumber(practiceNumber);
-        }
+       function playPracticeNumberAudio() {
+    unlockAudio(); // Asegurar unlock antes de audio automático
+    setTimeout(() => {
+        speakNumber(practiceNumber);
+    }, 150); // Pequeño delay para Chrome mobile autoplay
+}
 
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
