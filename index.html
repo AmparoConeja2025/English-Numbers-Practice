@@ -1,869 +1,355 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Práctica de Números en Inglés</title>
+    <title>Juego de Escuchar Números</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .gradient-bg {
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .learning-gradient {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-        }
-        .practice-gradient {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-        }
-        .level-gradient {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            min-height: 100vh;
         }
         
-        /* 📱 PREVENT ACCIDENTAL ZOOM ON ALL BUTTONS */
-        button {
-            touch-action: manipulation;
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
-        .number-display {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        
+        .option-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
         }
-        .word-display {
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-            touch-action: manipulation;
-        }
-        .btn-primary:hover {
+        
+        .option-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px 0 rgba(102, 126, 234, 0.6);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
-        .btn-secondary {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
-            box-shadow: 0 4px 15px 0 rgba(240, 147, 251, 0.4);
-            transition: all 0.3s ease;
-            touch-action: manipulation;
+        
+        .option-button.correct {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #059669;
+            animation: correctPulse 0.6s ease-in-out;
         }
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px 0 rgba(240, 147, 251, 0.6);
+        
+        .option-button.incorrect {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-color: #dc2626;
+            animation: incorrectShake 0.6s ease-in-out;
         }
-        .btn-success {
-            background: linear-gradient(45deg, #4facfe, #00f2fe);
-            box-shadow: 0 4px 15px 0 rgba(79, 172, 254, 0.4);
-            transition: all 0.3s ease;
-            touch-action: manipulation;
-            margin-bottom: 16px;
+        
+        .audio-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid transparent;
         }
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px 0 rgba(79, 172, 254, 0.6);
+        
+        .audio-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
         }
-        .btn-level {
-            background: linear-gradient(45deg, #ff9a56, #ff6a6a);
-            box-shadow: 0 4px 15px 0 rgba(255, 154, 86, 0.4);
-            transition: all 0.3s ease;
-            touch-action: manipulation;
+        
+        .audio-button.listen-state {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-color: #1d4ed8;
         }
-        .btn-level:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px 0 rgba(255, 154, 86, 0.6);
+        
+        .audio-button.repeat-state {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #047857;
         }
-        .btn-level.active {
-            background: linear-gradient(45deg, #48cc6c, #2dd65b);
-            box-shadow: 0 4px 15px 0 rgba(72, 204, 108, 0.6);
+        
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
-        .choice-button {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(102, 126, 234, 0.3);
-            transition: all 0.3s ease;
-            touch-action: manipulation;
+        
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
-        .choice-button:hover {
-            background: rgba(102, 126, 234, 0.1);
-            border-color: rgba(102, 126, 234, 0.6);
-            transform: translateY(-1px);
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .bounce {
-            animation: bounce 0.6s ease-in-out;
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
         }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-        @keyframes celebrationScale {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            40% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            border: 2px solid #d1d5db;
         }
     </style>
 </head>
-<body>
-    <div class="min-h-screen gradient-bg p-4">
-        <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
-            <div class="learning-gradient p-5 text-center">
-                <h1 class="text-2xl font-bold text-white mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
-                <p id="subtitle" class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">¡Aprende los números del 0 al 10 con estilo!</p>
+<body class="p-4">
+    <div class="max-w-2xl mx-auto">
+        <div class="game-container p-8">
+            <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
+                🎧 Juego de Escuchar Números
+            </h1>
+            
+            <!-- Estadísticas -->
+            <div class="stats-card rounded-xl p-4 mb-6">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl font-bold text-green-600" id="correct-count">0</div>
+                        <div class="text-sm text-gray-600">Correctas</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-red-600" id="incorrect-count">0</div>
+                        <div class="text-sm text-gray-600">Incorrectas</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-blue-600" id="total-count">0</div>
+                        <div class="text-sm text-gray-600">Total</div>
+                    </div>
+                </div>
             </div>
             
-            <!-- Learning Mode -->
-            <div id="learn-mode" class="p-5">
-                <!-- 🎯 LEVEL SELECTOR -->
-                <div class="text-center mb-6">
-                    <div class="level-gradient px-4 py-2 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                        📈 Selecciona tu Nivel
-                    </div>
-                    <div class="flex justify-center space-x-3 mb-4">
-                        <button id="beginner-btn" class="btn-level active text-white px-4 py-2 rounded-xl font-bold text-sm">
-                            🌱 Principiante (0-10)
-                        </button>
-                        <button id="intermediate-btn" class="btn-level text-white px-4 py-2 rounded-xl font-bold text-sm">
-                            🚀 Intermedio (0-20)
-                        </button>
-                    </div>
-                </div>
-
-                <div class="text-center mb-6">
-                    <div id="number-display" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                    <div id="word-display" class="text-3xl font-semibold text-gray-800 mb-2 word-display">zero</div>
-                    <div id="pronunciation-display" class="text-lg text-gray-600 mb-5 italic">/siro/</div>
-                    <button id="speak-btn" class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base">
-                        🔊 Escuchar
-                    </button>
-                    <button id="voice-btn" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-base ml-3" onclick="switchVoice()">
-                  🎭 Voice: Adam
-                    </button>
-                </div>
-
-                <div class="flex justify-center space-x-6 mb-6">
-                    <button id="prev-btn" class="btn-primary text-white px-5 py-2 rounded-xl font-medium text-sm">
-                        ← Anterior
-                    </button>
-                    <button id="next-btn" class="btn-primary text-white px-5 py-2 rounded-xl font-medium text-sm">
-                        Siguiente →
-                    </button>
-                </div>
-
-                <div class="text-center">
-                    <button id="start-practice-btn" class="btn-secondary text-white px-8 py-3 rounded-2xl font-bold text-lg">
-                        🚀 Empezar Práctica
-                    </button>
-                </div>
+            <!-- Botón de Audio con Sistema de Dos Estados -->
+            <div class="text-center mb-8">
+                <button id="audio-button" class="audio-button listen-state text-white font-bold py-4 px-8 rounded-full text-lg">
+                    🔊 Escuchar
+                </button>
             </div>
-
-            <!-- Practice Type Selection -->
-            <div id="practice-selection" style="display: none;" class="p-5">
-                <div class="text-center mb-6">
-                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-3" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                        🎯 Elige el Modo de Práctica
-                    </div>
-                    <div id="level-indicator" class="level-gradient px-4 py-1 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                        🌱 Nivel Principiante (0-10)
-                    </div>
-                    <p class="text-lg text-gray-700 font-medium">¿Cómo te gustaría practicar?</p>
-                </div>
-
-                <div class="space-y-5 mb-6">
-                    <button id="multiple-choice-btn" class="w-full btn-secondary text-white py-4 rounded-2xl font-bold text-lg">
-                        👆 Opción Múltiple
-                        <div class="text-xs opacity-90 font-normal mt-1">Ver número → hacer clic en la palabra</div>
-                    </button>
-                    <button id="audio-only-btn" class="w-full btn-primary text-white py-4 rounded-2xl font-bold text-lg">
-                        🎧 Solo Audio
-                        <div class="text-xs opacity-90 font-normal mt-1">Escuchar → elegir el número correcto</div>
-                    </button>
-                </div>
-
-                <div class="text-center">
-                    <button id="back-from-selection-btn" class="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 font-medium text-sm">
-                        ← Página Principal
-                    </button>
-                </div>
+            
+            <!-- Opciones de Números -->
+            <div class="grid grid-cols-2 gap-4 mb-6" id="options-container">
+                <!-- Las opciones se generarán aquí -->
             </div>
-
-            <!-- Practice Mode -->
-            <div id="practice-mode" style="display: none;" class="p-5">
-                <div class="text-center mb-6">
-                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-2" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                        <span id="practice-mode-label">Modo de Práctica</span>
-                    </div>
-                    <div id="practice-level-indicator" class="level-gradient px-4 py-1 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                        🌱 Nivel Principiante (0-10)
-                    </div>
-                    
-                    <!-- 📊 TRACKING DISPLAY -->
-                    <div class="flex justify-center space-x-3 mb-4">
-                        <div class="bg-green-100 px-3 py-1 rounded-full">
-                            <span class="text-green-800 font-bold text-sm">✅ <span id="correct-count">0</span></span>
-                        </div>
-                        <div class="bg-red-100 px-3 py-1 rounded-full">
-                            <span class="text-red-800 font-bold text-sm">❌ <span id="incorrect-count">0</span></span>
-                        </div>
-                        <div class="bg-blue-100 px-3 py-1 rounded-full">
-                            <span class="text-blue-800 font-bold text-sm">📊 <span id="total-count">0</span></span>
-                        </div>
-                        <div id="percentage-pill" class="px-3 py-1 rounded-full">
-                            <span id="percentage-text" class="font-bold text-sm">📈 <span id="percentage-count">0</span>%</span>
-                        </div>
-                    </div>
-                    
-                    <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                   <div id="audio-controls" class="flex justify-center mb-5" style="display: none;">
-                   <button id="repeat-btn" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-xl">
-                🔊 Escuchar/Repetir
-                    </button>
-                    </div>
-                   
-                    
-                    <!-- Multiple Choice Practice -->
-                    <div id="multiple-choice-practice">
-                        <div class="grid grid-cols-2 gap-3 mb-5" id="choice-buttons">
-                            <!-- Choice buttons will be generated here -->
-                        </div>
-                    </div>
-                    
-                    <!-- Audio-Only Practice -->
-                    <div id="audio-only-practice" style="display: none;">
-                        <div class="grid grid-cols-2 gap-3 mb-5" id="number-choice-buttons">
-                            <!-- Number choice buttons will be generated here -->
-                        </div>
-                    </div>
-                    
-                    <div id="feedback" class="text-center p-3 rounded-2xl font-bold text-base mb-5 hidden transition-all"></div>
-                </div>
-
-                <div class="text-center">
-                    <button id="back-to-learn-btn" class="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 font-medium text-sm">
-                        ← Volver al Aprendizaje
-                    </button>
-                </div>
+            
+            <!-- Mensaje de Resultado -->
+            <div id="result-message" class="text-center text-lg font-semibold mb-4 h-8"></div>
+            
+            <!-- Controles -->
+            <div class="text-center">
+                <button id="new-game-button" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                    🎮 Nuevo Juego
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        const numbers = {
-            0: { word: 'zero', pronunciation: '/siro/' },
-            1: { word: 'one', pronunciation: '/uan/' },
-            2: { word: 'two', pronunciation: '/tu/' },
-            3: { word: 'three', pronunciation: '/thri/' },
-            4: { word: 'four', pronunciation: '/for/' },
-            5: { word: 'five', pronunciation: '/faiv/' },
-            6: { word: 'six', pronunciation: '/siks/' },
-            7: { word: 'seven', pronunciation: '/seven/' },
-            8: { word: 'eight', pronunciation: '/eit/' },
-            9: { word: 'nine', pronunciation: '/nain/' },
-            10: { word: 'ten', pronunciation: '/ten/' },
-            11: { word: 'eleven', pronunciation: '/iléven/' },
-            12: { word: 'twelve', pronunciation: '/tuélv/' },
-            13: { word: 'thirteen', pronunciation: '/thirtín/' },
-            14: { word: 'fourteen', pronunciation: '/fortín/' },
-            15: { word: 'fifteen', pronunciation: '/fiftín/' },
-            16: { word: 'sixteen', pronunciation: '/sikstín/' },
-            17: { word: 'seventeen', pronunciation: '/seventín/' },
-            18: { word: 'eighteen', pronunciation: '/eitín/' },
-            19: { word: 'nineteen', pronunciation: '/naintín/' },
-            20: { word: 'twenty', pronunciation: '/tuénti/' }
-        };
-
-        let currentNumber = 0;
-        let currentVoice = 'adam';
-        let currentMode = 'learn';
-        let currentLevel = 'beginner'; // 'beginner' (0-10) or 'intermediate' (0-20)
-        let practiceNumber = 0;
-        let practiceType = 'multiple-choice';
-        let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        let practiceUsedNumbers = [];
-        
-        // 📊 TRACKING VARIABLES
-        let sessionStats = {
-            correct: 0,
-            incorrect: 0,
-            total: 0
-        };
-
-        const numberDisplay = document.getElementById('number-display');
-        const wordDisplay = document.getElementById('word-display');
-        const pronunciationDisplay = document.getElementById('pronunciation-display');
-        const speakBtn = document.getElementById('speak-btn');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const repeatBtn = document.getElementById('repeat-btn'); 
-        const subtitle = document.getElementById('subtitle');
-        
-        const learnMode = document.getElementById('learn-mode');
-        const practiceSelection = document.getElementById('practice-selection');
-        const practiceMode = document.getElementById('practice-mode');
-        
-        const beginnerBtn = document.getElementById('beginner-btn');
-        const intermediateBtn = document.getElementById('intermediate-btn');
-        const levelIndicator = document.getElementById('level-indicator');
-        const practiceLevelIndicator = document.getElementById('practice-level-indicator');
-        
-        const startPracticeBtn = document.getElementById('start-practice-btn');
-        const multipleChoiceBtn = document.getElementById('multiple-choice-btn');
-        const audioOnlyBtn = document.getElementById('audio-only-btn');
-        const backFromSelectionBtn = document.getElementById('back-from-selection-btn');
-        
-        const backToLearnBtn = document.getElementById('back-to-learn-btn');
-        const practiceNumberDisplay = document.getElementById('practice-number');
-        const practiceModeLabel = document.getElementById('practice-mode-label');
-        const multipleChoicePractice = document.getElementById('multiple-choice-practice');
-        const audioOnlyPractice = document.getElementById('audio-only-practice');
-        const choiceButtons = document.getElementById('choice-buttons');
-        const numberChoiceButtons = document.getElementById('number-choice-buttons');
-        const feedback = document.getElementById('feedback');
-        
-        // 📊 TRACKING ELEMENTS
-        const correctCountEl = document.getElementById('correct-count');
-        const incorrectCountEl = document.getElementById('incorrect-count');
-        const totalCountEl = document.getElementById('total-count');
-        const percentageCountEl = document.getElementById('percentage-count');
-        const percentagePillEl = document.getElementById('percentage-pill');
-        const percentageTextEl = document.getElementById('percentage-text');
-
-        // 🎯 LEVEL MANAGEMENT
-        function getNumberRange() {
-            return currentLevel === 'beginner' ? 
-                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : 
-                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-        }
-
-        function getMaxNumber() {
-            return currentLevel === 'beginner' ? 10 : 20;
-        }
-
-        function updateLevelDisplay() {
-            const isIntermediate = currentLevel === 'intermediate';
-            const range = isIntermediate ? '0-20' : '0-10';
-            const emoji = isIntermediate ? '🚀' : '🌱';
-            const levelName = isIntermediate ? 'Intermedio' : 'Principiante';
-            
-            subtitle.textContent = `¡Aprende los números del ${range} con estilo!`;
-            levelIndicator.innerHTML = `${emoji} Nivel ${levelName} (${range})`;
-            practiceLevelIndicator.innerHTML = `${emoji} Nivel ${levelName} (${range})`;
-            
-            // Update button active states
-            beginnerBtn.classList.toggle('active', currentLevel === 'beginner');
-            intermediateBtn.classList.toggle('active', currentLevel === 'intermediate');
-            
-            // Reset practice numbers for new level
-            practiceAvailableNumbers = getNumberRange();
-            practiceUsedNumbers = [];
-        }
-
-        function switchLevel(level) {
-            currentLevel = level;
-            updateLevelDisplay();
-            
-            // Reset to first number when switching levels
-            currentNumber = 0;
-            updateDisplay();
-            
-            console.log(`🎯 Switched to ${level} level: ${getNumberRange()}`);
-        }
-
-        // 📊 TRACKING FUNCTIONS
-        function updateSessionStats(isCorrect) {
-            if (isCorrect) {
-                sessionStats.correct++;
-            } else {
-                sessionStats.incorrect++;
-            }
-            sessionStats.total++;
-            
-            // Calculate percentage
-            const percentage = sessionStats.total > 0 ? 
-                Math.round((sessionStats.correct / sessionStats.total) * 100) : 0;
-            
-            // Update display
-            correctCountEl.textContent = sessionStats.correct;
-            incorrectCountEl.textContent = sessionStats.incorrect;
-            totalCountEl.textContent = sessionStats.total;
-            percentageCountEl.textContent = percentage;
-            
-            // Update percentage color dynamically
-            updatePercentageColor(percentage);
-            
-            console.log(`📊 Stats: ✅${sessionStats.correct} ❌${sessionStats.incorrect} 📊${sessionStats.total} 📈${percentage}%`);
-        }
-        
-        function updatePercentageColor(percentage) {
-            // Remove existing classes
-            percentagePillEl.className = 'px-3 py-1 rounded-full';
-            
-            if (percentage >= 80) {
-                // 🟢 Green for 80%+
-                percentagePillEl.classList.add('bg-green-100');
-                percentageTextEl.className = 'font-bold text-sm text-green-800';
-            } else if (percentage >= 60) {
-                // 🟡 Yellow for 60-79%
-                percentagePillEl.classList.add('bg-yellow-100');
-                percentageTextEl.className = 'font-bold text-sm text-yellow-800';
-            } else {
-                // 🔴 Red for <60%
-                percentagePillEl.classList.add('bg-red-100');
-                percentageTextEl.className = 'font-bold text-sm text-red-800';
-            }
-        }
-        
-        function resetSessionStats() {
-            sessionStats = { correct: 0, incorrect: 0, total: 0 };
-            correctCountEl.textContent = '0';
-            incorrectCountEl.textContent = '0';
-            totalCountEl.textContent = '0';
-            percentageCountEl.textContent = '0';
-            
-            // Reset percentage to neutral color
-            percentagePillEl.className = 'px-3 py-1 rounded-full bg-gray-100';
-            percentageTextEl.className = 'font-bold text-sm text-gray-600';
-            
-            console.log('📊 Stats reset for new session');
-        }
-
-        // 🎉 CELEBRATION ANIMATION SYSTEM
-        const celebrationMessages = [
-            { text: '¡Correcto, buen oído!', emoji: '🎧', colors: 'rgba(34, 197, 94, 0.95)' },
-            { text: '¡Dale pues, buen trabajo!', emoji: '💪', colors: 'rgba(59, 130, 246, 0.95)' },
-            { text: '¡Excelente, sigue así!', emoji: '⭐', colors: 'rgba(168, 85, 247, 0.95)' },
-            { text: '¡Qué bien, lo tienes!', emoji: '🎯', colors: 'rgba(236, 72, 153, 0.95)' },
-            { text: '¡Perfecto, eres un crack!', emoji: '🏆', colors: 'rgba(245, 158, 11, 0.95)' },
-            { text: '¡Increíble, vas súper bien!', emoji: '🚀', colors: 'rgba(20, 184, 166, 0.95)' },
-            { text: '¡Genial, qué inteligente!', emoji: '🧠', colors: 'rgba(139, 69, 19, 0.95)' },
-            { text: '¡Brutal, lo dominas!', emoji: '🔥', colors: 'rgba(220, 38, 38, 0.95)' }
-        ];
-
-        let availableCelebrations = [...celebrationMessages];
-        let usedCelebrations = [];
-
-        function getRandomCelebration() {
-            // Si no hay celebraciones disponibles, reiniciar el ciclo
-            if (availableCelebrations.length === 0) {
-                availableCelebrations = [...celebrationMessages];
-                usedCelebrations = [];
-                console.log('🎉 Celebraciones reiniciadas - todas disponibles de nuevo');
+        class NumberListeningGame {
+            constructor() {
+                this.correctAnswer = null;
+                this.options = [];
+                this.correctCount = 0;
+                this.incorrectCount = 0;
+                this.hasListened = false; // Control del estado del botón
+                this.audioContext = null;
+                this.isPlaying = false;
+                
+                this.initAudio();
+                this.initEventListeners();
+                this.generateNewRound();
             }
             
-            // Seleccionar una celebración aleatoria de las disponibles
-            const randomIndex = Math.floor(Math.random() * availableCelebrations.length);
-            const selectedCelebration = availableCelebrations[randomIndex];
+            initAudio() {
+                // Inicializar AudioContext cuando el usuario interactúe
+                document.addEventListener('click', () => {
+                    if (!this.audioContext) {
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                }, { once: true });
+            }
             
-            // Remover de disponibles y agregar a usadas
-            availableCelebrations.splice(randomIndex, 1);
-            usedCelebrations.push(selectedCelebration);
+            initEventListeners() {
+                document.getElementById('audio-button').addEventListener('click', () => {
+                    this.playAudio();
+                });
+                
+                document.getElementById('new-game-button').addEventListener('click', () => {
+                    this.resetGame();
+                });
+            }
             
-            console.log(`🎊 Celebración: ${selectedCelebration.text}`);
-            console.log(`🎭 Disponibles: ${availableCelebrations.length}, Usadas: ${usedCelebrations.length}`);
-            
-            return selectedCelebration;
-        }
-
-        function showCelebrationAnimation() {
-            // Get unique celebration message
-            const celebration = getRandomCelebration();
-            
-            // Create animation element
-            const animationEl = document.createElement('div');
-            animationEl.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                z-index: 1000;
-                background: ${celebration.colors};
-                color: white;
-                padding: 20px 40px;
-                border-radius: 20px;
-                font-size: 24px;
-                font-weight: bold;
-                text-align: center;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                backdrop-filter: blur(10px);
-                animation: celebrationScale 1.2s ease-out;
-            `;
-            
-            animationEl.innerHTML = `${celebration.emoji}<br><span style="font-size: 18px;">${celebration.text}</span>`;
-            
-            document.body.appendChild(animationEl);
-            
-            // Remove after animation
-            setTimeout(() => {
-                if (animationEl.parentNode) {
-                    animationEl.parentNode.removeChild(animationEl);
+            generateNewRound() {
+                // Generar número correcto (1-100)
+                this.correctAnswer = Math.floor(Math.random() * 100) + 1;
+                
+                // Generar opciones incorrectas
+                const incorrectOptions = [];
+                while (incorrectOptions.length < 3) {
+                    const option = Math.floor(Math.random() * 100) + 1;
+                    if (option !== this.correctAnswer && !incorrectOptions.includes(option)) {
+                        incorrectOptions.push(option);
+                    }
                 }
-            }, 1200);
-        }
-
-        function generateRandomNumber() {
-            // Si no hay números disponibles, reiniciar el ciclo
-            if (practiceAvailableNumbers.length === 0) {
-                practiceAvailableNumbers = getNumberRange();
-                practiceUsedNumbers = [];
-                console.log('🔄 Ciclo reiniciado - todos los números disponibles de nuevo');
+                
+                // Mezclar todas las opciones
+                this.options = [this.correctAnswer, ...incorrectOptions];
+                this.shuffleArray(this.options);
+                
+                // Resetear estado del botón a "Escuchar"
+                this.hasListened = false;
+                this.updateAudioButton();
+                
+                // Renderizar opciones
+                this.renderOptions();
+                
+                // Limpiar mensaje de resultado
+                document.getElementById('result-message').textContent = '';
             }
             
-            // Seleccionar un número aleatorio de los disponibles
-            const randomIndex = Math.floor(Math.random() * practiceAvailableNumbers.length);
-            const selectedNumber = practiceAvailableNumbers[randomIndex];
+            updateAudioButton() {
+                const button = document.getElementById('audio-button');
+                
+                if (this.hasListened) {
+                    // Estado 2: Repetir
+                    button.className = 'audio-button repeat-state text-white font-bold py-4 px-8 rounded-full text-lg';
+                    button.textContent = '🔄 Repetir';
+                } else {
+                    // Estado 1: Escuchar
+                    button.className = 'audio-button listen-state text-white font-bold py-4 px-8 rounded-full text-lg';
+                    button.textContent = '🔊 Escuchar';
+                }
+            }
             
-            // Remover el número seleccionado de disponibles y agregarlo a usados
-            practiceAvailableNumbers.splice(randomIndex, 1);
-            practiceUsedNumbers.push(selectedNumber);
+            renderOptions() {
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                
+                this.options.forEach((number, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-button bg-white hover:bg-gray-50 border-2 border-gray-200 rounded-xl p-6 text-xl font-bold text-gray-800';
+                    button.textContent = number;
+                    button.addEventListener('click', () => this.checkAnswer(number, button));
+                    container.appendChild(button);
+                });
+                
+                // Añadir animación de entrada
+                container.classList.add('fade-in');
+            }
             
-            console.log(`🎯 Número seleccionado: ${selectedNumber}`);
-            console.log(`📋 Disponibles restantes: [${practiceAvailableNumbers.join(', ')}]`);
-            console.log(`✅ Usados en este ciclo: [${practiceUsedNumbers.join(', ')}]`);
+            async playAudio() {
+                if (this.isPlaying) return;
+                
+                this.isPlaying = true;
+                
+                // Cambiar a estado "Repetir" después del primer click
+                if (!this.hasListened) {
+                    this.hasListened = true;
+                    this.updateAudioButton();
+                }
+                
+                try {
+                    if (!this.audioContext) {
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                    
+                    // Separar el número en dígitos
+                    const digits = this.correctAnswer.toString().split('').map(Number);
+                    
+                    // Reproducir cada dígito con una pausa
+                    for (let i = 0; i < digits.length; i++) {
+                        await this.playDigit(digits[i]);
+                        if (i < digits.length - 1) {
+                            await this.delay(300); // Pausa entre dígitos
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error al reproducir audio:', error);
+                }
+                
+                this.isPlaying = false;
+            }
             
-            return selectedNumber;
-        }
-
-        function generateWrongOptions(correctAnswer) {
-            const allNumbers = getNumberRange();
-            const wrongOptions = allNumbers
-                .filter(num => num !== correctAnswer)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 3);
-            return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
-        }
-
-        function generateWrongNumberOptions(correctAnswer) {
-            const allNumbers = getNumberRange();
-            const wrongOptions = allNumbers
-                .filter(num => num !== correctAnswer)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 3);
-            return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
-        }
-
-        function createNumberChoiceButtons() {
-            const options = generateWrongNumberOptions(practiceNumber);
-            numberChoiceButtons.innerHTML = '';
+            async playDigit(digit) {
+                return new Promise((resolve) => {
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    // Frecuencias para cada dígito (en Hz)
+                    const frequencies = {
+                        0: 220, 1: 246, 2: 277, 3: 311, 4: 349,
+                        5: 392, 6: 440, 7: 494, 8: 554, 9: 622
+                    };
+                    
+                    oscillator.frequency.setValueAtTime(frequencies[digit], this.audioContext.currentTime);
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                    
+                    oscillator.start();
+                    oscillator.stop(this.audioContext.currentTime + 0.5);
+                    
+                    oscillator.onended = () => resolve();
+                });
+            }
             
-            options.forEach((num) => {
-                const button = document.createElement('button');
-                button.textContent = num;
-                button.className = 'choice-button py-5 rounded-2xl font-bold text-2xl transition-all';
-                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
-                numberChoiceButtons.appendChild(button);
-            });
-        }
-
-        function createMultipleChoiceButtons() {
-            const options = generateWrongOptions(practiceNumber);
-            choiceButtons.innerHTML = '';
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
             
-            options.forEach((num) => {
-                const button = document.createElement('button');
-                button.textContent = numbers[num].word;
-                button.className = 'choice-button py-3 rounded-2xl font-bold text-base transition-all';
-                button.addEventListener('click', () => handleMultipleChoiceAnswer(numbers[num].word));
-                choiceButtons.appendChild(button);
-            });
-        }
-
-        function createAudioChoiceButtons() {
-            const options = generateWrongNumberOptions(practiceNumber);
-            choiceButtons.innerHTML = '';
+            checkAnswer(selectedNumber, buttonElement) {
+                const isCorrect = selectedNumber === this.correctAnswer;
+                
+                if (isCorrect) {
+                    this.correctCount++;
+                    buttonElement.classList.add('correct');
+                    document.getElementById('result-message').textContent = '¡Correcto! 🎉';
+                    document.getElementById('result-message').className = 'text-center text-lg font-semibold mb-4 h-8 text-green-600';
+                } else {
+                    this.incorrectCount++;
+                    buttonElement.classList.add('incorrect');
+                    document.getElementById('result-message').textContent = `Incorrecto. El número era ${this.correctAnswer}`;
+                    document.getElementById('result-message').className = 'text-center text-lg font-semibold mb-4 h-8 text-red-600';
+                }
+                
+                this.updateStats();
+                
+                // Deshabilitar todas las opciones
+                document.querySelectorAll('.option-button').forEach(btn => {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50');
+                });
+                
+                // Generar nueva ronda después de 2 segundos
+                setTimeout(() => {
+                    this.generateNewRound();
+                }, 2000);
+            }
             
-            options.forEach((num) => {
-                const button = document.createElement('button');
-                button.textContent = num;
-                button.className = 'choice-button py-3 rounded-2xl font-bold text-base transition-all';
-                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
-                choiceButtons.appendChild(button);
-            });
+            updateStats() {
+                document.getElementById('correct-count').textContent = this.correctCount;
+                document.getElementById('incorrect-count').textContent = this.incorrectCount;
+                document.getElementById('total-count').textContent = this.correctCount + this.incorrectCount;
+            }
+            
+            resetGame() {
+                this.correctCount = 0;
+                this.incorrectCount = 0;
+                this.hasListened = false;
+                this.updateStats();
+                this.generateNewRound();
+            }
+            
+            shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
         }
         
-        // MP3 AUDIO SYSTEM - Adam & Rachel voices
-        // Audio unlock para móviles
-        let audioUnlocked = false;
-
-        function unlockAudio() {
-            if (!audioUnlocked) {
-                const audio = new Audio();
-                audio.play().then(() => {
-                    audioUnlocked = true;
-                }).catch(() => {});
-            }
-        }
-
-        // Unlock audio en primera interacción
-        document.addEventListener('click', unlockAudio, { once: true });
-        document.addEventListener('touchstart', unlockAudio, { once: true });       
-
-        function speakNumber(number) {
-            const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
-            
-            const audio = new Audio(audioFile);
-            unlockAudio(); // Asegurar unlock
-            audio.play().catch(error => {
-                console.error('Error playing audio:', error);
-            });
-        }
-
-        // Voice switching function
-        function switchVoice() {
-            currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
-            const voiceBtn = document.getElementById('voice-btn');
-            if (voiceBtn) {
-                voiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
-            }
-            console.log(`Voice switched to: ${currentVoice}`);
-        }
-
-        function showFeedback(message, isCorrect) {
-            feedback.textContent = message;
-            feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-6 transition-all ${
-                isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-            }`;
-            feedback.classList.remove('hidden');
-        }
-
-        function hideFeedback() {
-            feedback.classList.add('hidden');
-        }
-
-        function updateDisplay() {
-            numberDisplay.textContent = currentNumber;
-            wordDisplay.textContent = numbers[currentNumber].word;
-            pronunciationDisplay.textContent = numbers[currentNumber].pronunciation;
-            
-            numberDisplay.classList.remove('bounce');
-            setTimeout(() => numberDisplay.classList.add('bounce'), 10);
-            
-            const maxNum = getMaxNumber();
-            prevBtn.disabled = currentNumber === 0;
-            nextBtn.disabled = currentNumber === maxNum;
-            
-            if (prevBtn.disabled) {
-                prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            } else {
-                prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-            
-            if (nextBtn.disabled) {
-                nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            } else {
-                nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-        }
-
-        function showPracticeSelection() {
-            currentMode = 'selection';
-            learnMode.style.display = 'none';
-            practiceSelection.style.display = 'block';
-            practiceMode.style.display = 'none';
-        }
-
-        function switchToLearnMode() {
-            currentMode = 'learn';
-            learnMode.style.display = 'block';
-            practiceSelection.style.display = 'none';
-            practiceMode.style.display = 'none';
-            hideFeedback();
-        }
-
-        function configurePracticeInterface(questionType) {
-            if (questionType === 'multiple-choice') {
-                // Mostrar interfaz de opción múltiple
-                multipleChoicePractice.style.display = 'block';
-                audioOnlyPractice.style.display = 'none';
-               // Mostrar botones de audio también en múltiple
-                document.getElementById('audio-controls').style.display = 'flex';
-                
-                // Mostrar el número y cambiar instrucción
-                practiceNumberDisplay.style.display = 'block';
-                
-                
-                // Crear botones de opción múltiple
-                createMultipleChoiceButtons();
-                } else if (questionType === 'audio-only') {
-        // Mostrar interfaz de solo audio usando la misma interfaz múltiple
-        multipleChoicePractice.style.display = 'block';
-        audioOnlyPractice.style.display = 'none';
-        
-        // Mostrar botones de audio
-        document.getElementById('audio-controls').style.display = 'flex';
-        
-        // Ocultar el número y cambiar instrucción
-        practiceNumberDisplay.style.display = 'none';
-        
-        // Crear botones de números en la misma interfaz
-        createAudioChoiceButtons();
-                
-                
-                // Ocultar el número y cambiar instrucción
-                practiceNumberDisplay.style.display = 'none';
-                document.querySelector('#practice-mode p').textContent = 'Escucha y elige el número correcto:';
-                
-                // Crear botones de números en la misma interfaz
-                createAudioChoiceButtons();
-                       
-               
-            }
-        }
-
-        function switchToPracticeMode() {
-            currentMode = 'practice';
-            learnMode.style.display = 'none';
-            practiceSelection.style.display = 'none';
-            practiceMode.style.display = 'block';
-            
-            // 📊 Reset stats for new practice session
-            resetSessionStats();
-            
-            // Asegurar que el sistema anti-repetición esté listo con el nivel actual
-            practiceAvailableNumbers = getNumberRange();
-            practiceUsedNumbers = [];
-            
-            practiceNumber = generateRandomNumber();
-            practiceNumberDisplay.textContent = practiceNumber;
-            
-            // Configurar interfaz según el tipo de práctica
-            configurePracticeInterface(practiceType);
-            hideFeedback();
-            // Auto-play inicial solo para Solo Audio
-            if (practiceType === 'audio-only') {
-            setTimeout(() => {
-            speakNumber(practiceNumber);
-            }, 500);
-    }
-        }
-
-        function handleMultipleChoiceAnswer(selectedWord) {
-            const correctAnswer = numbers[practiceNumber].word.toLowerCase();
-            
-            if (selectedWord.toLowerCase() === correctAnswer) {
-                updateSessionStats(true); // 📊 Track correct answer
-                showCelebrationAnimation(); // 🎉 Show celebration!
-                showFeedback('✅ ¡Correcto! ¡Excelente!', true);
-            } else {
-                updateSessionStats(false); // 📊 Track incorrect answer
-                showFeedback(`❌ ¡No del todo! La respuesta correcta es "${correctAnswer}"`, false);
-            }
-            
-            // ⏰ SIEMPRE continuar después de 1.5 segundos
-            setTimeout(() => {
-                practiceNumber = generateRandomNumber();
-                practiceNumberDisplay.textContent = practiceNumber;
-               configurePracticeInterface(practiceType);
-            hideFeedback();
-           }, 1500);
-      }
-
-        function handleAudioOnlyAnswer(selectedNumber) {
-            if (selectedNumber === practiceNumber) {
-                updateSessionStats(true); // 📊 Track correct answer
-                showCelebrationAnimation(); // 🎉 Show celebration!
-                showFeedback('✅ ¡Correcto! ¡Excelente oído!', true);
-            } else {
-                updateSessionStats(false); // 📊 Track incorrect answer
-                showFeedback(`❌ ¡No del todo! El número correcto era "${practiceNumber}"`, false);
-            }
-            
-            // ⏰ SIEMPRE continuar después de 1.5 segundos
-         //   setTimeout(() => {
-                practiceNumber = generateRandomNumber();
-                practiceNumberDisplay.textContent = practiceNumber;
-                configurePracticeInterface(practiceType);
-                hideFeedback();
-         //   }, 1500);
-        }
-
-       function playPracticeNumberAudio() {
-    unlockAudio(); // Asegurar unlock antes de audio automático
-    setTimeout(() => {
-        speakNumber(practiceNumber);
-    }, 150); // Pequeño delay para Chrome mobile autoplay
-}
-
-        function startMultipleChoicePractice() {
-            practiceType = 'multiple-choice';
-            practiceModeLabel.textContent = '👆 Opción Múltiple';
-            switchToPracticeMode();
-        }
-
-        function startAudioOnlyPractice() {
-            practiceType = 'audio-only';
-            practiceModeLabel.textContent = '🎧 Práctica Solo Audio';
-            switchToPracticeMode();
-        }
-
-        // Event Listeners
-        prevBtn.addEventListener('click', () => {
-            if (currentNumber > 0) {
-                currentNumber--;
-                updateDisplay();
-            }
+        // Inicializar el juego cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', () => {
+            new NumberListeningGame();
         });
-
-        nextBtn.addEventListener('click', () => {
-            const maxNum = getMaxNumber();
-            if (currentNumber < maxNum) {
-                currentNumber++;
-                updateDisplay();
-            }
-        });
-
-        speakBtn.addEventListener('click', () => {
-            // Cambiar a gris
-            speakBtn.style.background = '#9CA3AF';
-            speakBtn.style.transform = 'scale(0.95)';
-            
-            speakNumber(currentNumber);
-            
-            // Volver al color original después de 2 segundos
-            setTimeout(() => {
-                speakBtn.style.background = '';
-                speakBtn.style.transform = '';
-            }, 2000);
-        });
-
-        // Level selection event listeners
-        beginnerBtn.addEventListener('click', () => switchLevel('beginner'));
-        intermediateBtn.addEventListener('click', () => switchLevel('intermediate'));
-
-        startPracticeBtn.addEventListener('click', showPracticeSelection);
-        multipleChoiceBtn.addEventListener('click', startMultipleChoicePractice);
-        audioOnlyBtn.addEventListener('click', startAudioOnlyPractice);
-        backFromSelectionBtn.addEventListener('click', switchToLearnMode);
-        backToLearnBtn.addEventListener('click', switchToLearnMode);
-
-        
-        if (repeatBtn) {
-        repeatBtn.addEventListener('click', () => {
-        console.log('🔄 Botón Repetir clickeado!');
-        speakNumber(practiceNumber);
-    });
-}
-
-
- 
-
-        // Inicializar la app
-        updateLevelDisplay();
-        updateDisplay();
     </script>
 </body>
 </html>
