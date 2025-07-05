@@ -230,10 +230,10 @@
                     
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
                     <div id="audio-controls" class="flex justify-center space-x-4 mb-5">
-                    <button id="repeat-btn" class="btn-primary text-white px-6 py-3 rounded-full font-bold text-base">
+                    <button id="repeat-btn" class="btn-primary text-white px-8 py-3 rounded-full font-bold text-base">
                     🔄 Repetir
                     </button>
-                    <button id="next-btn" class="btn-success text-white px-6 py-3 rounded-full font-bold text-base">
+                    <button id="next-btn" class="btn-success text-white px-8 py-3 rounded-full font-bold text-base">
                     ▶️ Siguiente
                     </button>
                     </div>
@@ -718,13 +718,16 @@ const nextBtn = document.getElementById('next-btn');
 
 if (repeatBtn) {
     repeatBtn.addEventListener('click', () => {
+        console.log('🔄 Botón Repetir clickeado!');
         speakNumber(practiceNumber);
     });
 }
 
 if (nextBtn) {
     nextBtn.addEventListener('click', () => {
+        console.log('🔥 Botón Siguiente clickeado!');
         practiceNumber = generateRandomNumber();
+        console.log('🎯 Nuevo número:', practiceNumber);
         practiceNumberDisplay.textContent = practiceNumber;
         configurePracticeInterface(practiceType);
         hideFeedback();
@@ -754,6 +757,12 @@ if (nextBtn) {
             // Configurar interfaz según el tipo de práctica
             configurePracticeInterface(practiceType);
             hideFeedback();
+            // Auto-play inicial solo para Solo Audio
+            if (practiceType === 'audio-only') {
+            setTimeout(() => {
+            speakNumber(practiceNumber);
+            }, 500);
+    }
         }
 
         function handleMultipleChoiceAnswer(selectedWord) {
