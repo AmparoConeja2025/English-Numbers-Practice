@@ -312,6 +312,7 @@
         const speakBtn = document.getElementById('speak-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
+        const repeatBtn = document.getElementById('repeat-btn'); 
         const subtitle = document.getElementById('subtitle');
         
         const learnMode = document.getElementById('learn-mode');
@@ -847,11 +848,7 @@
         backFromSelectionBtn.addEventListener('click', switchToLearnMode);
         backToLearnBtn.addEventListener('click', switchToLearnMode);
 
-                     
-             // Event listeners para botones de audio
-            const repeatBtn = document.getElementById('repeat-btn');
-            const nextBtn = document.getElementById('next-btn');
-
+        
         if (repeatBtn) {
         repeatBtn.addEventListener('click', () => {
         console.log('🔄 Botón Repetir clickeado!');
