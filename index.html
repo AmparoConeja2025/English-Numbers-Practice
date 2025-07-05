@@ -229,12 +229,9 @@
                     </div>
                     
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                    <div id="audio-controls" class="flex justify-center space-x-4 mb-5" style="display: none;">
+                   <div id="audio-controls" class="flex justify-center mb-5" style="display: none;">
                     <button id="repeat-btn" class="btn-primary text-white px-8 py-3 rounded-full font-bold text-base">
-                    🔄 Repetir
-                    </button>
-                    <button id="next-btn" class="btn-success text-white px-8 py-3 rounded-full font-bold text-base">
-                    ▶️ Siguiente
+                   🔊 Escuchar
                     </button>
                     </div>
                     <p class="text-lg text-gray-700 font-medium mb-5">Selecciona la palabra correcta:</p>
@@ -856,16 +853,7 @@
     });
 }
 
-if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-        console.log('🔥 Botón Siguiente clickeado!');
-        practiceNumber = generateRandomNumber();
-        console.log('🎯 Nuevo número:', practiceNumber);
-        practiceNumberDisplay.textContent = practiceNumber;
-        configurePracticeInterface(practiceType);
-        hideFeedback();
-       });
-   }
+
  
 
         // Inicializar la app
