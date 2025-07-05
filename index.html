@@ -229,7 +229,7 @@
                     </div>
                     
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                    <div id="audio-controls" class="flex justify-center space-x-4 mb-5">
+                    <div id="audio-controls" class="flex justify-center space-x-4 mb-5" style="display: none;">
                     <button id="repeat-btn" class="btn-primary text-white px-8 py-3 rounded-full font-bold text-base">
                     🔄 Repetir
                     </button>
@@ -691,6 +691,8 @@
                 // Mostrar interfaz de opción múltiple
                 multipleChoicePractice.style.display = 'block';
                 audioOnlyPractice.style.display = 'none';
+               // Ocultar botones de audio
+                document.getElementById('audio-controls').style.display = 'none'; 
                 
                 // Mostrar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'block';
@@ -705,6 +707,8 @@
                 // Mostrar interfaz de solo audio usando la misma interfaz múltiple
                 multipleChoicePractice.style.display = 'block';
                 audioOnlyPractice.style.display = 'none';
+                // Mostrar botones de audio
+                document.getElementById('audio-controls').style.display = 'flex';
                 
                 // Ocultar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'none';
@@ -712,28 +716,7 @@
                 
                 // Crear botones de números en la misma interfaz
                 createAudioChoiceButtons();
-             // Event listeners para botones de audio
-const repeatBtn = document.getElementById('repeat-btn');
-const nextBtn = document.getElementById('next-btn');
-
-if (repeatBtn) {
-    repeatBtn.addEventListener('click', () => {
-        console.log('🔄 Botón Repetir clickeado!');
-        speakNumber(practiceNumber);
-    });
-}
-
-if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-        console.log('🔥 Botón Siguiente clickeado!');
-        practiceNumber = generateRandomNumber();
-        console.log('🎯 Nuevo número:', practiceNumber);
-        practiceNumberDisplay.textContent = practiceNumber;
-        configurePracticeInterface(practiceType);
-        hideFeedback();
-    });
-}
-                
+                       
                
             }
         }
@@ -778,13 +761,13 @@ if (nextBtn) {
             }
             
             // ⏰ SIEMPRE continuar después de 1.5 segundos
-            setTimeout(() => {
-                practiceNumber = generateRandomNumber();
-                practiceNumberDisplay.textContent = practiceNumber;
-                configurePracticeInterface(practiceType);
-                hideFeedback();
-            }, 1500);
-        }
+          //  setTimeout(() => {
+            //    practiceNumber = generateRandomNumber();
+            //    practiceNumberDisplay.textContent = practiceNumber;
+           //     configurePracticeInterface(practiceType);
+            //    hideFeedback();
+        //    }, 1500);
+    //  }
 
         function handleAudioOnlyAnswer(selectedNumber) {
             if (selectedNumber === practiceNumber) {
@@ -797,12 +780,12 @@ if (nextBtn) {
             }
             
             // ⏰ SIEMPRE continuar después de 1.5 segundos
-            setTimeout(() => {
+         //   setTimeout(() => {
                 practiceNumber = generateRandomNumber();
                 practiceNumberDisplay.textContent = practiceNumber;
                 configurePracticeInterface(practiceType);
                 hideFeedback();
-            }, 1500);
+         //   }, 1500);
         }
 
        function playPracticeNumberAudio() {
@@ -863,6 +846,30 @@ if (nextBtn) {
         audioOnlyBtn.addEventListener('click', startAudioOnlyPractice);
         backFromSelectionBtn.addEventListener('click', switchToLearnMode);
         backToLearnBtn.addEventListener('click', switchToLearnMode);
+
+                     
+             // Event listeners para botones de audio
+            const repeatBtn = document.getElementById('repeat-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+        if (repeatBtn) {
+        repeatBtn.addEventListener('click', () => {
+        console.log('🔄 Botón Repetir clickeado!');
+        speakNumber(practiceNumber);
+    });
+}
+
+if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+        console.log('🔥 Botón Siguiente clickeado!');
+        practiceNumber = generateRandomNumber();
+        console.log('🎯 Nuevo número:', practiceNumber);
+        practiceNumberDisplay.textContent = practiceNumber;
+        configurePracticeInterface(practiceType);
+        hideFeedback();
+    });
+}
+
 
         // Inicializar la app
         updateLevelDisplay();
