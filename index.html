@@ -231,7 +231,7 @@
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
                    <div id="audio-controls" class="flex justify-center mb-5" style="display: none;">
                     <button id="repeat-btn" class="btn-primary text-white px-8 py-3 rounded-full font-bold text-base">
-                   🔊 Escuchar
+                🔊 Escuchar/Repetir
                     </button>
                     </div>
                     <p class="text-lg text-gray-700 font-medium mb-5">Selecciona la palabra correcta:</p>
@@ -689,8 +689,8 @@
                 // Mostrar interfaz de opción múltiple
                 multipleChoicePractice.style.display = 'block';
                 audioOnlyPractice.style.display = 'none';
-               // Ocultar botones de audio
-                document.getElementById('audio-controls').style.display = 'none'; 
+               // Mostrar botones de audio también en múltiple
+                document.getElementById('audio-controls').style.display = 'flex';
                 
                 // Mostrar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'block';
