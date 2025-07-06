@@ -296,6 +296,32 @@
         let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let practiceUsedNumbers = [];
         
+        // 🎯 SISTEMA DE DOS ESTADOS DEL BOTÓN
+        let hasListenedToCurrentNumber = false;
+
+        // 🎯 FUNCIONES DEL SISTEMA DE DOS ESTADOS
+function updateAudioButtonState() {
+    const button = document.getElementById('repeat-btn');
+    if (!button) return;
+    
+    if (hasListenedToCurrentNumber) {
+        // Estado 2: Repetir (Verde)
+        button.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+        button.style.boxShadow = '0 4px 15px 0 rgba(16, 185, 129, 0.4)';
+        button.textContent = '🔄 Repetir';
+    } else {
+        // Estado 1: Escuchar (Azul)
+        button.style.background = 'linear-gradient(45deg, #3b82f6, #2563eb)';
+        button.style.boxShadow = '0 4px 15px 0 rgba(59, 130, 246, 0.4)';
+        button.textContent = '🔊 Escuchar';
+    }
+}
+
+function resetAudioButtonToListenState() {
+    hasListenedToCurrentNumber = false;
+    updateAudioButtonState();
+}
+        
         // 📊 TRACKING VARIABLES
         let sessionStats = {
             correct: 0,
@@ -689,8 +715,15 @@
                 // Mostrar interfaz de opción múltiple
                 multipleChoicePractice.style.display = 'block';
                 audioOnlyPractice.style.display = 'none';
+                
                // Mostrar botones de audio también en múltiple
                 document.getElementById('audio-controls').style.display = 'flex';
+
+                // Mostrar botones de audio también en múltiple
+                document.getElementById('audio-controls').style.display = 'flex';
+
+                // 🎯 Actualizar estado del botón al mostrar controles
+                updateAudioButtonState();
                 
                 // Mostrar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'block';
@@ -739,10 +772,14 @@
             
             practiceNumber = generateRandomNumber();
             practiceNumberDisplay.textContent = practiceNumber;
+
+            // 🎯 Resetear botón a Estado 1 para nueva sesión
+            resetAudioButtonToListenState();
             
             // Configurar interfaz según el tipo de práctica
             configurePracticeInterface(practiceType);
             hideFeedback();
+            
             // Auto-play inicial solo para Solo Audio
             if (practiceType === 'audio-only') {
             setTimeout(() => {
@@ -781,15 +818,25 @@
                 updateSessionStats(false); // 📊 Track incorrect answer
                 showFeedback(`❌ ¡No del todo! El número correcto era "${practiceNumber}"`, false);
             }
+
             
-            // ⏰ SIEMPRE continuar después de 1.5 segundos
-         //   setTimeout(() => {
-                practiceNumber = generateRandomNumber();
-                practiceNumberDisplay.textContent = practiceNumber;
-                configurePracticeInterface(practiceType);
-                hideFeedback();
-         //   }, 1500);
-        }
+    setTimeout(() => {
+        practiceNumber = generateRandomNumber();
+        practiceNumberDisplay.textContent = practiceNumber;
+        resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
+        configurePracticeInterface(practiceType);
+        hideFeedback();
+    }, 1500);
+}
+            
+          // ⏰ SIEMPRE continuar después de 1.5 segundos
+setTimeout(() => {
+    practiceNumber = generateRandomNumber();
+    practiceNumberDisplay.textContent = practiceNumber;
+    resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
+    configurePracticeInterface(practiceType);
+    hideFeedback();
+}, 1500);
 
        function playPracticeNumberAudio() {
     unlockAudio(); // Asegurar unlock antes de audio automático
@@ -852,8 +899,15 @@
 
         
         if (repeatBtn) {
-        repeatBtn.addEventListener('click', () => {
-        console.log('🔄 Botón Repetir clickeado!');
+    repeatBtn.addEventListener('click', () => {
+        console.log('🔄 Botón de audio clickeado!');
+        
+        // 🎯 Cambiar a Estado 2 después del primer click
+        if (!hasListenedToCurrentNumber) {
+            hasListenedToCurrentNumber = true;
+            updateAudioButtonState();
+        }
+        
         speakNumber(practiceNumber);
     });
 }
