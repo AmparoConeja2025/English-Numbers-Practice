@@ -565,22 +565,50 @@ function resetAudioButtonToListenState() {
         }
 
         function generateWrongOptions(correctAnswer) {
-            const allNumbers = getNumberRange();
-            const wrongOptions = allNumbers
-                .filter(num => num !== correctAnswer)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 3);
-            return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
+    // 🎯 LÓGICA MEJORADA: Rangos inteligentes para nivel intermedio
+    let availableNumbers;
+    
+    if (currentLevel === 'beginner') {
+        // Principiante: usar todos los números 0-10
+        availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    } else {
+        // Intermedio: rangos lógicos
+        if (correctAnswer <= 10) {
+            availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        } else {
+            availableNumbers = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
         }
+    }
+    
+    const wrongOptions = availableNumbers
+        .filter(num => num !== correctAnswer)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+    return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
+}
 
-        function generateWrongNumberOptions(correctAnswer) {
-            const allNumbers = getNumberRange();
-            const wrongOptions = allNumbers
-                .filter(num => num !== correctAnswer)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 3);
-            return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
+    function generateWrongNumberOptions(correctAnswer) {
+    // 🎯 LÓGICA MEJORADA: Rangos inteligentes para nivel intermedio
+    let availableNumbers;
+    
+    if (currentLevel === 'beginner') {
+        // Principiante: usar todos los números 0-10
+        availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    } else {
+        // Intermedio: rangos lógicos
+        if (correctAnswer <= 10) {
+            availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        } else {
+            availableNumbers = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
         }
+    }
+    
+    const wrongOptions = availableNumbers
+        .filter(num => num !== correctAnswer)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+    return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
+}
 
         function createNumberChoiceButtons() {
             const options = generateWrongNumberOptions(practiceNumber);
