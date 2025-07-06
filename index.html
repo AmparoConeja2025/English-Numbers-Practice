@@ -728,29 +728,6 @@ function resetAudioButtonToListenState() {
                 
                 // Crear botones de opción múltiple
                 createMultipleChoiceButtons();
-                } else if (questionType === 'audio-only') {
-        // Mostrar interfaz de solo audio usando la misma interfaz múltiple
-        multipleChoicePractice.style.display = 'block';
-        audioOnlyPractice.style.display = 'none';
-        
-        // Mostrar botones de audio
-        document.getElementById('audio-controls').style.display = 'flex';
-        
-        // Ocultar el número y cambiar instrucción
-        practiceNumberDisplay.style.display = 'none';
-        
-        // Crear botones de números en la misma interfaz
-        createAudioChoiceButtons();
-                
-                
-                // Ocultar el número y cambiar instrucción
-                practiceNumberDisplay.style.display = 'none';
-                document.querySelector('#practice-mode p').textContent = 'Escucha y elige el número correcto:';
-                
-                // Crear botones de números en la misma interfaz
-                createAudioChoiceButtons();
-                       
-               
             }
         }
 
