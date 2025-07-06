@@ -805,8 +805,9 @@ function resetAudioButtonToListenState() {
                 practiceNumber = generateRandomNumber();
                 practiceNumberDisplay.textContent = practiceNumber;
                configurePracticeInterface(practiceType);
-            hideFeedback();
-           }, 1500);
+                resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
+                hideFeedback();
+               }, 1500);
       }
 
         function handleAudioOnlyAnswer(selectedNumber) {
