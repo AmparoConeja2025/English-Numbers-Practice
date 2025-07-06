@@ -111,6 +111,26 @@
             40% { transform: translateY(-10px); }
             60% { transform: translateY(-5px); }
         }
+        .voice-btn {
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            border: 2px solid transparent;
+        }
+        .voice-btn-active {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            box-shadow: 0 4px 15px 0 rgba(59, 130, 246, 0.5);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .voice-btn-inactive {
+            background: linear-gradient(45deg, #ec4899, #be185d);
+            box-shadow: 0 4px 15px 0 rgba(236, 72, 153, 0.3);
+            border-color: rgba(236, 72, 153, 0.2);
+            opacity: 0.7;
+        }
+        .voice-btn:hover {
+            transform: translateY(-1px);
+            opacity: 1;
+        }
         @keyframes celebrationScale {
             0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
             40% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
@@ -228,10 +248,15 @@
                         </div>
                     </div>
                     
-                    <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                   <div id="audio-controls" class="flex justify-center mb-5" style="display: none;">
-                   <button id="repeat-btn" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-xl">
-                🔊 Escuchar/Repetir
+                    <div id="audio-controls" class="flex justify-center items-center space-x-3 mb-5" style="display: none;">
+                    <button id="rachel-voice-btn" class="voice-btn voice-btn-inactive text-white px-4 py-2 rounded-full font-bold text-sm">
+                    🎭 Rachel
+                    </button>
+                    <button id="repeat-btn" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-xl">
+                    🔊 Escuchar/Repetir
+                    </button>
+                    <button id="adam-voice-btn" class="voice-btn voice-btn-active text-white px-4 py-2 rounded-full font-bold text-sm">
+                    🎭 Adam
                     </button>
                     </div>
                    
@@ -685,7 +710,24 @@ function resetAudioButtonToListenState() {
             }
             console.log(`Voice switched to: ${currentVoice}`);
         }
-
+        
+          // 🎭 UPDATE VOICE BUTTON STATES
+        function updateVoiceButtonStates() {
+            const rachelBtn = document.getElementById('rachel-voice-btn');
+            const adamBtn = document.getElementById('adam-voice-btn');
+            
+            if (rachelBtn && adamBtn) {
+                if (currentVoice === 'rachel') {
+                    // Rachel activa, Adam inactivo
+                    rachelBtn.className = 'voice-btn voice-btn-active text-white px-4 py-2 rounded-full font-bold text-sm';
+                    adamBtn.className = 'voice-btn voice-btn-inactive text-white px-4 py-2 rounded-full font-bold text-sm';
+                } else {
+                    // Adam activo, Rachel inactivo
+                    rachelBtn.className = 'voice-btn voice-btn-inactive text-white px-4 py-2 rounded-full font-bold text-sm';
+                    adamBtn.className = 'voice-btn voice-btn-active text-white px-4 py-2 rounded-full font-bold text-sm';
+                }
+            }
+        }  
         function showFeedback(message, isCorrect) {
             feedback.textContent = message;
             feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-6 transition-all ${
@@ -936,6 +978,29 @@ setTimeout(() => {
             hasListenedToCurrentNumber = true;
             updateAudioButtonState();
         }
+       // 🎭 VOICE BUTTON EVENT LISTENERS
+        const rachelVoiceBtn = document.getElementById('rachel-voice-btn');
+        const adamVoiceBtn = document.getElementById('adam-voice-btn');
+        
+        if (rachelVoiceBtn) {
+            rachelVoiceBtn.addEventListener('click', () => {
+                if (currentVoice !== 'rachel') {
+                    currentVoice = 'rachel';
+                    updateVoiceButtonStates();
+                    console.log('🎭 Voice switched to: Rachel');
+                }
+            });
+        }
+        
+        if (adamVoiceBtn) {
+            adamVoiceBtn.addEventListener('click', () => {
+                if (currentVoice !== 'adam') {
+                    currentVoice = 'adam';
+                    updateVoiceButtonStates();
+                    console.log('🎭 Voice switched to: Adam');
+                }
+            });
+        } 
         
         speakNumber(practiceNumber);
     });
