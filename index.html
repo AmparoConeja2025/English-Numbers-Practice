@@ -786,11 +786,12 @@ function resetAudioButtonToListenState() {
                 multipleChoicePractice.style.display = 'block';
                 audioOnlyPractice.style.display = 'none';
                 
-               // Mostrar botones de audio también en múltiple
-                document.getElementById('audio-controls').style.display = 'flex';
-
-                // Mostrar botones de audio también en múltiple
-                document.getElementById('audio-controls').style.display = 'flex';
+               // 🎯 Mostrar botones de audio con verificación
+                const audioControls = document.getElementById('audio-controls');
+                if (audioControls) {
+                audioControls.style.display = 'flex';
+                updateVoiceButtonStates(); // Asegurar que botones tengan estado correcto
+        }
 
                 // 🎯 Actualizar estado del botón al mostrar controles
                 updateAudioButtonState();
