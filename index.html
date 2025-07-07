@@ -151,8 +151,8 @@
                     <button id="speak-btn" class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base">
                         🔊 Escuchar
                     </button>
-                    <button id="voice-btn" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-base ml-3" onclick="switchVoice()">
-                  🎭 Adam
+                    <button id="voice-btn" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-base ml-3">
+                        🎭 Adam
                     </button>
                 </div>
 
@@ -229,27 +229,19 @@
                     </div>
                     
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                   <div id="audio-controls" class="flex justify-center mb-5" style="display: none;">
-                       <button id="practice-voice-btn" class="btn-primary text-white px-4 py-1 rounded-full font-semibold text-sm mr-3" onclick="switchVoice()">
-                        🎭 Voice: Adam
-                    </button> 
-                   <button id="repeat-btn" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-xl">
-                🔊 Escuchar/Repetir
-                    </button>
-                      
+                    <div id="audio-controls" class="flex justify-center mb-5" style="display: none;">
+                        <button id="practice-voice-btn" class="btn-primary text-white px-4 py-1 rounded-full font-semibold text-sm mr-3">
+                            🎭 Voice: Adam
+                        </button> 
+                        <button id="repeat-btn" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-xl">
+                            🔊 Escuchar
+                        </button>
                     </div> 
                     
-                    <!-- Multiple Choice Practice -->
-                    <div id="multiple-choice-practice">
+                    <!-- Practice Interface -->
+                    <div id="practice-interface">
                         <div class="grid grid-cols-2 gap-3 mb-5" id="choice-buttons">
                             <!-- Choice buttons will be generated here -->
-                        </div>
-                    </div>
-                    
-                    <!-- Audio-Only Practice -->
-                    <div id="audio-only-practice" style="display: none;">
-                        <div class="grid grid-cols-2 gap-3 mb-5" id="number-choice-buttons">
-                            <!-- Number choice buttons will be generated here -->
                         </div>
                     </div>
                     
@@ -290,55 +282,30 @@
             20: { word: 'twenty', pronunciation: '/tuénti/' }
         };
 
+        // Global variables
         let currentNumber = 0;
         let currentVoice = 'adam';
         let currentMode = 'learn';
-        let currentLevel = 'beginner'; // 'beginner' (0-10) or 'intermediate' (0-20)
+        let currentLevel = 'beginner';
         let practiceNumber = 0;
         let practiceType = 'multiple-choice';
         let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let practiceUsedNumbers = [];
-        
-        // 🎯 SISTEMA DE DOS ESTADOS DEL BOTÓN
         let hasListenedToCurrentNumber = false;
 
-        // 🎯 FUNCIONES DEL SISTEMA DE DOS ESTADOS
-function updateAudioButtonState() {
-    const button = document.getElementById('repeat-btn');
-    if (!button) return;
-    
-    if (hasListenedToCurrentNumber) {
-        // Estado 2: Repetir (Verde)
-        button.style.background = 'linear-gradient(45deg, #10b981, #059669)';
-        button.style.boxShadow = '0 4px 15px 0 rgba(16, 185, 129, 0.4)';
-        button.textContent = '🔄 Repetir';
-    } else {
-        // Estado 1: Escuchar (Azul)
-        button.style.background = 'linear-gradient(45deg, #3b82f6, #2563eb)';
-        button.style.boxShadow = '0 4px 15px 0 rgba(59, 130, 246, 0.4)';
-        button.textContent = '🔊 Escuchar';
-    }
-}
+        // Session stats
+        let sessionStats = { correct: 0, incorrect: 0, total: 0 };
 
-function resetAudioButtonToListenState() {
-    hasListenedToCurrentNumber = false;
-    updateAudioButtonState();
-}
-        
-        // 📊 TRACKING VARIABLES
-        let sessionStats = {
-            correct: 0,
-            incorrect: 0,
-            total: 0
-        };
-
+        // DOM elements
         const numberDisplay = document.getElementById('number-display');
         const wordDisplay = document.getElementById('word-display');
         const pronunciationDisplay = document.getElementById('pronunciation-display');
         const speakBtn = document.getElementById('speak-btn');
+        const voiceBtn = document.getElementById('voice-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
-        const repeatBtn = document.getElementById('repeat-btn'); 
+        const repeatBtn = document.getElementById('repeat-btn');
+        const practiceVoiceBtn = document.getElementById('practice-voice-btn');
         const subtitle = document.getElementById('subtitle');
         
         const learnMode = document.getElementById('learn-mode');
@@ -358,13 +325,10 @@ function resetAudioButtonToListenState() {
         const backToLearnBtn = document.getElementById('back-to-learn-btn');
         const practiceNumberDisplay = document.getElementById('practice-number');
         const practiceModeLabel = document.getElementById('practice-mode-label');
-        const multipleChoicePractice = document.getElementById('multiple-choice-practice');
-        const audioOnlyPractice = document.getElementById('audio-only-practice');
         const choiceButtons = document.getElementById('choice-buttons');
-        const numberChoiceButtons = document.getElementById('number-choice-buttons');
         const feedback = document.getElementById('feedback');
         
-        // 📊 TRACKING ELEMENTS
+        // Tracking elements
         const correctCountEl = document.getElementById('correct-count');
         const incorrectCountEl = document.getElementById('incorrect-count');
         const totalCountEl = document.getElementById('total-count');
@@ -372,7 +336,80 @@ function resetAudioButtonToListenState() {
         const percentagePillEl = document.getElementById('percentage-pill');
         const percentageTextEl = document.getElementById('percentage-text');
 
-        // 🎯 LEVEL MANAGEMENT
+        // Celebration messages
+        const celebrationMessages = [
+            { text: '¡Correcto, buen oído!', emoji: '🎧', colors: 'rgba(34, 197, 94, 0.95)' },
+            { text: '¡Dale pues, buen trabajo!', emoji: '💪', colors: 'rgba(59, 130, 246, 0.95)' },
+            { text: '¡Excelente, sigue así!', emoji: '⭐', colors: 'rgba(168, 85, 247, 0.95)' },
+            { text: '¡Qué bien, lo tienes!', emoji: '🎯', colors: 'rgba(236, 72, 153, 0.95)' },
+            { text: '¡Perfecto, eres un crack!', emoji: '🏆', colors: 'rgba(245, 158, 11, 0.95)' },
+            { text: '¡Increíble, vas súper bien!', emoji: '🚀', colors: 'rgba(20, 184, 166, 0.95)' },
+            { text: '¡Genial, qué inteligente!', emoji: '🧠', colors: 'rgba(139, 69, 19, 0.95)' },
+            { text: '¡Brutal, lo dominas!', emoji: '🔥', colors: 'rgba(220, 38, 38, 0.95)' }
+        ];
+
+        let availableCelebrations = [...celebrationMessages];
+        let usedCelebrations = [];
+
+        // Audio system
+        let audioUnlocked = false;
+
+        function unlockAudio() {
+            if (!audioUnlocked) {
+                const audio = new Audio();
+                audio.play().then(() => {
+                    audioUnlocked = true;
+                }).catch(() => {});
+            }
+        }
+
+        // Unlock audio on first interaction
+        document.addEventListener('click', unlockAudio, { once: true });
+        document.addEventListener('touchstart', unlockAudio, { once: true });
+
+        function speakNumber(number) {
+            // For demo purposes, using speech synthesis since audio files aren't available
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(numbers[number].word);
+                utterance.rate = 0.8;
+                utterance.pitch = 1;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Audio button state management
+        function updateAudioButtonState() {
+            if (!repeatBtn) return;
+            
+            if (hasListenedToCurrentNumber) {
+                repeatBtn.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+                repeatBtn.style.boxShadow = '0 4px 15px 0 rgba(16, 185, 129, 0.4)';
+                repeatBtn.textContent = '🔄 Repetir';
+            } else {
+                repeatBtn.style.background = 'linear-gradient(45deg, #3b82f6, #2563eb)';
+                repeatBtn.style.boxShadow = '0 4px 15px 0 rgba(59, 130, 246, 0.4)';
+                repeatBtn.textContent = '🔊 Escuchar';
+            }
+        }
+
+        function resetAudioButtonToListenState() {
+            hasListenedToCurrentNumber = false;
+            updateAudioButtonState();
+        }
+
+        // Voice switching
+        function switchVoice() {
+            currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
+            if (voiceBtn) {
+                voiceBtn.textContent = `🎭 ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+            }
+            if (practiceVoiceBtn) {
+                practiceVoiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+            }
+            console.log(`Voice switched to: ${currentVoice}`);
+        }
+
+        // Level management
         function getNumberRange() {
             return currentLevel === 'beginner' ? 
                 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : 
@@ -393,11 +430,9 @@ function resetAudioButtonToListenState() {
             levelIndicator.innerHTML = `${emoji} Nivel ${levelName} (${range})`;
             practiceLevelIndicator.innerHTML = `${emoji} Nivel ${levelName} (${range})`;
             
-            // Update button active states
             beginnerBtn.classList.toggle('active', currentLevel === 'beginner');
             intermediateBtn.classList.toggle('active', currentLevel === 'intermediate');
             
-            // Reset practice numbers for new level
             practiceAvailableNumbers = getNumberRange();
             practiceUsedNumbers = [];
         }
@@ -405,15 +440,12 @@ function resetAudioButtonToListenState() {
         function switchLevel(level) {
             currentLevel = level;
             updateLevelDisplay();
-            
-            // Reset to first number when switching levels
             currentNumber = 0;
             updateDisplay();
-            
             console.log(`🎯 Switched to ${level} level: ${getNumberRange()}`);
         }
 
-        // 📊 TRACKING FUNCTIONS
+        // Session stats tracking
         function updateSessionStats(isCorrect) {
             if (isCorrect) {
                 sessionStats.correct++;
@@ -422,36 +454,28 @@ function resetAudioButtonToListenState() {
             }
             sessionStats.total++;
             
-            // Calculate percentage
             const percentage = sessionStats.total > 0 ? 
                 Math.round((sessionStats.correct / sessionStats.total) * 100) : 0;
             
-            // Update display
             correctCountEl.textContent = sessionStats.correct;
             incorrectCountEl.textContent = sessionStats.incorrect;
             totalCountEl.textContent = sessionStats.total;
             percentageCountEl.textContent = percentage;
             
-            // Update percentage color dynamically
             updatePercentageColor(percentage);
-            
             console.log(`📊 Stats: ✅${sessionStats.correct} ❌${sessionStats.incorrect} 📊${sessionStats.total} 📈${percentage}%`);
         }
         
         function updatePercentageColor(percentage) {
-            // Remove existing classes
             percentagePillEl.className = 'px-3 py-1 rounded-full';
             
             if (percentage >= 80) {
-                // 🟢 Green for 80%+
                 percentagePillEl.classList.add('bg-green-100');
                 percentageTextEl.className = 'font-bold text-sm text-green-800';
             } else if (percentage >= 60) {
-                // 🟡 Yellow for 60-79%
                 percentagePillEl.classList.add('bg-yellow-100');
                 percentageTextEl.className = 'font-bold text-sm text-yellow-800';
             } else {
-                // 🔴 Red for <60%
                 percentagePillEl.classList.add('bg-red-100');
                 percentageTextEl.className = 'font-bold text-sm text-red-800';
             }
@@ -464,55 +488,33 @@ function resetAudioButtonToListenState() {
             totalCountEl.textContent = '0';
             percentageCountEl.textContent = '0';
             
-            // Reset percentage to neutral color
             percentagePillEl.className = 'px-3 py-1 rounded-full bg-gray-100';
             percentageTextEl.className = 'font-bold text-sm text-gray-600';
             
             console.log('📊 Stats reset for new session');
         }
 
-        // 🎉 CELEBRATION ANIMATION SYSTEM
-        const celebrationMessages = [
-            { text: '¡Correcto, buen oído!', emoji: '🎧', colors: 'rgba(34, 197, 94, 0.95)' },
-            { text: '¡Dale pues, buen trabajo!', emoji: '💪', colors: 'rgba(59, 130, 246, 0.95)' },
-            { text: '¡Excelente, sigue así!', emoji: '⭐', colors: 'rgba(168, 85, 247, 0.95)' },
-            { text: '¡Qué bien, lo tienes!', emoji: '🎯', colors: 'rgba(236, 72, 153, 0.95)' },
-            { text: '¡Perfecto, eres un crack!', emoji: '🏆', colors: 'rgba(245, 158, 11, 0.95)' },
-            { text: '¡Increíble, vas súper bien!', emoji: '🚀', colors: 'rgba(20, 184, 166, 0.95)' },
-            { text: '¡Genial, qué inteligente!', emoji: '🧠', colors: 'rgba(139, 69, 19, 0.95)' },
-            { text: '¡Brutal, lo dominas!', emoji: '🔥', colors: 'rgba(220, 38, 38, 0.95)' }
-        ];
-
-        let availableCelebrations = [...celebrationMessages];
-        let usedCelebrations = [];
-
+        // Celebration system
         function getRandomCelebration() {
-            // Si no hay celebraciones disponibles, reiniciar el ciclo
             if (availableCelebrations.length === 0) {
                 availableCelebrations = [...celebrationMessages];
                 usedCelebrations = [];
                 console.log('🎉 Celebraciones reiniciadas - todas disponibles de nuevo');
             }
             
-            // Seleccionar una celebración aleatoria de las disponibles
             const randomIndex = Math.floor(Math.random() * availableCelebrations.length);
             const selectedCelebration = availableCelebrations[randomIndex];
             
-            // Remover de disponibles y agregar a usadas
             availableCelebrations.splice(randomIndex, 1);
             usedCelebrations.push(selectedCelebration);
             
             console.log(`🎊 Celebración: ${selectedCelebration.text}`);
-            console.log(`🎭 Disponibles: ${availableCelebrations.length}, Usadas: ${usedCelebrations.length}`);
-            
             return selectedCelebration;
         }
 
         function showCelebrationAnimation() {
-            // Get unique celebration message
             const celebration = getRandomCelebration();
             
-            // Create animation element
             const animationEl = document.createElement('div');
             animationEl.style.cssText = `
                 position: fixed;
@@ -536,7 +538,6 @@ function resetAudioButtonToListenState() {
             
             document.body.appendChild(animationEl);
             
-            // Remove after animation
             setTimeout(() => {
                 if (animationEl.parentNode) {
                     animationEl.parentNode.removeChild(animationEl);
@@ -544,88 +545,48 @@ function resetAudioButtonToListenState() {
             }, 1200);
         }
 
+        // Random number generation
         function generateRandomNumber() {
-            // Si no hay números disponibles, reiniciar el ciclo
             if (practiceAvailableNumbers.length === 0) {
                 practiceAvailableNumbers = getNumberRange();
                 practiceUsedNumbers = [];
                 console.log('🔄 Ciclo reiniciado - todos los números disponibles de nuevo');
             }
             
-            // Seleccionar un número aleatorio de los disponibles
             const randomIndex = Math.floor(Math.random() * practiceAvailableNumbers.length);
             const selectedNumber = practiceAvailableNumbers[randomIndex];
             
-            // Remover el número seleccionado de disponibles y agregarlo a usados
             practiceAvailableNumbers.splice(randomIndex, 1);
             practiceUsedNumbers.push(selectedNumber);
             
             console.log(`🎯 Número seleccionado: ${selectedNumber}`);
             console.log(`📋 Disponibles restantes: [${practiceAvailableNumbers.join(', ')}]`);
-            console.log(`✅ Usados en este ciclo: [${practiceUsedNumbers.join(', ')}]`);
             
             return selectedNumber;
         }
 
+        // Option generation
         function generateWrongOptions(correctAnswer) {
-    // 🎯 LÓGICA MEJORADA: Rangos inteligentes para nivel intermedio
-    let availableNumbers;
-    
-    if (currentLevel === 'beginner') {
-        // Principiante: usar todos los números 0-10
-        availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    } else {
-        // Intermedio: rangos lógicos
-        if (correctAnswer <= 10) {
-            availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        } else {
-            availableNumbers = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-        }
-    }
-    
-    const wrongOptions = availableNumbers
-        .filter(num => num !== correctAnswer)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
-    return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
-}
-
-    function generateWrongNumberOptions(correctAnswer) {
-    // 🎯 LÓGICA MEJORADA: Rangos inteligentes para nivel intermedio
-    let availableNumbers;
-    
-    if (currentLevel === 'beginner') {
-        // Principiante: usar todos los números 0-10
-        availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    } else {
-        // Intermedio: rangos lógicos
-        if (correctAnswer <= 10) {
-            availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        } else {
-            availableNumbers = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-        }
-    }
-    
-    const wrongOptions = availableNumbers
-        .filter(num => num !== correctAnswer)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
-    return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
-}
-
-        function createNumberChoiceButtons() {
-            const options = generateWrongNumberOptions(practiceNumber);
-            numberChoiceButtons.innerHTML = '';
+            let availableNumbers;
             
-            options.forEach((num) => {
-                const button = document.createElement('button');
-                button.textContent = num;
-                button.className = 'choice-button py-5 rounded-2xl font-bold text-2xl transition-all';
-                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
-                numberChoiceButtons.appendChild(button);
-            });
+            if (currentLevel === 'beginner') {
+                availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            } else {
+                if (correctAnswer <= 10) {
+                    availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                } else {
+                    availableNumbers = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+                }
+            }
+            
+            const wrongOptions = availableNumbers
+                .filter(num => num !== correctAnswer)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
         }
 
+        // Button creation functions
         function createMultipleChoiceButtons() {
             const options = generateWrongOptions(practiceNumber);
             choiceButtons.innerHTML = '';
@@ -640,7 +601,7 @@ function resetAudioButtonToListenState() {
         }
 
         function createAudioChoiceButtons() {
-            const options = generateWrongNumberOptions(practiceNumber);
+            const options = generateWrongOptions(practiceNumber);
             choiceButtons.innerHTML = '';
             
             options.forEach((num) => {
@@ -651,49 +612,8 @@ function resetAudioButtonToListenState() {
                 choiceButtons.appendChild(button);
             });
         }
-        
-        // MP3 AUDIO SYSTEM - Adam & Rachel voices
-        // Audio unlock para móviles
-        let audioUnlocked = false;
 
-        function unlockAudio() {
-            if (!audioUnlocked) {
-                const audio = new Audio();
-                audio.play().then(() => {
-                    audioUnlocked = true;
-                }).catch(() => {});
-            }
-        }
-
-        // Unlock audio en primera interacción
-        document.addEventListener('click', unlockAudio, { once: true });
-        document.addEventListener('touchstart', unlockAudio, { once: true });       
-
-        function speakNumber(number) {
-            const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
-            
-            const audio = new Audio(audioFile);
-            unlockAudio(); // Asegurar unlock
-            audio.play().catch(error => {
-                console.error('Error playing audio:', error);
-            });
-        }
-
-        // Voice switching function
-        function switchVoice() {
-            currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
-            const voiceBtn = document.getElementById('voice-btn');
-            if (voiceBtn) {
-                voiceBtn.textContent = `🎭 ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
-            }
-            console.log(`Voice switched to: ${currentVoice}`);
-
-            const practiceVoiceBtn = document.getElementById('practice-voice-btn');
-            if (practiceVoiceBtn) {
-                practiceVoiceBtn.textContent = `🎭 ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
-            }
-        }
-
+        // Feedback functions
         function showFeedback(message, isCorrect) {
             feedback.textContent = message;
             feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-6 transition-all ${
@@ -706,6 +626,7 @@ function resetAudioButtonToListenState() {
             feedback.classList.add('hidden');
         }
 
+        // Display functions
         function updateDisplay() {
             numberDisplay.textContent = currentNumber;
             wordDisplay.textContent = numbers[currentNumber].word;
@@ -731,6 +652,7 @@ function resetAudioButtonToListenState() {
             }
         }
 
+        // Mode switching functions
         function showPracticeSelection() {
             currentMode = 'selection';
             learnMode.style.display = 'none';
@@ -748,48 +670,15 @@ function resetAudioButtonToListenState() {
 
         function configurePracticeInterface(questionType) {
             if (questionType === 'multiple-choice') {
-                // Mostrar interfaz de opción múltiple
-                multipleChoicePractice.style.display = 'block';
-                audioOnlyPractice.style.display = 'none';
-                
-               // Mostrar botones de audio también en múltiple
                 document.getElementById('audio-controls').style.display = 'flex';
-
-                // Mostrar botones de audio también en múltiple
-                document.getElementById('audio-controls').style.display = 'flex';
-
-                // 🎯 Actualizar estado del botón al mostrar controles
                 updateAudioButtonState();
-                
-                // Mostrar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'block';
-                
-                
-                // Crear botones de opción múltiple
                 createMultipleChoiceButtons();
-                } else if (questionType === 'audio-only') {
-        // Mostrar interfaz de solo audio usando la misma interfaz múltiple
-        multipleChoicePractice.style.display = 'block';
-        audioOnlyPractice.style.display = 'none';
-        
-        // Mostrar botones de audio
-        document.getElementById('audio-controls').style.display = 'flex';
-        
-        // Ocultar el número y cambiar instrucción
-        practiceNumberDisplay.style.display = 'none';
-        
-        // Crear botones de números en la misma interfaz
-        createAudioChoiceButtons();
-                
-                
-                // Ocultar el número y cambiar instrucción
+            } else if (questionType === 'audio-only') {
+                document.getElementById('audio-controls').style.display = 'flex';
+                updateAudioButtonState();
                 practiceNumberDisplay.style.display = 'none';
-                document.querySelector('#practice-mode p').textContent = 'Escucha y elige el número correcto:';
-                
-                // Crear botones de números en la misma interfaz
                 createAudioChoiceButtons();
-                       
-               
             }
         }
 
@@ -799,88 +688,69 @@ function resetAudioButtonToListenState() {
             practiceSelection.style.display = 'none';
             practiceMode.style.display = 'block';
             
-            // 📊 Reset stats for new practice session
             resetSessionStats();
             
-            // Asegurar que el sistema anti-repetición esté listo con el nivel actual
             practiceAvailableNumbers = getNumberRange();
             practiceUsedNumbers = [];
             
             practiceNumber = generateRandomNumber();
             practiceNumberDisplay.textContent = practiceNumber;
 
-            // 🎯 Resetear botón a Estado 1 para nueva sesión
             resetAudioButtonToListenState();
             
-            // Configurar interfaz según el tipo de práctica
             configurePracticeInterface(practiceType);
             hideFeedback();
             
-            // Auto-play inicial solo para Solo Audio
+            // Auto-play initial audio for audio-only mode
             if (practiceType === 'audio-only') {
-            setTimeout(() => {
-            speakNumber(practiceNumber);
-            }, 500);
-    }
+                setTimeout(() => {
+                    speakNumber(practiceNumber);
+                    hasListenedToCurrentNumber = true;
+                    updateAudioButtonState();
+                }, 500);
+            }
         }
 
+        // Answer handling functions
         function handleMultipleChoiceAnswer(selectedWord) {
             const correctAnswer = numbers[practiceNumber].word.toLowerCase();
             
             if (selectedWord.toLowerCase() === correctAnswer) {
-                updateSessionStats(true); // 📊 Track correct answer
-                showCelebrationAnimation(); // 🎉 Show celebration!
+                updateSessionStats(true);
+                showCelebrationAnimation();
                 showFeedback('✅ ¡Correcto! ¡Excelente!', true);
             } else {
-                updateSessionStats(false); // 📊 Track incorrect answer
+                updateSessionStats(false);
                 showFeedback(`❌ ¡No del todo! La respuesta correcta es "${correctAnswer}"`, false);
             }
             
-            // ⏰ SIEMPRE continuar después de 1.5 segundos
             setTimeout(() => {
                 practiceNumber = generateRandomNumber();
                 practiceNumberDisplay.textContent = practiceNumber;
-               configurePracticeInterface(practiceType);
-                resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
+                configurePracticeInterface(practiceType);
+                resetAudioButtonToListenState();
                 hideFeedback();
-               }, 1500);
-      }
+            }, 1500);
+        }
 
         function handleAudioOnlyAnswer(selectedNumber) {
             if (selectedNumber === practiceNumber) {
-                updateSessionStats(true); // 📊 Track correct answer
-                showCelebrationAnimation(); // 🎉 Show celebration!
+                updateSessionStats(true);
+                showCelebrationAnimation();
                 showFeedback('✅ ¡Correcto! ¡Excelente oído!', true);
             } else {
-                updateSessionStats(false); // 📊 Track incorrect answer
+                updateSessionStats(false);
                 showFeedback(`❌ ¡No del todo! El número correcto era "${practiceNumber}"`, false);
             }
 
-            
-    setTimeout(() => {
-        practiceNumber = generateRandomNumber();
-        practiceNumberDisplay.textContent = practiceNumber;
-        resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
-        configurePracticeInterface(practiceType);
-        hideFeedback();
-    }, 1500);
-}
-            
-          // ⏰ SIEMPRE continuar después de 1.5 segundos
-setTimeout(() => {
-    practiceNumber = generateRandomNumber();
-    practiceNumberDisplay.textContent = practiceNumber;
-    resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
-    configurePracticeInterface(practiceType);
-    hideFeedback();
-}, 1500);
-
-       function playPracticeNumberAudio() {
-    unlockAudio(); // Asegurar unlock antes de audio automático
-    setTimeout(() => {
-        speakNumber(practiceNumber);
-    }, 150); // Pequeño delay para Chrome mobile autoplay
-}
+            setTimeout(() => {
+                practiceNumber = generateRandomNumber();
+                practiceNumberDisplay.textContent = practiceNumber;
+                resetAudioButtonToListenState();
+                configurePracticeInterface(practiceType);
+                hideFeedback();
+            }, 1500);
+        }
 
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
@@ -911,20 +781,19 @@ setTimeout(() => {
         });
 
         speakBtn.addEventListener('click', () => {
-            // Cambiar a gris
             speakBtn.style.background = '#9CA3AF';
             speakBtn.style.transform = 'scale(0.95)';
             
             speakNumber(currentNumber);
             
-            // Volver al color original después de 2 segundos
             setTimeout(() => {
                 speakBtn.style.background = '';
                 speakBtn.style.transform = '';
             }, 2000);
         });
 
-        // Level selection event listeners
+        voiceBtn.addEventListener('click', switchVoice);
+
         beginnerBtn.addEventListener('click', () => switchLevel('beginner'));
         intermediateBtn.addEventListener('click', () => switchLevel('intermediate'));
 
@@ -934,25 +803,25 @@ setTimeout(() => {
         backFromSelectionBtn.addEventListener('click', switchToLearnMode);
         backToLearnBtn.addEventListener('click', switchToLearnMode);
 
-        
+        // Repeat button event listener
         if (repeatBtn) {
-    repeatBtn.addEventListener('click', () => {
-        console.log('🔄 Botón de audio clickeado!');
-        
-        // 🎯 Cambiar a Estado 2 después del primer click
-        if (!hasListenedToCurrentNumber) {
-            hasListenedToCurrentNumber = true;
-            updateAudioButtonState();
+            repeatBtn.addEventListener('click', () => {
+                console.log('🔄 Botón de audio clickeado!');
+                
+                if (!hasListenedToCurrentNumber) {
+                    hasListenedToCurrentNumber = true;
+                    updateAudioButtonState();
+                }
+                
+                speakNumber(practiceNumber);
+            });
         }
-        
-        speakNumber(practiceNumber);
-    });
-}
 
+        if (practiceVoiceBtn) {
+            practiceVoiceBtn.addEventListener('click', switchVoice);
+        }
 
- 
-
-        // Inicializar la app
+        // Initialize the app
         updateLevelDisplay();
         updateDisplay();
     </script>
