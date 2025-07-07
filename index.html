@@ -49,24 +49,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px 0 rgba(102, 126, 234, 0.6);
         }
-        .btn-voice {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            box-shadow: 0 2px 8px 0 rgba(102, 126, 234, 0.3);
-            transition: all 0.3s ease;
-            touch-action: manipulation;
-            padding: 0.25rem 0.75rem !important; /* py-1 px-3 equivalent */
-            font-size: 0.875rem !important; /* text-sm equivalent */
-        }
-        class="btn-voice text-white rounded-full font-semibold mr-3"
-            .btn-voice:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.5);
-        }
-        
-        .btn-voice:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.5);
-        }
         .btn-secondary {
             background: linear-gradient(45deg, #f093fb, #f5576c);
             box-shadow: 0 4px 15px 0 rgba(240, 147, 251, 0.4);
@@ -248,7 +230,7 @@
                     
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
                    <div id="audio-controls" class="flex justify-center mb-5" style="display: none;">
-                       <button id="practice-voice-btn" class="btn-voice text-white rounded-full font-semibold mr-3"
+                       <button id="practice-voice-btn" class="btn-primary text-white px-4 py-1 rounded-full font-semibold text-sm mr-3" onclick="switchVoice()">
                         🎭 Voice: Adam
                     </button> 
                    <button id="repeat-btn" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-xl">
