@@ -811,6 +811,12 @@ function resetAudioButtonToListenState() {
 
             // 🎯 Resetear botón a Estado 1 para nueva sesión
             resetAudioButtonToListenState();
+
+            // Inicializar botón de voz
+            const practiceVoiceBtn = document.getElementById('practice-voice-btn');
+            if (practiceVoiceBtn) {
+                practiceVoiceBtn.textContent = `🎭 ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+            }
             
             // Configurar interfaz según el tipo de práctica
             configurePracticeInterface(practiceType);
