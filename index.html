@@ -152,7 +152,7 @@
                         🔊 Escuchar
                     </button>
                     <button id="voice-btn" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-base ml-3" onclick="switchVoice()">
-                  🎭 Voice: Adam
+                  🎭 Adam
                     </button>
                 </div>
 
@@ -230,7 +230,7 @@
                     
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
                    <div id="audio-controls" class="flex justify-center mb-5" style="display: none;">
-                       <button id="practice-voice-btn" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-base mr-3" onclick="switchVoice()">
+                       <button id="practice-voice-btn" class="btn-primary text-white px-4 py-1 rounded-full font-semibold text-sm mr-3" onclick="switchVoice()">
                         🎭 Voice: Adam
                     </button> 
                    <button id="repeat-btn" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-xl">
@@ -684,13 +684,13 @@ function resetAudioButtonToListenState() {
             currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
             const voiceBtn = document.getElementById('voice-btn');
             if (voiceBtn) {
-                voiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+                voiceBtn.textContent = `🎭 ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
             }
             console.log(`Voice switched to: ${currentVoice}`);
 
             const practiceVoiceBtn = document.getElementById('practice-voice-btn');
             if (practiceVoiceBtn) {
-                practiceVoiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+                practiceVoiceBtn.textContent = `🎭 ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
             }
         }
 
