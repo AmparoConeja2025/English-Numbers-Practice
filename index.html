@@ -233,8 +233,10 @@
                    <button id="repeat-btn" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-xl">
                 🔊 Escuchar/Repetir
                     </button>
-                    </div>
-                   
+                     <button id="practice-voice-btn" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-base ml-3" onclick="switchVoice()">
+                        🎭 Voice: Adam
+                    </button>  
+                    </div> 
                     
                     <!-- Multiple Choice Practice -->
                     <div id="multiple-choice-practice">
@@ -684,6 +686,11 @@ function resetAudioButtonToListenState() {
                 voiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
             }
             console.log(`Voice switched to: ${currentVoice}`);
+
+            const practiceVoiceBtn = document.getElementById('practice-voice-btn');
+            if (practiceVoiceBtn) {
+                practiceVoiceBtn.textContent = `🎭 Voice: ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+            }
         }
 
         function showFeedback(message, isCorrect) {
