@@ -925,6 +925,7 @@ function resetAudioButtonToListenState() {
             } else {
                 updateSessionStats(false); // 📊 Track incorrect answer
                 showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
+                showCorrectAnswer(numbers[practiceNumber].word.toLowerCase());
             }
 
             
@@ -934,7 +935,7 @@ function resetAudioButtonToListenState() {
         resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
         configurePracticeInterface(practiceType);
         hideFeedback();
-    }, 1500);
+    }, 2000);
 }
             
           // ⏰ SIEMPRE continuar después de 1.5 segundos
