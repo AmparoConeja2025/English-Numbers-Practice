@@ -460,7 +460,7 @@ function resetAudioButtonToListenState() {
             console.log('Buscando respuesta correcta:', correctAnswer);
             const choiceButtons = document.querySelectorAll('.choice-button');
             
-            if (choiceButtons.length > 0) {
+           if (practiceType === 'multiple-choice') {
                 // Modo Opción Múltiple - destacar botón correcto
                 choiceButtons.forEach(button => {
                     console.log('Botón encontrado:', button.textContent);
