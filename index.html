@@ -455,6 +455,20 @@ function resetAudioButtonToListenState() {
         }
 
         // 📊 TRACKING FUNCTIONS
+
+        function showCorrectAnswer(correctAnswer) {
+            console.log('Buscando respuesta correcta:', correctAnswer);
+            const choiceButtons = document.querySelectorAll('.choice-button');
+            choiceButtons.forEach(button => {
+                console.log('Botón encontrado:', button.textContent);
+                if (button.textContent.toLowerCase() === correctAnswer) {
+                    button.classList.add('correct-answer');
+                    setTimeout(() => {
+                        button.classList.remove('correct-answer');
+                    }, 2000);
+                }
+            });
+        }
         function updateSessionStats(isCorrect) {
             if (isCorrect) {
                 sessionStats.correct++;
@@ -912,20 +926,6 @@ function resetAudioButtonToListenState() {
                 updateSessionStats(false); // 📊 Track incorrect answer
                 showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
             }
-
-            function showCorrectAnswer(correctAnswer) {
-            console.log('Buscando respuesta correcta:', correctAnswer);
-            const choiceButtons = document.querySelectorAll('.choice-button');
-            choiceButtons.forEach(button => {
-                console.log('Botón encontrado:', button.textContent);
-                if (button.textContent.toLowerCase() === correctAnswer) {
-                    button.classList.add('correct-answer');
-                    setTimeout(() => {
-                        button.classList.remove('correct-answer');
-                    }, 2000);
-                }
-            });
-        }
 
             
     setTimeout(() => {
