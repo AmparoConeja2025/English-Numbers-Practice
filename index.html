@@ -699,7 +699,7 @@ function resetAudioButtonToListenState() {
     return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
 }
 
-        function createNumberChoiceButtons() {
+      function createNumberChoiceButtons() {
             const options = generateWrongNumberOptions(practiceNumber);
             numberChoiceButtons.innerHTML = '';
             
@@ -707,12 +707,15 @@ function resetAudioButtonToListenState() {
                 const button = document.createElement('button');
                 button.textContent = num;
                 button.className = 'choice-button py-5 rounded-2xl font-bold text-2xl transition-all';
-                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
+                
+                // 🔧 Usar función anónima para evitar listeners duplicados
+                button.onclick = () => handleAudioOnlyAnswer(num);
+                
                 numberChoiceButtons.appendChild(button);
             });
         }
 
-        function createMultipleChoiceButtons() {
+      function createMultipleChoiceButtons() {
             const options = generateWrongOptions(practiceNumber);
             choiceButtons.innerHTML = '';
             
@@ -720,12 +723,15 @@ function resetAudioButtonToListenState() {
                 const button = document.createElement('button');
                 button.textContent = numbers[num].word;
                 button.className = 'choice-button py-3 rounded-2xl font-bold text-base transition-all';
-                button.addEventListener('click', () => handleMultipleChoiceAnswer(numbers[num].word));
+                
+                // 🔧 Usar función anónima para evitar listeners duplicados
+                button.onclick = () => handleMultipleChoiceAnswer(numbers[num].word);
+                
                 choiceButtons.appendChild(button);
             });
         }
 
-        function createAudioChoiceButtons() {
+      function createAudioChoiceButtons() {
             const options = generateWrongNumberOptions(practiceNumber);
             choiceButtons.innerHTML = '';
             
@@ -733,7 +739,10 @@ function resetAudioButtonToListenState() {
                 const button = document.createElement('button');
                 button.textContent = num;
                 button.className = 'choice-button py-3 rounded-2xl font-bold text-base transition-all';
-                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
+                
+                // 🔧 Usar función anónima para evitar listeners duplicados
+                button.onclick = () => handleAudioOnlyAnswer(num);
+                
                 choiceButtons.appendChild(button);
             });
         }
