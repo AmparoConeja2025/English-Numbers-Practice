@@ -925,11 +925,15 @@ function resetAudioButtonToListenState() {
             // Establecer la respuesta correcta en el primer intento
             if (attemptCount === 0) {
                 correctAnswerForCurrentQuestion = correctAnswer;
+                console.log(`🔍 DEBUG: attemptCount al inicio: ${attemptCount}`);
             }
             
             attemptCount++;
+           console.log(`🔍 DEBUG: attemptCount después de incrementar: ${attemptCount}`);
+            console.log(`🔍 DEBUG: correctAnswerForCurrentQuestion: ${correctAnswerForCurrentQuestion}`);
             
             if (selectedWord.toLowerCase() === correctAnswer) {
+                
                 // ✅ RESPUESTA CORRECTA
                 updateSessionStats(true);
                 showCelebrationAnimation();
