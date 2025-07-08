@@ -588,7 +588,8 @@ function resetAudioButtonToListenState() {
         function showIncorrectAnimation() {
 
         function showCorrectAnswer(correctAnswer) {
-            // Buscar el botón con la respuesta correcta
+            // Buscar el botón con la respuesta correcta 
+            console.log('Botón encontrado:', button.textContent);
             const choiceButtons = document.querySelectorAll('.choice-button');
             choiceButtons.forEach(button => {
                 if (button.textContent.toLowerCase() === correctAnswer) {
