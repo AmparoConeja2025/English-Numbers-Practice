@@ -473,8 +473,8 @@ function resetAudioButtonToListenState() {
                 });
            } else {
                 // Modo Solo Audio - mostrar respuesta en área principal
-                const numberDisplay = document.getElementById('number-display');
-                const wordDisplay = document.getElementById('word-display');
+               const numberDisplay = document.getElementById('practice-number');
+                const wordDisplay = document.querySelector('.text-center p'); // Para la palabra
                 
                 if (numberDisplay && wordDisplay) {
                     // Guardar contenido original
