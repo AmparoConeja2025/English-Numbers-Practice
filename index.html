@@ -586,21 +586,6 @@ function resetAudioButtonToListenState() {
         }
         
         function showIncorrectAnimation() {
-
-        function showCorrectAnswer(correctAnswer) {
-            // Buscar el botón con la respuesta correcta 
-            console.log('Botón encontrado:', button.textContent);
-            const choiceButtons = document.querySelectorAll('.choice-button');
-            choiceButtons.forEach(button => {
-                if (button.textContent.toLowerCase() === correctAnswer) {
-                    button.classList.add('correct-answer');
-                    // Remover la clase después de la animación
-                    setTimeout(() => {
-                        button.classList.remove('correct-answer');
-                    }, 2000);
-                }
-            });
-        } 
             
             // Aplicar shake a todos los botones de opciones
             const choiceButtons = document.querySelectorAll('.choice-button');
@@ -927,6 +912,20 @@ function resetAudioButtonToListenState() {
                 updateSessionStats(false); // 📊 Track incorrect answer
                 showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
             }
+
+            function showCorrectAnswer(correctAnswer) {
+            console.log('Buscando respuesta correcta:', correctAnswer);
+            const choiceButtons = document.querySelectorAll('.choice-button');
+            choiceButtons.forEach(button => {
+                console.log('Botón encontrado:', button.textContent);
+                if (button.textContent.toLowerCase() === correctAnswer) {
+                    button.classList.add('correct-answer');
+                    setTimeout(() => {
+                        button.classList.remove('correct-answer');
+                    }, 2000);
+                }
+            });
+        }
 
             
     setTimeout(() => {
