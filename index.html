@@ -456,18 +456,43 @@ function resetAudioButtonToListenState() {
 
         // 📊 TRACKING FUNCTIONS
 
-        function showCorrectAnswer(correctAnswer) {
+       function showCorrectAnswer(correctAnswer) {
             console.log('Buscando respuesta correcta:', correctAnswer);
             const choiceButtons = document.querySelectorAll('.choice-button');
-            choiceButtons.forEach(button => {
-                console.log('Botón encontrado:', button.textContent);
-                if (button.textContent.toLowerCase() === correctAnswer) {
-                    button.classList.add('correct-answer');
+            
+            if (choiceButtons.length > 0) {
+                // Modo Opción Múltiple - destacar botón correcto
+                choiceButtons.forEach(button => {
+                    console.log('Botón encontrado:', button.textContent);
+                    if (button.textContent.toLowerCase() === correctAnswer) {
+                        button.classList.add('correct-answer');
+                        setTimeout(() => {
+                            button.classList.remove('correct-answer');
+                        }, 2000);
+                    }
+                });
+           } else {
+                // Modo Solo Audio - mostrar respuesta en área principal
+                const numberDisplay = document.getElementById('number-display');
+                const wordDisplay = document.getElementById('word-display');
+                
+                if (numberDisplay && wordDisplay) {
+                    // Guardar contenido original
+                    const originalNumber = numberDisplay.textContent;
+                    const originalWord = wordDisplay.textContent;
+                    
+                    // Mostrar respuesta correcta
+                    wordDisplay.textContent = correctAnswer;
+                    wordDisplay.classList.add('correct-answer');
+                    
                     setTimeout(() => {
-                        button.classList.remove('correct-answer');
+                        // Restaurar contenido original
+                        numberDisplay.textContent = originalNumber;
+                        wordDisplay.textContent = originalWord;
+                        wordDisplay.classList.remove('correct-answer');
                     }, 2000);
                 }
-            });
+            }
         }
         function updateSessionStats(isCorrect) {
             if (isCorrect) {
