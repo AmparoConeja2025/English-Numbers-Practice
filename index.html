@@ -313,10 +313,7 @@
         let hasListenedToCurrentNumber = false;
 
         // 🎯 SISTEMA DE INTENTOS MÚLTIPLES
-        let attemptCount = 0;
-        let correctAnswerForCurrentQuestion = null;
-        let hasShownCorrectAnswer = false;
-
+       
         // 🎯 FUNCIONES DEL SISTEMA DE DOS ESTADOS
 function updateAudioButtonState() {
     const button = document.getElementById('repeat-btn');
@@ -612,23 +609,7 @@ function resetAudioButtonToListenState() {
             });
         }
 
-        function resetAttemptState() {
-            attemptCount = 0;
-            correctAnswerForCurrentQuestion = null;
-            hasShownCorrectAnswer = false;
-            
-            // Rehabilitar todos los botones
-            const choiceButtons = document.querySelectorAll('.choice-button');
-            choiceButtons.forEach(button => {
-                button.disabled = false;
-                button.style.opacity = '1';
-                button.style.cursor = 'pointer';
-                button.style.background = '';
-                button.style.transform = '';
-                button.style.boxShadow = '';
-                button.classList.remove('bounce');
-            });
-        }
+     
 
         function generateRandomNumber() {
             // Si no hay números disponibles, reiniciar el ciclo
@@ -919,21 +900,10 @@ function resetAudioButtonToListenState() {
     }
         }
 
-       function handleMultipleChoiceAnswer(selectedWord) {
+      function handleMultipleChoiceAnswer(selectedWord) {
             const correctAnswer = numbers[practiceNumber].word.toLowerCase();
             
-            // Establecer la respuesta correcta en el primer intento
-            if (attemptCount === 0) {
-                correctAnswerForCurrentQuestion = correctAnswer;
-                console.log(`🔍 DEBUG: attemptCount al inicio: ${attemptCount}`);
-            }
-            
-            attemptCount++;
-           console.log(`🔍 DEBUG: attemptCount después de incrementar: ${attemptCount}`);
-            console.log(`🔍 DEBUG: correctAnswerForCurrentQuestion: ${correctAnswerForCurrentQuestion}`);
-            
             if (selectedWord.toLowerCase() === correctAnswer) {
-                
                 // ✅ RESPUESTA CORRECTA
                 updateSessionStats(true);
                 showCelebrationAnimation();
@@ -944,7 +914,6 @@ function resetAudioButtonToListenState() {
                     practiceNumberDisplay.textContent = practiceNumber;
                     configurePracticeInterface(practiceType);
                     resetAudioButtonToListenState();
-                    resetAttemptState();
                     hideFeedback();
                 }, 1500);
                 
@@ -953,35 +922,23 @@ function resetAudioButtonToListenState() {
                 updateSessionStats(false);
                 showIncorrectAnimation();
                 
-                if (attemptCount === 1) {
-                    // Primer intento fallido: deshabilitar incorrectos y dar segunda oportunidad
-                    disableIncorrectButtons(correctAnswerForCurrentQuestion, 'multiple-choice');
+                // Mostrar respuesta correcta y continuar automáticamente
+                setTimeout(() => {
+                    showCorrectAnswerAnimation(correctAnswer, 'multiple-choice');
                     
-                } else if (attemptCount >= 2) {
-                    // Segundo intento fallido: mostrar respuesta correcta
-                    showCorrectAnswerAnimation(correctAnswerForCurrentQuestion, 'multiple-choice');
-                    
-                    // Continuar después de mostrar respuesta
+                    // Avanzar automáticamente después de 2 segundos
                     setTimeout(() => {
                         practiceNumber = generateRandomNumber();
                         practiceNumberDisplay.textContent = practiceNumber;
                         configurePracticeInterface(practiceType);
                         resetAudioButtonToListenState();
-                        resetAttemptState();
                         hideFeedback();
                     }, 2000);
-                }
+                }, 300);
             }
         }
 
        function handleAudioOnlyAnswer(selectedNumber) {
-            // Establecer la respuesta correcta en el primer intento
-            if (attemptCount === 0) {
-                correctAnswerForCurrentQuestion = practiceNumber;
-            }
-            
-            attemptCount++;
-            
             if (selectedNumber === practiceNumber) {
                 // ✅ RESPUESTA CORRECTA
                 updateSessionStats(true);
@@ -993,7 +950,6 @@ function resetAudioButtonToListenState() {
                     practiceNumberDisplay.textContent = practiceNumber;
                     resetAudioButtonToListenState();
                     configurePracticeInterface(practiceType);
-                    resetAttemptState();
                     hideFeedback();
                 }, 1500);
                 
@@ -1002,24 +958,19 @@ function resetAudioButtonToListenState() {
                 updateSessionStats(false);
                 showIncorrectAnimation();
                 
-                if (attemptCount === 1) {
-                    // Primer intento fallido: deshabilitar incorrectos y dar segunda oportunidad
-                    disableIncorrectButtons(correctAnswerForCurrentQuestion, 'audio-only');
+                // Mostrar respuesta correcta y continuar automáticamente
+                setTimeout(() => {
+                    showCorrectAnswerAnimation(practiceNumber, 'audio-only');
                     
-                } else if (attemptCount >= 2) {
-                    // Segundo intento fallido: mostrar respuesta correcta
-                    showCorrectAnswerAnimation(correctAnswerForCurrentQuestion, 'audio-only');
-                    
-                    // Continuar después de mostrar respuesta
+                    // Avanzar automáticamente después de 2 segundos
                     setTimeout(() => {
                         practiceNumber = generateRandomNumber();
                         practiceNumberDisplay.textContent = practiceNumber;
                         resetAudioButtonToListenState();
                         configurePracticeInterface(practiceType);
-                        resetAttemptState();
                         hideFeedback();
                     }, 2000);
-                }
+                }, 300);
             }
         }
 
@@ -1040,7 +991,6 @@ setTimeout(() => {
     resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
     configurePracticeInterface(practiceType);
     hideFeedback();
-    resetAttemptState(); // 🎯 Reset attempt system for new practice session
 }, 1500);
 
        function playPracticeNumberAudio() {
