@@ -312,8 +312,6 @@
         // 🎯 SISTEMA DE DOS ESTADOS DEL BOTÓN
         let hasListenedToCurrentNumber = false;
 
-        // 🎯 SISTEMA DE INTENTOS MÚLTIPLES
-       
         // 🎯 FUNCIONES DEL SISTEMA DE DOS ESTADOS
 function updateAudioButtonState() {
     const button = document.getElementById('repeat-btn');
@@ -568,49 +566,6 @@ function resetAudioButtonToListenState() {
             });
         }
 
-        function disableIncorrectButtons(correctAnswer, practiceType) {
-            const choiceButtons = document.querySelectorAll('.choice-button');
-            choiceButtons.forEach(button => {
-                let isCorrectButton = false;
-                
-                if (practiceType === 'multiple-choice') {
-                    // Para opción múltiple, comparar con la palabra
-                    isCorrectButton = button.textContent.toLowerCase() === correctAnswer.toLowerCase();
-                } else {
-                    // Para solo audio, comparar con el número
-                    isCorrectButton = parseInt(button.textContent) === correctAnswer;
-                }
-                
-                if (!isCorrectButton) {
-                    button.disabled = true;
-                    button.style.opacity = '0.4';
-                    button.style.cursor = 'not-allowed';
-                }
-            });
-        }
-
-        function showCorrectAnswerAnimation(correctAnswer, practiceType) {
-            const choiceButtons = document.querySelectorAll('.choice-button');
-            choiceButtons.forEach(button => {
-                let isCorrectButton = false;
-                
-                if (practiceType === 'multiple-choice') {
-                    isCorrectButton = button.textContent.toLowerCase() === correctAnswer.toLowerCase();
-                } else {
-                    isCorrectButton = parseInt(button.textContent) === correctAnswer;
-                }
-                
-                if (isCorrectButton) {
-                    button.style.background = 'linear-gradient(45deg, #10b981, #059669)';
-                    button.style.transform = 'scale(1.05)';
-                    button.style.boxShadow = '0 8px 25px 0 rgba(16, 185, 129, 0.6)';
-                    button.classList.add('bounce');
-                }
-            });
-        }
-
-     
-
         function generateRandomNumber() {
             // Si no hay números disponibles, reiniciar el ciclo
             if (practiceAvailableNumbers.length === 0) {
@@ -680,7 +635,7 @@ function resetAudioButtonToListenState() {
     return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
 }
 
-      function createNumberChoiceButtons() {
+        function createNumberChoiceButtons() {
             const options = generateWrongNumberOptions(practiceNumber);
             numberChoiceButtons.innerHTML = '';
             
@@ -688,15 +643,12 @@ function resetAudioButtonToListenState() {
                 const button = document.createElement('button');
                 button.textContent = num;
                 button.className = 'choice-button py-5 rounded-2xl font-bold text-2xl transition-all';
-                
-                // 🔧 Usar función anónima para evitar listeners duplicados
-                button.onclick = () => handleAudioOnlyAnswer(num);
-                
+                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
                 numberChoiceButtons.appendChild(button);
             });
         }
 
-      function createMultipleChoiceButtons() {
+        function createMultipleChoiceButtons() {
             const options = generateWrongOptions(practiceNumber);
             choiceButtons.innerHTML = '';
             
@@ -704,15 +656,12 @@ function resetAudioButtonToListenState() {
                 const button = document.createElement('button');
                 button.textContent = numbers[num].word;
                 button.className = 'choice-button py-3 rounded-2xl font-bold text-base transition-all';
-                
-                // 🔧 Usar función anónima para evitar listeners duplicados
-                button.onclick = () => handleMultipleChoiceAnswer(numbers[num].word);
-                
+                button.addEventListener('click', () => handleMultipleChoiceAnswer(numbers[num].word));
                 choiceButtons.appendChild(button);
             });
         }
 
-      function createAudioChoiceButtons() {
+        function createAudioChoiceButtons() {
             const options = generateWrongNumberOptions(practiceNumber);
             choiceButtons.innerHTML = '';
             
@@ -720,10 +669,7 @@ function resetAudioButtonToListenState() {
                 const button = document.createElement('button');
                 button.textContent = num;
                 button.className = 'choice-button py-3 rounded-2xl font-bold text-base transition-all';
-                
-                // 🔧 Usar función anónima para evitar listeners duplicados
-                button.onclick = () => handleAudioOnlyAnswer(num);
-                
+                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
                 choiceButtons.appendChild(button);
             });
         }
@@ -900,79 +846,36 @@ function resetAudioButtonToListenState() {
     }
         }
 
-      function handleMultipleChoiceAnswer(selectedWord) {
+        function handleMultipleChoiceAnswer(selectedWord) {
             const correctAnswer = numbers[practiceNumber].word.toLowerCase();
             
             if (selectedWord.toLowerCase() === correctAnswer) {
-                // ✅ RESPUESTA CORRECTA
-                updateSessionStats(true);
-                showCelebrationAnimation();
-                
-                // Continuar después de celebración
-                setTimeout(() => {
-                    practiceNumber = generateRandomNumber();
-                    practiceNumberDisplay.textContent = practiceNumber;
-                    configurePracticeInterface(practiceType);
-                    resetAudioButtonToListenState();
-                    hideFeedback();
-                }, 1500);
+                updateSessionStats(true); // 📊 Track correct answer
+                showCelebrationAnimation(); // 🎉 Show celebration!
                 
             } else {
-                // ❌ RESPUESTA INCORRECTA
-                updateSessionStats(false);
-                showIncorrectAnimation();
-                
-                // Mostrar respuesta correcta y continuar automáticamente
-                setTimeout(() => {
-                    showCorrectAnswerAnimation(correctAnswer, 'multiple-choice');
-                    
-                    // Avanzar automáticamente después de 2 segundos
-                    setTimeout(() => {
-                        practiceNumber = generateRandomNumber();
-                        practiceNumberDisplay.textContent = practiceNumber;
-                        configurePracticeInterface(practiceType);
-                        resetAudioButtonToListenState();
-                        hideFeedback();
-                    }, 2000);
-                }, 300);
+                updateSessionStats(false); // 📊 Track incorrect answer
+                showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
             }
-        }
+            
+            // ⏰ SIEMPRE continuar después de 1.5 segundos
+            setTimeout(() => {
+                practiceNumber = generateRandomNumber();
+                practiceNumberDisplay.textContent = practiceNumber;
+               configurePracticeInterface(practiceType);
+                resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
+                hideFeedback();
+               }, 1500);
+      }
 
-       function handleAudioOnlyAnswer(selectedNumber) {
+        function handleAudioOnlyAnswer(selectedNumber) {
             if (selectedNumber === practiceNumber) {
-                // ✅ RESPUESTA CORRECTA
-                updateSessionStats(true);
-                showCelebrationAnimation();
-                
-                // Continuar después de celebración
-                setTimeout(() => {
-                    practiceNumber = generateRandomNumber();
-                    practiceNumberDisplay.textContent = practiceNumber;
-                    resetAudioButtonToListenState();
-                    configurePracticeInterface(practiceType);
-                    hideFeedback();
-                }, 1500);
-                
+                updateSessionStats(true); // 📊 Track correct answer
+                showCelebrationAnimation(); // 🎉 Show celebration!
             } else {
-                // ❌ RESPUESTA INCORRECTA
-                updateSessionStats(false);
-                showIncorrectAnimation();
-                
-                // Mostrar respuesta correcta y continuar automáticamente
-                setTimeout(() => {
-                    showCorrectAnswerAnimation(practiceNumber, 'audio-only');
-                    
-                    // Avanzar automáticamente después de 2 segundos
-                    setTimeout(() => {
-                        practiceNumber = generateRandomNumber();
-                        practiceNumberDisplay.textContent = practiceNumber;
-                        resetAudioButtonToListenState();
-                        configurePracticeInterface(practiceType);
-                        hideFeedback();
-                    }, 2000);
-                }, 300);
+                updateSessionStats(false); // 📊 Track incorrect answer
+                showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
             }
-        }
 
             
     setTimeout(() => {
@@ -982,7 +885,7 @@ function resetAudioButtonToListenState() {
         configurePracticeInterface(practiceType);
         hideFeedback();
     }, 1500);
-
+}
             
           // ⏰ SIEMPRE continuar después de 1.5 segundos
 setTimeout(() => {
