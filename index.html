@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>  
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -116,6 +116,16 @@
             40% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
             50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
             100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        .shake-incorrect {
+            animation: shakeIncorrect 0.6s ease-in-out;
+            background: rgba(248, 113, 113, 0.3) !important;
+            border-color: rgba(239, 68, 68, 0.5) !important;
+        }
+        @keyframes shakeIncorrect {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+            20%, 40%, 60%, 80% { transform: translateX(3px); }
         }
     </style>
 </head>
@@ -543,6 +553,18 @@ function resetAudioButtonToListenState() {
                 }
             }, 1200);
         }
+        function showIncorrectAnimation() {
+            // Aplicar shake a todos los botones de opciones
+            const choiceButtons = document.querySelectorAll('.choice-button');
+            choiceButtons.forEach(button => {
+                button.classList.add('shake-incorrect');
+                
+                // Remover la clase después de la animación
+                setTimeout(() => {
+                    button.classList.remove('shake-incorrect');
+                }, 600);
+            });
+        }
 
         function generateRandomNumber() {
             // Si no hay números disponibles, reiniciar el ciclo
@@ -830,10 +852,10 @@ function resetAudioButtonToListenState() {
             if (selectedWord.toLowerCase() === correctAnswer) {
                 updateSessionStats(true); // 📊 Track correct answer
                 showCelebrationAnimation(); // 🎉 Show celebration!
-                showFeedback('✅ ¡Correcto! ¡Excelente!', true);
+                
             } else {
                 updateSessionStats(false); // 📊 Track incorrect answer
-                showFeedback(`❌ ¡No del todo! La respuesta correcta es "${correctAnswer}"`, false);
+                showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
             }
             
             // ⏰ SIEMPRE continuar después de 1.5 segundos
@@ -850,10 +872,9 @@ function resetAudioButtonToListenState() {
             if (selectedNumber === practiceNumber) {
                 updateSessionStats(true); // 📊 Track correct answer
                 showCelebrationAnimation(); // 🎉 Show celebration!
-                showFeedback('✅ ¡Correcto! ¡Excelente oído!', true);
             } else {
                 updateSessionStats(false); // 📊 Track incorrect answer
-                showFeedback(`❌ ¡No del todo! El número correcto era "${practiceNumber}"`, false);
+                showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
             }
 
             
