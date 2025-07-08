@@ -312,6 +312,11 @@
         // 🎯 SISTEMA DE DOS ESTADOS DEL BOTÓN
         let hasListenedToCurrentNumber = false;
 
+        // 🎯 SISTEMA DE INTENTOS MÚLTIPLES
+        let attemptCount = 0;
+        let correctAnswerForCurrentQuestion = null;
+        let hasShownCorrectAnswer = false;
+
         // 🎯 FUNCIONES DEL SISTEMA DE DOS ESTADOS
 function updateAudioButtonState() {
     const button = document.getElementById('repeat-btn');
@@ -563,6 +568,65 @@ function resetAudioButtonToListenState() {
                 setTimeout(() => {
                     button.classList.remove('shake-incorrect');
                 }, 600);
+            });
+        }
+
+        function disableIncorrectButtons(correctAnswer, practiceType) {
+            const choiceButtons = document.querySelectorAll('.choice-button');
+            choiceButtons.forEach(button => {
+                let isCorrectButton = false;
+                
+                if (practiceType === 'multiple-choice') {
+                    // Para opción múltiple, comparar con la palabra
+                    isCorrectButton = button.textContent.toLowerCase() === correctAnswer.toLowerCase();
+                } else {
+                    // Para solo audio, comparar con el número
+                    isCorrectButton = parseInt(button.textContent) === correctAnswer;
+                }
+                
+                if (!isCorrectButton) {
+                    button.disabled = true;
+                    button.style.opacity = '0.4';
+                    button.style.cursor = 'not-allowed';
+                }
+            });
+        }
+
+        function showCorrectAnswerAnimation(correctAnswer, practiceType) {
+            const choiceButtons = document.querySelectorAll('.choice-button');
+            choiceButtons.forEach(button => {
+                let isCorrectButton = false;
+                
+                if (practiceType === 'multiple-choice') {
+                    isCorrectButton = button.textContent.toLowerCase() === correctAnswer.toLowerCase();
+                } else {
+                    isCorrectButton = parseInt(button.textContent) === correctAnswer;
+                }
+                
+                if (isCorrectButton) {
+                    button.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+                    button.style.transform = 'scale(1.05)';
+                    button.style.boxShadow = '0 8px 25px 0 rgba(16, 185, 129, 0.6)';
+                    button.classList.add('bounce');
+                }
+            });
+        }
+
+        function resetAttemptState() {
+            attemptCount = 0;
+            correctAnswerForCurrentQuestion = null;
+            hasShownCorrectAnswer = false;
+            
+            // Rehabilitar todos los botones
+            const choiceButtons = document.querySelectorAll('.choice-button');
+            choiceButtons.forEach(button => {
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.style.cursor = 'pointer';
+                button.style.background = '';
+                button.style.transform = '';
+                button.style.boxShadow = '';
+                button.classList.remove('bounce');
             });
         }
 
@@ -846,36 +910,105 @@ function resetAudioButtonToListenState() {
     }
         }
 
-        function handleMultipleChoiceAnswer(selectedWord) {
+       function handleMultipleChoiceAnswer(selectedWord) {
             const correctAnswer = numbers[practiceNumber].word.toLowerCase();
             
-            if (selectedWord.toLowerCase() === correctAnswer) {
-                updateSessionStats(true); // 📊 Track correct answer
-                showCelebrationAnimation(); // 🎉 Show celebration!
-                
-            } else {
-                updateSessionStats(false); // 📊 Track incorrect answer
-                showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
+            // Establecer la respuesta correcta en el primer intento
+            if (attemptCount === 0) {
+                correctAnswerForCurrentQuestion = correctAnswer;
             }
             
-            // ⏰ SIEMPRE continuar después de 1.5 segundos
-            setTimeout(() => {
-                practiceNumber = generateRandomNumber();
-                practiceNumberDisplay.textContent = practiceNumber;
-               configurePracticeInterface(practiceType);
-                resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
-                hideFeedback();
-               }, 1500);
-      }
-
-        function handleAudioOnlyAnswer(selectedNumber) {
-            if (selectedNumber === practiceNumber) {
-                updateSessionStats(true); // 📊 Track correct answer
-                showCelebrationAnimation(); // 🎉 Show celebration!
+            attemptCount++;
+            
+            if (selectedWord.toLowerCase() === correctAnswer) {
+                // ✅ RESPUESTA CORRECTA
+                updateSessionStats(true);
+                showCelebrationAnimation();
+                
+                // Continuar después de celebración
+                setTimeout(() => {
+                    practiceNumber = generateRandomNumber();
+                    practiceNumberDisplay.textContent = practiceNumber;
+                    configurePracticeInterface(practiceType);
+                    resetAudioButtonToListenState();
+                    resetAttemptState();
+                    hideFeedback();
+                }, 1500);
+                
             } else {
-                updateSessionStats(false); // 📊 Track incorrect answer
-                showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
+                // ❌ RESPUESTA INCORRECTA
+                updateSessionStats(false);
+                showIncorrectAnimation();
+                
+                if (attemptCount === 1) {
+                    // Primer intento fallido: deshabilitar incorrectos y dar segunda oportunidad
+                    disableIncorrectButtons(correctAnswerForCurrentQuestion, 'multiple-choice');
+                    
+                } else if (attemptCount >= 2) {
+                    // Segundo intento fallido: mostrar respuesta correcta
+                    showCorrectAnswerAnimation(correctAnswerForCurrentQuestion, 'multiple-choice');
+                    
+                    // Continuar después de mostrar respuesta
+                    setTimeout(() => {
+                        practiceNumber = generateRandomNumber();
+                        practiceNumberDisplay.textContent = practiceNumber;
+                        configurePracticeInterface(practiceType);
+                        resetAudioButtonToListenState();
+                        resetAttemptState();
+                        hideFeedback();
+                    }, 2000);
+                }
             }
+        }
+
+       function handleAudioOnlyAnswer(selectedNumber) {
+            // Establecer la respuesta correcta en el primer intento
+            if (attemptCount === 0) {
+                correctAnswerForCurrentQuestion = practiceNumber;
+            }
+            
+            attemptCount++;
+            
+            if (selectedNumber === practiceNumber) {
+                // ✅ RESPUESTA CORRECTA
+                updateSessionStats(true);
+                showCelebrationAnimation();
+                
+                // Continuar después de celebración
+                setTimeout(() => {
+                    practiceNumber = generateRandomNumber();
+                    practiceNumberDisplay.textContent = practiceNumber;
+                    resetAudioButtonToListenState();
+                    configurePracticeInterface(practiceType);
+                    resetAttemptState();
+                    hideFeedback();
+                }, 1500);
+                
+            } else {
+                // ❌ RESPUESTA INCORRECTA
+                updateSessionStats(false);
+                showIncorrectAnimation();
+                
+                if (attemptCount === 1) {
+                    // Primer intento fallido: deshabilitar incorrectos y dar segunda oportunidad
+                    disableIncorrectButtons(correctAnswerForCurrentQuestion, 'audio-only');
+                    
+                } else if (attemptCount >= 2) {
+                    // Segundo intento fallido: mostrar respuesta correcta
+                    showCorrectAnswerAnimation(correctAnswerForCurrentQuestion, 'audio-only');
+                    
+                    // Continuar después de mostrar respuesta
+                    setTimeout(() => {
+                        practiceNumber = generateRandomNumber();
+                        practiceNumberDisplay.textContent = practiceNumber;
+                        resetAudioButtonToListenState();
+                        configurePracticeInterface(practiceType);
+                        resetAttemptState();
+                        hideFeedback();
+                    }, 2000);
+                }
+            }
+        }
 
             
     setTimeout(() => {
@@ -894,6 +1027,7 @@ setTimeout(() => {
     resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
     configurePracticeInterface(practiceType);
     hideFeedback();
+    resetAttemptState(); // 🎯 Reset attempt system for new practice session
 }, 1500);
 
        function playPracticeNumberAudio() {
