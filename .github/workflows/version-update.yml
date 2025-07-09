@@ -1,0 +1,28 @@
+name: Update Version File
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Get short commit SHA
+        id: vars
+        run: echo "COMMIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Create version file
+        run: echo "export const APP_VERSION = '${{ env.COMMIT_SHA }}';" > ./version.js
+
+      - name: Commit version file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add version.js
+          git commit -m "Update version file to ${{ env.COMMIT_SHA }}" || echo "No changes to commit"
+          git push
