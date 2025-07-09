@@ -1,3 +1,4 @@
+<!-- BUILD: 09.07.25-15:30 -->
 <!DOCTYPE html>    
 <html lang="en">
 <head>
@@ -340,18 +341,7 @@
         let practiceType = 'multiple-choice';
         let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let practiceUsedNumbers = [];
-        // 🕐 AUTO-TIMESTAMP SYSTEM
-        function updateVersionDisplay() {
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const year = String(now.getFullYear()).slice(-2);
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            
-            const timestamp = `${day}.${month}.${year}-${hours}:${minutes}`;
-            document.getElementById('version-display').textContent = `Build: ${timestamp}`;
-        }
+        
         
         // 🎯 SISTEMA DE DOS ESTADOS DEL BOTÓN
         let hasListenedToCurrentNumber = false;
@@ -1065,7 +1055,14 @@ setTimeout(() => {
         // Inicializar la app
         updateLevelDisplay();
         updateDisplay();
-       updateVersionDisplay(); 
+     // 🎯 MANUAL BUILD READER
+function loadManualBuildVersion() {
+    const buildComment = document.documentElement.outerHTML.match(/<!-- BUILD: (.*?) -->/);
+    if (buildComment) {
+        document.getElementById('version-display').textContent = `Build: ${buildComment[1]}`;
+    }
+}
+loadManualBuildVersion();  
     </script>
 </body>
 </html>
