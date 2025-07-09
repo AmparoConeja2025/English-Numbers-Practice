@@ -1,4 +1,4 @@
-<!DOCTYPE html>     
+<!DOCTYPE html>    
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -485,17 +485,28 @@ function resetAudioButtonToListenState() {
                     }
                 });
            } else {
-    // Modo Solo Audio - destacar botón numérico correcto
-    const correctNumber = practiceNumber;
-    choiceButtons.forEach(button => {
-        if (parseInt(button.textContent) === correctNumber) {
-            button.classList.add('correct-answer');
-            setTimeout(() => {
-                button.classList.remove('correct-answer');
-            }, 2000);
+                // Modo Solo Audio - mostrar respuesta en área principal
+               const numberDisplay = document.getElementById('practice-number');
+                const wordDisplay = document.querySelector('.text-center p'); // Para la palabra
+                
+                if (numberDisplay && wordDisplay) {
+                    // Guardar contenido original
+                    const originalNumber = numberDisplay.textContent;
+                    const originalWord = wordDisplay.textContent;
+                    
+                    // Mostrar respuesta correcta
+                    wordDisplay.textContent = correctAnswer;
+                    wordDisplay.classList.add('correct-answer');
+                    
+                    setTimeout(() => {
+                        // Restaurar contenido original
+                        numberDisplay.textContent = originalNumber;
+                        wordDisplay.textContent = originalWord;
+                        wordDisplay.classList.remove('correct-answer');
+                    }, 2000);
+                }
+            }
         }
-    });
-}
         function updateSessionStats(isCorrect) {
             if (isCorrect) {
                 sessionStats.correct++;
