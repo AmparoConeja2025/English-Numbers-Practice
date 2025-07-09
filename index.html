@@ -652,16 +652,6 @@ function resetAudioButtonToListenState() {
             const randomIndex = Math.floor(Math.random() * practiceAvailableNumbers.length);
             const selectedNumber = practiceAvailableNumbers[randomIndex];
             
-            // Remover el número seleccionado de disponibles y agregarlo a usados
-            practiceAvailableNumbers.splice(randomIndex, 1);
-            practiceUsedNumbers.push(selectedNumber);
-            
-            console.log(`🎯 Número seleccionado: ${selectedNumber}`);
-            console.log(`📋 Disponibles restantes: [${practiceAvailableNumbers.join(', ')}]`);
-            console.log(`✅ Usados en este ciclo: [${practiceUsedNumbers.join(', ')}]`);
-            
-            return selectedNumber;
-        }
 
         function generateWrongOptions(correctAnswer) {
     // 🎯 LÓGICA MEJORADA: Rangos inteligentes para nivel intermedio
