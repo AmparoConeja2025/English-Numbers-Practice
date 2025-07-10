@@ -177,7 +177,7 @@
     <div class="min-h-screen gradient-bg p-4">
         <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
             <div class="learning-gradient p-5 text-center">
-                <input type="text" id="commit-tracker" value="v4" class="commit-textbox">
+                <input type="text" id="commit-tracker" value="v5" class="commit-textbox">
                 <div class="version-indicator" id="version-display">Build: Loading...</div>
                 <h1 class="text-2xl font-bold text-white mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
                 <p id="subtitle" class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">¡Aprende los números del 0 al 10 con estilo!</p>
@@ -484,43 +484,26 @@ function resetAudioButtonToListenState() {
         // 📊 TRACKING FUNCTIONS
 
        function showCorrectAnswer(correctAnswer) {
-            console.log('Buscando respuesta correcta:', correctAnswer);
-            const choiceButtons = document.querySelectorAll('.choice-button');
+    console.log('Buscando respuesta correcta:', correctAnswer);
+    const choiceButtons = document.querySelectorAll('.choice-button');
+    
+    choiceButtons.forEach(button => {
+        console.log('Botón encontrado:', button.textContent);
+        
+        // Para modo múltiple: comparar con palabra
+        // Para modo solo audio: comparar con número
+        const isCorrect = (practiceType === 'multiple-choice') 
+            ? button.textContent.toLowerCase() === correctAnswer
+            : parseInt(button.textContent) === practiceNumber;
             
-           if (practiceType === 'multiple-choice') {
-                // Modo Opción Múltiple - destacar botón correcto
-                choiceButtons.forEach(button => {
-                    console.log('Botón encontrado:', button.textContent);
-                    if (button.textContent.toLowerCase() === correctAnswer) {
-                        button.classList.add('correct-answer');
-                        setTimeout(() => {
-                            button.classList.remove('correct-answer');
-                        }, 2000);
-                    }
-                });
-           } else {
-                // Modo Solo Audio - mostrar respuesta en área principal
-               const numberDisplay = document.getElementById('practice-number');
-                const wordDisplay = document.querySelector('.text-center p'); // Para la palabra
-                
-                if (numberDisplay && wordDisplay) {
-                    // Guardar contenido original
-                    const originalNumber = numberDisplay.textContent;
-                    const originalWord = wordDisplay.textContent;
-                    
-                    // Mostrar respuesta correcta
-                    wordDisplay.textContent = correctAnswer;
-                    wordDisplay.classList.add('correct-answer');
-                    
-                    setTimeout(() => {
-                        // Restaurar contenido original
-                        numberDisplay.textContent = originalNumber;
-                        wordDisplay.textContent = originalWord;
-                        wordDisplay.classList.remove('correct-answer');
-                    }, 2000);
-                }
-            }
+        if (isCorrect) {
+            button.classList.add('correct-answer');
+            setTimeout(() => {
+                button.classList.remove('correct-answer');
+            }, 2000);
         }
+    });
+}
         function updateSessionStats(isCorrect) {
             if (isCorrect) {
                 sessionStats.correct++;
