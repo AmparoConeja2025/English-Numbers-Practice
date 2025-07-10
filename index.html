@@ -185,7 +185,7 @@
     <div class="min-h-screen gradient-bg p-4">
         <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
             <div class="learning-gradient p-5 text-center">
-               <div class="version-indicator" id="version-display">Build: 1.0.8</div>
+               <div class="version-indicator" id="version-display">Build: 1.0.9</div>
                 <h1 class="text-2xl font-bold text-white mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
                 <p id="subtitle" class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">¡Aprende los números del 0 al 10 con estilo!</p>
             </div>
@@ -193,7 +193,7 @@
             <!-- Learning Mode -->
             <div id="learn-mode" class="p-5">
                 <!-- 🎯 LEVEL SELECTOR -->
-                <div class="text-center mb-6">
+                <div class="text-center mb-3">
                     <div class="level-gradient px-4 py-2 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
                         📈 Selecciona tu Nivel
                     </div>
@@ -207,10 +207,10 @@
                     </div>
                 </div>
 
-                <div class="text-center mb-6">
+                <div class="text-center mb-3">
                     <div id="number-display" class="text-7xl font-bold number-display mb-3 bounce">0</div>
                     <div id="word-display" class="text-3xl font-semibold text-gray-800 mb-2 word-display">zero</div>
-                    <div id="pronunciation-display" class="text-lg text-gray-600 mb-5 italic">/siro/</div>
+                    <div id="pronunciation-display" class="text-lg text-gray-600 mb-2 italic">/siro/</div>
                     <button id="speak-btn" class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base">
                         🔊 Escuchar
                     </button>
@@ -219,7 +219,7 @@
                     </button>
                 </div>
 
-                <div class="flex justify-center space-x-6 mb-6">
+                <div class="flex justify-center space-x-6 mb-3">
                     <button id="prev-btn" class="btn-primary text-white px-5 py-2 rounded-xl font-medium text-sm">
                         ← Anterior
                     </button>
@@ -237,7 +237,7 @@
 
             <!-- Practice Type Selection -->
             <div id="practice-selection" style="display: none;" class="p-5">
-                <div class="text-center mb-6">
+                <div class="text-center mb-3">
                     <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-3" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
                         🎯 Elige el Modo de Práctica
                     </div>
@@ -247,7 +247,7 @@
                     <p class="text-lg text-gray-700 font-medium">¿Cómo te gustaría practicar?</p>
                 </div>
 
-                <div class="space-y-5 mb-6">
+                <div class="space-y-5 mb-3">
                     <button id="multiple-choice-btn" class="w-full btn-secondary text-white py-4 rounded-2xl font-bold text-lg">
                         👆 Opción Múltiple
                         <div class="text-xs opacity-90 font-normal mt-1">Ver el número → clic la opción correcta</div>
@@ -267,7 +267,7 @@
 
             <!-- Practice Mode -->
             <div id="practice-mode" style="display: none;" class="p-5">
-                <div class="text-center mb-6">
+                <div class="text-center mb-3">
                     <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-2" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
                         <span id="practice-mode-label">Modo de Práctica</span>
                     </div>
@@ -292,7 +292,7 @@
                     </div>
                     
                     <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                   <div id="audio-controls" class="flex justify-center mb-5" style="display: none;">
+                   <div id="audio-controls" class="flex justify-center mb-2" style="display: none;">
                        <button id="practice-voice-btn" class="btn-primary text-white px-4 py-1 rounded-full font-semibold text-sm mr-3" onclick="switchVoice()">
                         🎭 Voice: Adam
                     </button> 
@@ -796,7 +796,7 @@ function resetAudioButtonToListenState() {
 
         function showFeedback(message, isCorrect) {
             feedback.textContent = message;
-            feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-6 transition-all ${
+            feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-3 transition-all ${
                 isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
             }`;
             feedback.classList.remove('hidden');
