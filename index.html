@@ -217,7 +217,7 @@
         <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
             <div class="learning-gradient p-5 text-center">
             <div class="progress-indicator" id="progress-icon" title="Ver Progreso">📊</div>
-               <div class="version-indicator" id="version-display">Build: 1.0.46</div>
+               <div class="version-indicator" id="version-display">Build: 1.0.29</div>
                 <h1 class="text-2xl font-bold text-white mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
                 <p id="subtitle" class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">¡Aprende los números del 0 al 10 con estilo!</p>
             </div>
@@ -307,7 +307,7 @@
                     <!-- Total Stats Display -->
                     <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
                         <h3 class="text-lg font-bold text-gray-800 mb-3">🎯 Estadísticas Generales</h3>
-                        <div class="grid grid-cols-2 gap-0">
+                        <div class="grid grid-cols-2 gap-3">
                             <div class="bg-green-100 p-3 rounded-xl text-center">
                                 <div class="text-2xl font-bold text-green-800" id="total-correct-display">0</div>
                                 <div class="text-sm text-green-600">✅ Correctas</div>
@@ -330,7 +330,7 @@
                     <!-- Level Stats -->
                     <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
                         <h3 class="text-lg font-bold text-gray-800 mb-3">📈 Progreso por Nivel</h3>
-                        <div class="space-y-0">
+                        <div class="space-y-3">
                             <div class="bg-gradient-to-r from-green-100 to-green-200 p-3 rounded-xl">
                                 <div class="flex justify-between items-center">
                                     <span class="font-bold text-green-800">🌱 Principiante (0-10)</span>
@@ -348,7 +348,15 @@
                         </div>
                     </div>
 
-                
+                    <!-- First Used -->
+                    <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">📅 Información</h3>
+                        <div class="text-center">
+                            <div class="text-gray-600">Comenzaste a usar la app:</div>
+                            <div class="font-bold text-blue-800" id="first-used-display">--</div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="text-center">
                     <button id="back-from-progress-btn" class="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 font-medium text-sm">
