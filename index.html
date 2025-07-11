@@ -17,8 +17,7 @@
         }
         .level-gradient {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-        } 
-        
+        }
      .glass-card {
      #progress-screen {
             max-height: 75vh;
@@ -29,20 +28,10 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            /* CAMBIAR LÍNEA 32 */
-            min-height: 60vh;  →  height: 60vh;
+            height: 85vh;
             max-height: 85vh;
             overflow-y: auto;
         }
-            /* FORCE BUTTON VISIBILITY */
-        #progress-screen .text-center:last-child {
-            position: fixed !important;
-            bottom: 20px !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            z-index: 1000 !important;
-        }
-
     .progress-indicator {
             position: absolute;
             top: 10px;
@@ -226,7 +215,7 @@
         <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
             <div class="learning-gradient p-5 text-center">
             <div class="progress-indicator" id="progress-icon" title="Ver Progreso">📊</div>
-               <div class="version-indicator" id="version-display">Build: 1.0.35</div>
+               <div class="version-indicator" id="version-display">Build: 1.0.29</div>
                 <h1 class="text-2xl font-bold text-white mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
                 <p id="subtitle" class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">¡Aprende los números del 0 al 10 con estilo!</p>
             </div>
@@ -356,6 +345,16 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- First Used -->
+                    <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">📅 Información</h3>
+                        <div class="text-center">
+                            <div class="text-gray-600">Comenzaste a usar la app:</div>
+                            <div class="font-bold text-blue-800" id="first-used-display">--</div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="text-center">
                     <button id="back-from-progress-btn" class="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 font-medium text-sm">
