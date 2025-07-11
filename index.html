@@ -188,7 +188,7 @@
     <div class="min-h-screen gradient-bg p-4">
         <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
             <div class="learning-gradient p-5 text-center">
-               <div class="version-indicator" id="version-display">Build: 1.0.22</div>
+               <div class="version-indicator" id="version-display">Build: 1.0.23</div>
                 <h1 class="text-2xl font-bold text-white mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
                 <p id="subtitle" class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">¡Aprende los números del 0 al 10 con estilo!</p>
             </div>
@@ -525,6 +525,8 @@ function resetAudioButtonToListenState() {
             updatePercentageColor(percentage);
             
             console.log(`📊 Stats: ✅${sessionStats.correct} ❌${sessionStats.incorrect} 📊${sessionStats.total} 📈${percentage}%`);
+            // 💾 Save to localStorage for persistent tracking
+            saveProgressToLocalStorage(isCorrect, percentage);
         }
         
         function updatePercentageColor(percentage) {
@@ -546,6 +548,51 @@ function resetAudioButtonToListenState() {
             }
         }
         
+        // 💾 PERSISTENT PROGRESS TRACKING SYSTEM
+        function saveProgressToLocalStorage(isCorrect, currentPercentage) {
+            const today = new Date().toISOString().split('T')[0]; // Format: 2025-07-11
+            
+            // Get existing progress or create new
+            let progress = JSON.parse(localStorage.getItem('numbersProgressData') || '{}');
+            
+            // Initialize if first time
+            if (!progress.totalStats) {
+                progress = {
+                    totalStats: { correct: 0, incorrect: 0, total: 0 },
+                    dailyStats: {},
+                    levelStats: { beginner: { correct: 0, total: 0 }, intermediate: { correct: 0, total: 0 } },
+                    streakData: { current: 0, best: 0, lastDate: null },
+                    firstUsed: today
+                };
+            }
+            
+            // Update total stats
+            if (isCorrect) {
+                progress.totalStats.correct++;
+                progress.levelStats[currentLevel].correct++;
+            } else {
+                progress.totalStats.incorrect++;
+            }
+            progress.totalStats.total++;
+            progress.levelStats[currentLevel].total++;
+            
+            // Update daily stats
+            if (!progress.dailyStats[today]) {
+                progress.dailyStats[today] = { correct: 0, incorrect: 0, total: 0 };
+            }
+            
+            if (isCorrect) {
+                progress.dailyStats[today].correct++;
+            } else {
+                progress.dailyStats[today].incorrect++;
+            }
+            progress.dailyStats[today].total++;
+            
+            // Save back to localStorage
+            localStorage.setItem('numbersProgressData', JSON.stringify(progress));
+            
+            console.log('💾 Progress saved:', progress.totalStats);
+        }
         function resetSessionStats() {
             sessionStats = { correct: 0, incorrect: 0, total: 0 };
             correctCountEl.textContent = '0';
