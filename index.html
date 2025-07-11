@@ -1,13 +1,5 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html>     
 <html lang="en">
-    <!-- 
-🏆 VERSION: v1.0.0-STABLE
-📅 DATE: 2025-07-01-15:00
-✅ STATUS: GOLDEN VERSION - Azure TTS Perfect
-🔊 FEATURES: Azure TTS, Responsive, Professional Audio
-⚠️  BACKUP POINT - Don't break this version!
--->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,21 +15,82 @@
         .practice-gradient {
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
         }
-        .glass-card {
+        .level-gradient {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+     .glass-card {
+     #progress-screen {
+            max-height: 75vh;
+            overflow-y: auto;
+            padding-bottom: 10px;
+        }
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            height: 85vh;
+            max-height: 85vh;
+            overflow-y: auto;
         }
-       .listening {
-            animation: pulse 0.5s ease-in-out infinite alternate;
-            background-color: #ff6b35 !important;
+    .progress-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            backdrop-filter: none;
+            border: none;
+            z-index: 10;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        @keyframes pulse {
-            from { transform: scale(1); opacity: 1; }
-            to { transform: scale(1.05); opacity: 0.8; }
-        } 
+        .progress-indicator:hover {
+            color: rgba(255, 255, 255, 1);
+            transform: scale(1.3);
+            font-size: 16px;
+        }        
+           .version-indicator {
+    position: absolute;
+    bottom: 0px;
+    right: 10px;
+    background: none;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 8px;
+    font-family: 'Courier New', monospace;
+    backdrop-filter: none;
+    border: none;
+    z-index: 10;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.version-indicator:hover {
+    color: rgba(255, 255, 255, 1);
+    transform: scale(1.2);
+    font-size: 10px;
+}
+        .commit-textbox {
+            position: absolute;
+            bottom: 2px;
+            left: 10px;
+            background: transparent;
+            border: none;
+            padding: 2px 6px;
+            font-size: 8px;
+            border-radius: 3px;
+            width: 40px;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            z-index: 10;
+        }
+        /* 📱 PREVENT ACCIDENTAL ZOOM ON ALL BUTTONS */
         button {
             touch-action: manipulation;
         }
@@ -76,10 +129,25 @@
             box-shadow: 0 4px 15px 0 rgba(79, 172, 254, 0.4);
             transition: all 0.3s ease;
             touch-action: manipulation;
+            margin-bottom: 16px;
         }
         .btn-success:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px 0 rgba(79, 172, 254, 0.6);
+        }
+        .btn-level {
+            background: linear-gradient(45deg, #ff9a56, #ff6a6a);
+            box-shadow: 0 4px 15px 0 rgba(255, 154, 86, 0.4);
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+        .btn-level:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(255, 154, 86, 0.6);
+        }
+        .btn-level.active {
+            background: linear-gradient(45deg, #48cc6c, #2dd65b);
+            box-shadow: 0 4px 15px 0 rgba(72, 204, 108, 0.6);
         }
         .choice-button {
             background: rgba(255, 255, 255, 0.8);
@@ -114,31 +182,74 @@
             50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
             100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
+        
+        .shake-incorrect {
+            animation: shakeIncorrect 0.6s ease-in-out;
+            background: rgba(248, 113, 113, 0.3) !important;
+            border-color: rgba(239, 68, 68, 0.5) !important;
+        }
+        @keyframes shakeIncorrect {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+            20%, 40%, 60%, 80% { transform: translateX(3px); }
+        }
+
+        .correct-answer {
+            animation: bounceCorrect 0.6s ease-in-out;
+            background: rgba(72, 187, 120, 0.9) !important;
+            border-color: rgba(34, 197, 94, 0.8) !important;
+        }
+
+        @keyframes bounceCorrect {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1.05); }
+            75% { transform: scale(1.1); }
+        }
     </style>
 </head>
 <body>
+    
+  <!-- Version indicator -->    
     <div class="min-h-screen gradient-bg p-4">
         <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
             <div class="learning-gradient p-5 text-center">
+            <div class="progress-indicator" id="progress-icon" title="Ver Progreso">📊</div>
+               <div class="version-indicator" id="version-display">Build: 1.0.41</div>
                 <h1 class="text-2xl font-bold text-white mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
-                <p class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">¡Aprende con audio profesional Azure!</p>
-                <div id="azure-status" class="mt-2 text-xs text-white opacity-75">
-                    🔄 Conectando con servidor Azure...
-                </div>
+                <p id="subtitle" class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">¡Aprende los números del 0 al 10 con estilo!</p>
             </div>
             
             <!-- Learning Mode -->
             <div id="learn-mode" class="p-5">
-                <div class="text-center mb-6">
+                <!-- 🎯 LEVEL SELECTOR -->
+                <div class="text-center mb-3">
+                    <div class="level-gradient px-4 py-2 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        📈 Selecciona tu Nivel
+                    </div>
+                    <div class="flex justify-center space-x-3 mb-4">
+                        <button id="beginner-btn" class="btn-level active text-white px-4 py-2 rounded-xl font-bold text-sm">
+                            🌱 Principiante (0-10)
+                        </button>
+                        <button id="intermediate-btn" class="btn-level text-white px-4 py-2 rounded-xl font-bold text-sm">
+                            🚀 Intermedio (0-20)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-center mb-3">
                     <div id="number-display" class="text-7xl font-bold number-display mb-3 bounce">0</div>
                     <div id="word-display" class="text-3xl font-semibold text-gray-800 mb-2 word-display">zero</div>
-                    <div id="pronunciation-display" class="text-lg text-gray-600 mb-5 italic">/siro/</div>
+                    <div id="pronunciation-display" class="text-lg text-gray-600 mb-2 italic">/siro/</div>
                     <button id="speak-btn" class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base">
                         🔊 Escuchar
                     </button>
+                    <button id="voice-btn" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-base ml-3" onclick="switchVoice()">
+                  🎭 Adam
+                    </button>
                 </div>
 
-                <div class="flex justify-center space-x-6 mb-6">
+                <div class="flex justify-center space-x-6 mb-5">
                     <button id="prev-btn" class="btn-primary text-white px-5 py-2 rounded-xl font-medium text-sm">
                         ← Anterior
                     </button>
@@ -147,25 +258,34 @@
                     </button>
                 </div>
 
-              
+                <div class="text-center">
+                    <button id="start-practice-btn" class="btn-secondary text-white px-8 py-3 rounded-2xl font-bold text-lg">
+                        🚀 Empezar Práctica
+                    </button>
+                </div>
+                
+            </div>
 
             <!-- Practice Type Selection -->
             <div id="practice-selection" style="display: none;" class="p-5">
-                <div class="text-center mb-6">
-                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-5" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                <div class="text-center mb-3">
+                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-3" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
                         🎯 Elige el Modo de Práctica
+                    </div>
+                    <div id="level-indicator" class="level-gradient px-4 py-1 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        🌱 Nivel Principiante (0-10)
                     </div>
                     <p class="text-lg text-gray-700 font-medium">¿Cómo te gustaría practicar?</p>
                 </div>
 
-                <div class="space-y-5 mb-6">
+                <div class="space-y-5 mb-3">
                     <button id="multiple-choice-btn" class="w-full btn-secondary text-white py-4 rounded-2xl font-bold text-lg">
-                        👆 Opción Múltiple
-                        <div class="text-xs opacity-90 font-normal mt-1">Ver número → hacer clic en la palabra</div>
+                        👆🏼 Opción Múltiple
+                        <div class="text-xs opacity-90 font-normal mt-1">Ver el número → clic la opción correcta</div>
                     </button>
                     <button id="audio-only-btn" class="w-full btn-primary text-white py-4 rounded-2xl font-bold text-lg">
                         🎧 Solo Audio
-                        <div class="text-xs opacity-90 font-normal mt-1">Escuchar → elegir el número correcto</div>
+                        <div class="text-xs opacity-90 font-normal mt-1">Escuchar el número → clic la opción correcta</div>
                     </button>
                 </div>
 
@@ -175,14 +295,84 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Practice Mode -->
-            <div id="practice-mode" style="display: none;" class="p-5">
-                <div class="text-center mb-6">
+            <!-- Progress Screen -->
+            <div id="progress-screen" style="display: none;" class="p-5">
+                <div class="text-center mb-3">
                     <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-3" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                        <span id="practice-mode-label">Modo de Práctica</span>
+                        📊 Tu Progreso Total
                     </div>
                     
+                    <!-- Total Stats Display -->
+                    <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">🎯 Estadísticas Generales</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-green-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-green-800" id="total-correct-display">0</div>
+                                <div class="text-sm text-green-600">✅ Correctas</div>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-red-800" id="total-incorrect-display">0</div>
+                                <div class="text-sm text-red-600">❌ Incorrectas</div>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-blue-800" id="total-questions-display">0</div>
+                                <div class="text-sm text-blue-600">📊 Total</div>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-purple-800" id="total-accuracy-display">0%</div>
+                                <div class="text-sm text-purple-600">🎯 Precisión</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Level Stats -->
+                    <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">📈 Progreso por Nivel</h3>
+                        <div class="space-y-3">
+                            <div class="bg-gradient-to-r from-green-100 to-green-200 p-3 rounded-xl">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-green-800">🌱 Principiante (0-10)</span>
+                                    <span class="font-bold text-green-800" id="beginner-accuracy">0%</span>
+                                </div>
+                                <div class="text-sm text-green-600" id="beginner-stats">0/0 correctas</div>
+                            </div>
+                            <div class="bg-gradient-to-r from-orange-100 to-orange-200 p-3 rounded-xl">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-orange-800">🚀 Intermedio (0-20)</span>
+                                    <span class="font-bold text-orange-800" id="intermediate-accuracy">0%</span>
+                                </div>
+                                <div class="text-sm text-orange-600" id="intermediate-stats">0/0 correctas</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- First Used -->
+                    <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">📅 Información</h3>
+                        <div class="text-center">
+                            <div class="text-gray-600">Comenzaste a usar la app:</div>
+                            <div class="font-bold text-blue-800" id="first-used-display">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button id="back-from-progress-btn" class="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 font-medium text-sm">
+                        ← Volver al Inicio
+                    </button>
+                </div>
+            </div> 
+            <!-- Practice Mode -->
+            <div id="practice-mode" style="display: none;" class="p-5">
+                <div class="text-center mb-3">
+                    <div class="practice-gradient px-5 py-2 rounded-full text-white font-bold text-base inline-block mb-2" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        <span id="practice-mode-label">Modo de Práctica</span>
+                    </div>
+                    <div id="practice-level-indicator" class="level-gradient px-4 py-1 rounded-full text-white font-bold text-sm inline-block mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        🌱 Nivel Principiante (0-10)
+                    </div>
+                    
+                    <!-- 📊 TRACKING DISPLAY -->
                     <div class="flex justify-center space-x-3 mb-4">
                         <div class="bg-green-100 px-3 py-1 rounded-full">
                             <span class="text-green-800 font-bold text-sm">✅ <span id="correct-count">0</span></span>
@@ -198,19 +388,28 @@
                         </div>
                     </div>
                     
-                    <div id="practice-number" class="text-7xl font-bold number-display mb-3 bounce">0</div>
-                    <button class="btn-success text-white px-6 py-2 rounded-full font-semibold text-base mb-5" onclick="speakNumber(practiceNumber)">
-                        🔊 Escuchar
+                    <div id="practice-number" class="text-5xl font-bold number-display mb-3 bounce">0</div>
+                   <div id="audio-controls" class="flex justify-center mb-2" style="display: none;">
+                       <button id="practice-voice-btn" class="btn-primary text-white px-4 py-1 rounded-full font-semibold text-sm mr-3" onclick="switchVoice()">
+                        🎭 Voice: Adam
+                    </button> 
+                   <button id="repeat-btn" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-xl">
+                🔊 Escuchar/Repetir
                     </button>
-                    <p class="text-lg text-gray-700 font-medium mb-5">Selecciona la palabra correcta:</p>
+                      
+                    </div> 
                     
+                    <!-- Multiple Choice Practice -->
                     <div id="multiple-choice-practice">
                         <div class="grid grid-cols-2 gap-3 mb-5" id="choice-buttons">
+                            <!-- Choice buttons will be generated here -->
                         </div>
                     </div>
                     
+                    <!-- Audio-Only Practice -->
                     <div id="audio-only-practice" style="display: none;">
                         <div class="grid grid-cols-2 gap-3 mb-5" id="number-choice-buttons">
+                            <!-- Number choice buttons will be generated here -->
                         </div>
                     </div>
                     
@@ -227,12 +426,6 @@
     </div>
 
     <script>
-        // 🌐 CONFIGURACIÓN DEL SERVIDOR
-        const SERVER_URL = 'https://azure-tts-server.onrender.com';
-        
-        // Variables globales
-        let isCurrentlySpeaking = false;
-
         const numbers = {
             0: { word: 'zero', pronunciation: '/siro/' },
             1: { word: 'one', pronunciation: '/uan/' },
@@ -244,33 +437,79 @@
             7: { word: 'seven', pronunciation: '/seven/' },
             8: { word: 'eight', pronunciation: '/eit/' },
             9: { word: 'nine', pronunciation: '/nain/' },
-            10: { word: 'ten', pronunciation: '/ten/' }
+            10: { word: 'ten', pronunciation: '/ten/' },
+            11: { word: 'eleven', pronunciation: '/iléven/' },
+            12: { word: 'twelve', pronunciation: '/tuélv/' },
+            13: { word: 'thirteen', pronunciation: '/thirtín/' },
+            14: { word: 'fourteen', pronunciation: '/fortín/' },
+            15: { word: 'fifteen', pronunciation: '/fiftín/' },
+            16: { word: 'sixteen', pronunciation: '/sikstín/' },
+            17: { word: 'seventeen', pronunciation: '/seventín/' },
+            18: { word: 'eighteen', pronunciation: '/eitín/' },
+            19: { word: 'nineteen', pronunciation: '/naintín/' },
+            20: { word: 'twenty', pronunciation: '/tuénti/' }
         };
 
         let currentNumber = 0;
+        let currentVoice = 'adam';
         let currentMode = 'learn';
+        let currentLevel = 'beginner'; // 'beginner' (0-10) or 'intermediate' (0-20)
         let practiceNumber = 0;
         let practiceType = 'multiple-choice';
         let practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let practiceUsedNumbers = [];
+       
         
+        // 🎯 SISTEMA DE DOS ESTADOS DEL BOTÓN
+        let hasListenedToCurrentNumber = false;
+
+        // 🎯 FUNCIONES DEL SISTEMA DE DOS ESTADOS
+function updateAudioButtonState() {
+    const button = document.getElementById('repeat-btn');
+    if (!button) return;
+    
+    if (hasListenedToCurrentNumber) {
+        // Estado 2: Repetir (Verde)
+        button.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+        button.style.boxShadow = '0 4px 15px 0 rgba(16, 185, 129, 0.4)';
+        button.textContent = '🔄 Repetir';
+    } else {
+        // Estado 1: Escuchar (Azul)
+        button.style.background = 'linear-gradient(45deg, #3b82f6, #2563eb)';
+        button.style.boxShadow = '0 4px 15px 0 rgba(59, 130, 246, 0.4)';
+        button.textContent = '🔊 Escuchar';
+    }
+}
+
+function resetAudioButtonToListenState() {
+    hasListenedToCurrentNumber = false;
+    updateAudioButtonState();
+}
+        
+        // 📊 TRACKING VARIABLES
         let sessionStats = {
             correct: 0,
             incorrect: 0,
             total: 0
         };
 
-        // Elements
         const numberDisplay = document.getElementById('number-display');
         const wordDisplay = document.getElementById('word-display');
         const pronunciationDisplay = document.getElementById('pronunciation-display');
         const speakBtn = document.getElementById('speak-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
+        const repeatBtn = document.getElementById('repeat-btn'); 
+        const subtitle = document.getElementById('subtitle');
         
         const learnMode = document.getElementById('learn-mode');
         const practiceSelection = document.getElementById('practice-selection');
         const practiceMode = document.getElementById('practice-mode');
+        
+        const beginnerBtn = document.getElementById('beginner-btn');
+        const intermediateBtn = document.getElementById('intermediate-btn');
+        const levelIndicator = document.getElementById('level-indicator');
+        const practiceLevelIndicator = document.getElementById('practice-level-indicator');
         
         const startPracticeBtn = document.getElementById('start-practice-btn');
         const multipleChoiceBtn = document.getElementById('multiple-choice-btn');
@@ -286,133 +525,78 @@
         const numberChoiceButtons = document.getElementById('number-choice-buttons');
         const feedback = document.getElementById('feedback');
         
+        // 📊 TRACKING ELEMENTS
         const correctCountEl = document.getElementById('correct-count');
         const incorrectCountEl = document.getElementById('incorrect-count');
         const totalCountEl = document.getElementById('total-count');
         const percentageCountEl = document.getElementById('percentage-count');
         const percentagePillEl = document.getElementById('percentage-pill');
         const percentageTextEl = document.getElementById('percentage-text');
-        const azureStatusEl = document.getElementById('azure-status');
 
-        // 🔒 FUNCIÓN AZURE SEGURA (corregida)
-        async function speakNumberAzure(number) {
-            if (isCurrentlySpeaking) {
-                console.log('🔄 Ya reproduciendo audio...');
-                return;
-            }
-            
-            isCurrentlySpeaking = true;
-            // Activar animación del botón
-            speakBtn.classList.add('listening');
-            speakBtn.textContent = '🎵 Escuchando...';
-            const word = numbers[number].word;
-            console.log('🔒 Llamando servidor seguro para:', word);
-            
-            try {
-                const response = await fetch(`${SERVER_URL}/speech`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ word: word })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // 🎵 REPRODUCIR MP3 DESDE BASE64
-                    const audioBlob = new Blob([
-                        Uint8Array.from(atob(data.audio), c => c.charCodeAt(0))
-                    ], { type: 'audio/mpeg' });
-                    
-                    const audioUrl = URL.createObjectURL(audioBlob);
-                    const audio = new Audio(audioUrl);
-                    audio.load(); // Preload agresivo para reducir latencia
-                    audio.onended = () => {
-                        // Quitar animación del botón
-                    speakBtn.classList.remove('listening');
-                    speakBtn.textContent = '🔊 Escuchar';
-                    };
-                        URL.revokeObjectURL(audioUrl);
-                        isCurrentlySpeaking = false;
-                        console.log('✅ Azure TTS completado para:', word);
-                    };
-                    
-                    audio.onerror = () => {
-                        URL.revokeObjectURL(audioUrl);
-                        isCurrentlySpeaking = false;
-                        throw new Error('Error reproduciendo audio');
-                    };
-                    
-                    await audio.play();
-                    azureStatusEl.textContent = '🎙️ Azure TTS funcionando';
-                    console.log('✅ Azure TTS exitoso para:', word);
-                    
-                } else {
-                    throw new Error(`Error del servidor: ${response.status}`);
-                }
-                
-            } catch (error) {
-                console.log('🔄 Fallback a TTS navegador:', error.message);
-                azureStatusEl.textContent = '⚠️ Usando TTS del navegador';
-                isCurrentlySpeaking = false;
-                speakNumberFallback(number);
-            }
+        // 🎯 LEVEL MANAGEMENT
+        function getNumberRange() {
+            return currentLevel === 'beginner' ? 
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : 
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
         }
 
-        // 🔄 FALLBACK CON TTS DEL NAVEGADOR
-        function speakNumberFallback(number) {
-            if (isCurrentlySpeaking) {
-                console.log('🔄 Ya reproduciendo audio...');
-                return;
-            }
-            
-            const word = numbers[number].word;
-            
-            if ('speechSynthesis' in window) {
-                isCurrentlySpeaking = true;
-                speechSynthesis.cancel();
-                
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.rate = 0.8;
-                utterance.pitch = 1.0;
-                utterance.volume = 1.0;
-                utterance.lang = 'en-US';
-                
-                const voices = speechSynthesis.getVoices();
-                const preferredVoice = voices.find(voice => 
-                    voice.lang.includes('en-US') && 
-                    (voice.name.includes('Google') || voice.name.includes('Microsoft'))
-                );
-                
-                if (preferredVoice) {
-                    utterance.voice = preferredVoice;
-                    console.log('🎤 Usando voz:', preferredVoice.name);
-                }
-                
-                utterance.onstart = () => console.log('🎵 TTS navegador iniciado para:', word);
-                utterance.onend = () => {
-                    isCurrentlySpeaking = false;
-                    console.log('✅ TTS navegador completado para:', word);
-                };
-                utterance.onerror = (e) => {
-                    isCurrentlySpeaking = false;
-                    console.log('❌ Error TTS navegador:', e.error);
-                };
-                
-                speechSynthesis.speak(utterance);
-            } else {
-                console.log('❌ Speech synthesis no soportado');
-                isCurrentlySpeaking = false;
-            }
+        function getMaxNumber() {
+            return currentLevel === 'beginner' ? 10 : 20;
         }
 
-        // 🎯 FUNCIÓN PRINCIPAL DE AUDIO
-        function speakNumber(number) {
-            speakNumberAzure(number);
+        function updateLevelDisplay() {
+            const isIntermediate = currentLevel === 'intermediate';
+            const range = isIntermediate ? '0-20' : '0-10';
+            const emoji = isIntermediate ? '🚀' : '🌱';
+            const levelName = isIntermediate ? 'Intermedio' : 'Principiante';
+            
+            subtitle.textContent = `¡Aprende los números del ${range} con estilo!`;
+            levelIndicator.innerHTML = `${emoji} Nivel ${levelName} (${range})`;
+            practiceLevelIndicator.innerHTML = `${emoji} Nivel ${levelName} (${range})`;
+            
+            // Update button active states
+            beginnerBtn.classList.toggle('active', currentLevel === 'beginner');
+            intermediateBtn.classList.toggle('active', currentLevel === 'intermediate');
+            
+            // Reset practice numbers for new level
+            practiceAvailableNumbers = getNumberRange();
+            practiceUsedNumbers = [];
+        }
+
+        function switchLevel(level) {
+            currentLevel = level;
+            updateLevelDisplay();
+            
+            // Reset to first number when switching levels
+            currentNumber = 0;
+            updateDisplay();
+            
+            console.log(`🎯 Switched to ${level} level: ${getNumberRange()}`);
         }
 
         // 📊 TRACKING FUNCTIONS
+
+       function showCorrectAnswer(correctAnswer) {
+    console.log('Buscando respuesta correcta:', correctAnswer);
+    const choiceButtons = document.querySelectorAll('.choice-button');
+    
+    choiceButtons.forEach(button => {
+        console.log('Botón encontrado:', button.textContent);
+        
+        // Para modo múltiple: comparar con palabra
+        // Para modo solo audio: comparar con número
+        const isCorrect = (practiceType === 'multiple-choice') 
+            ? button.textContent.toLowerCase() === correctAnswer
+            : parseInt(button.textContent) === practiceNumber;
+            
+        if (isCorrect) {
+            button.classList.add('correct-answer');
+            setTimeout(() => {
+                button.classList.remove('correct-answer');
+            }, 2000);
+        }
+    });
+}
         function updateSessionStats(isCorrect) {
             if (isCorrect) {
                 sessionStats.correct++;
@@ -421,34 +605,88 @@
             }
             sessionStats.total++;
             
+            // Calculate percentage
             const percentage = sessionStats.total > 0 ? 
                 Math.round((sessionStats.correct / sessionStats.total) * 100) : 0;
             
+            // Update display
             correctCountEl.textContent = sessionStats.correct;
             incorrectCountEl.textContent = sessionStats.incorrect;
             totalCountEl.textContent = sessionStats.total;
             percentageCountEl.textContent = percentage;
             
+            // Update percentage color dynamically
             updatePercentageColor(percentage);
             
             console.log(`📊 Stats: ✅${sessionStats.correct} ❌${sessionStats.incorrect} 📊${sessionStats.total} 📈${percentage}%`);
+            // 💾 Save to localStorage for persistent tracking
+            saveProgressToLocalStorage(isCorrect, percentage);
         }
         
         function updatePercentageColor(percentage) {
+            // Remove existing classes
             percentagePillEl.className = 'px-3 py-1 rounded-full';
             
             if (percentage >= 80) {
+                // 🟢 Green for 80%+
                 percentagePillEl.classList.add('bg-green-100');
                 percentageTextEl.className = 'font-bold text-sm text-green-800';
             } else if (percentage >= 60) {
+                // 🟡 Yellow for 60-79%
                 percentagePillEl.classList.add('bg-yellow-100');
                 percentageTextEl.className = 'font-bold text-sm text-yellow-800';
             } else {
+                // 🔴 Red for <60%
                 percentagePillEl.classList.add('bg-red-100');
                 percentageTextEl.className = 'font-bold text-sm text-red-800';
             }
         }
         
+        // 💾 PERSISTENT PROGRESS TRACKING SYSTEM
+        function saveProgressToLocalStorage(isCorrect, currentPercentage) {
+            const today = new Date().toISOString().split('T')[0]; // Format: 2025-07-11
+            
+            // Get existing progress or create new
+            let progress = JSON.parse(localStorage.getItem('numbersProgressData') || '{}');
+            
+            // Initialize if first time
+            if (!progress.totalStats) {
+                progress = {
+                    totalStats: { correct: 0, incorrect: 0, total: 0 },
+                    dailyStats: {},
+                    levelStats: { beginner: { correct: 0, total: 0 }, intermediate: { correct: 0, total: 0 } },
+                    streakData: { current: 0, best: 0, lastDate: null },
+                    firstUsed: today
+                };
+            }
+            
+            // Update total stats
+            if (isCorrect) {
+                progress.totalStats.correct++;
+                progress.levelStats[currentLevel].correct++;
+            } else {
+                progress.totalStats.incorrect++;
+            }
+            progress.totalStats.total++;
+            progress.levelStats[currentLevel].total++;
+            
+            // Update daily stats
+            if (!progress.dailyStats[today]) {
+                progress.dailyStats[today] = { correct: 0, incorrect: 0, total: 0 };
+            }
+            
+            if (isCorrect) {
+                progress.dailyStats[today].correct++;
+            } else {
+                progress.dailyStats[today].incorrect++;
+            }
+            progress.dailyStats[today].total++;
+            
+            // Save back to localStorage
+            localStorage.setItem('numbersProgressData', JSON.stringify(progress));
+            
+            console.log('💾 Progress saved:', progress.totalStats);
+        }
         function resetSessionStats() {
             sessionStats = { correct: 0, incorrect: 0, total: 0 };
             correctCountEl.textContent = '0';
@@ -456,6 +694,7 @@
             totalCountEl.textContent = '0';
             percentageCountEl.textContent = '0';
             
+            // Reset percentage to neutral color
             percentagePillEl.className = 'px-3 py-1 rounded-full bg-gray-100';
             percentageTextEl.className = 'font-bold text-sm text-gray-600';
             
@@ -478,15 +717,18 @@
         let usedCelebrations = [];
 
         function getRandomCelebration() {
+            // Si no hay celebraciones disponibles, reiniciar el ciclo
             if (availableCelebrations.length === 0) {
                 availableCelebrations = [...celebrationMessages];
                 usedCelebrations = [];
                 console.log('🎉 Celebraciones reiniciadas - todas disponibles de nuevo');
             }
             
+            // Seleccionar una celebración aleatoria de las disponibles
             const randomIndex = Math.floor(Math.random() * availableCelebrations.length);
             const selectedCelebration = availableCelebrations[randomIndex];
             
+            // Remover de disponibles y agregar a usadas
             availableCelebrations.splice(randomIndex, 1);
             usedCelebrations.push(selectedCelebration);
             
@@ -497,8 +739,10 @@
         }
 
         function showCelebrationAnimation() {
+            // Get unique celebration message
             const celebration = getRandomCelebration();
             
+            // Create animation element
             const animationEl = document.createElement('div');
             animationEl.style.cssText = `
                 position: fixed;
@@ -522,23 +766,41 @@
             
             document.body.appendChild(animationEl);
             
+            // Remove after animation
             setTimeout(() => {
                 if (animationEl.parentNode) {
                     animationEl.parentNode.removeChild(animationEl);
                 }
             }, 1200);
         }
+        
+        function showIncorrectAnimation() {
+            
+            // Aplicar shake a todos los botones de opciones
+            const choiceButtons = document.querySelectorAll('.choice-button');
+            choiceButtons.forEach(button => {
+                button.classList.add('shake-incorrect');
+                
+                // Remover la clase después de la animación
+                setTimeout(() => {
+                    button.classList.remove('shake-incorrect');
+                }, 600);
+            });
+        }
 
         function generateRandomNumber() {
+            // Si no hay números disponibles, reiniciar el ciclo
             if (practiceAvailableNumbers.length === 0) {
-                practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                practiceAvailableNumbers = getNumberRange();
                 practiceUsedNumbers = [];
                 console.log('🔄 Ciclo reiniciado - todos los números disponibles de nuevo');
             }
             
+            // Seleccionar un número aleatorio de los disponibles
             const randomIndex = Math.floor(Math.random() * practiceAvailableNumbers.length);
             const selectedNumber = practiceAvailableNumbers[randomIndex];
             
+            // Remover el número seleccionado de disponibles y agregarlo a usados
             practiceAvailableNumbers.splice(randomIndex, 1);
             practiceUsedNumbers.push(selectedNumber);
             
@@ -550,21 +812,62 @@
         }
 
         function generateWrongOptions(correctAnswer) {
-            const allNumbers = Object.keys(numbers).map(Number);
-            const wrongOptions = allNumbers
-                .filter(num => num !== correctAnswer)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 3);
-            return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
+    // 🎯 LÓGICA MEJORADA: Rangos inteligentes para nivel intermedio
+    let availableNumbers;
+    
+    if (currentLevel === 'beginner') {
+        // Principiante: usar todos los números 0-10
+        availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    } else {
+        // Intermedio: rangos lógicos
+        if (correctAnswer <= 10) {
+            availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        } else {
+            availableNumbers = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
         }
+    }
+    
+    const wrongOptions = availableNumbers
+        .filter(num => num !== correctAnswer)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+    return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
+}
 
-        function generateWrongNumberOptions(correctAnswer) {
-            const allNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-            const wrongOptions = allNumbers
-                .filter(num => num !== correctAnswer)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 3);
-            return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
+    function generateWrongNumberOptions(correctAnswer) {
+    // 🎯 LÓGICA MEJORADA: Rangos inteligentes para nivel intermedio
+    let availableNumbers;
+    
+    if (currentLevel === 'beginner') {
+        // Principiante: usar todos los números 0-10
+        availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    } else {
+        // Intermedio: rangos lógicos
+        if (correctAnswer <= 10) {
+            availableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        } else {
+            availableNumbers = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+        }
+    }
+    
+    const wrongOptions = availableNumbers
+        .filter(num => num !== correctAnswer)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+    return [...wrongOptions, correctAnswer].sort(() => Math.random() - 0.5);
+}
+
+        function createNumberChoiceButtons() {
+            const options = generateWrongNumberOptions(practiceNumber);
+            numberChoiceButtons.innerHTML = '';
+            
+            options.forEach((num) => {
+                const button = document.createElement('button');
+                button.textContent = num;
+                button.className = 'choice-button py-5 rounded-2xl font-bold text-2xl transition-all';
+                button.addEventListener('click', () => handleAudioOnlyAnswer(num));
+                numberChoiceButtons.appendChild(button);
+            });
         }
 
         function createMultipleChoiceButtons() {
@@ -592,10 +895,52 @@
                 choiceButtons.appendChild(button);
             });
         }
+        
+        // MP3 AUDIO SYSTEM - Adam & Rachel voices
+        // Audio unlock para móviles
+        let audioUnlocked = false;
+
+        function unlockAudio() {
+            if (!audioUnlocked) {
+                const audio = new Audio();
+                audio.play().then(() => {
+                    audioUnlocked = true;
+                }).catch(() => {});
+            }
+        }
+
+        // Unlock audio en primera interacción
+        document.addEventListener('click', unlockAudio, { once: true });
+        document.addEventListener('touchstart', unlockAudio, { once: true });       
+
+        function speakNumber(number) {
+            const audioFile = `audio/${currentVoice}/${currentVoice}_${number}.mp3`;
+            
+            const audio = new Audio(audioFile);
+            unlockAudio(); // Asegurar unlock
+            audio.play().catch(error => {
+                console.error('Error playing audio:', error);
+            });
+        }
+
+        // Voice switching function
+        function switchVoice() {
+            currentVoice = currentVoice === 'adam' ? 'rachel' : 'adam';
+            const voiceBtn = document.getElementById('voice-btn');
+            if (voiceBtn) {
+                voiceBtn.textContent = `🎭 ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+            }
+            console.log(`Voice switched to: ${currentVoice}`);
+
+            const practiceVoiceBtn = document.getElementById('practice-voice-btn');
+            if (practiceVoiceBtn) {
+                practiceVoiceBtn.textContent = `🎭 ${currentVoice.charAt(0).toUpperCase() + currentVoice.slice(1)}`;
+            }
+        }
 
         function showFeedback(message, isCorrect) {
             feedback.textContent = message;
-            feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-6 transition-all ${
+            feedback.className = `text-center p-4 rounded-2xl font-bold text-lg mb-3 transition-all ${
                 isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
             }`;
             feedback.classList.remove('hidden');
@@ -613,8 +958,9 @@
             numberDisplay.classList.remove('bounce');
             setTimeout(() => numberDisplay.classList.add('bounce'), 10);
             
+            const maxNum = getMaxNumber();
             prevBtn.disabled = currentNumber === 0;
-            nextBtn.disabled = currentNumber === 10;
+            nextBtn.disabled = currentNumber === maxNum;
             
             if (prevBtn.disabled) {
                 prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
@@ -634,35 +980,130 @@
             learnMode.style.display = 'none';
             practiceSelection.style.display = 'block';
             practiceMode.style.display = 'none';
+            document.getElementById('progress-screen').style.display = 'none';
+        }
+            function showProgressScreen() {
+            currentMode = 'progress';
+            learnMode.style.display = 'none';
+            practiceSelection.style.display = 'none';
+            practiceMode.style.display = 'none';
+            document.getElementById('progress-screen').style.display = 'block';
+            
+            // Load and display progress data
+            loadProgressData();
         }
 
+        function loadProgressData() {
+            // Get progress from localStorage
+            const progress = JSON.parse(localStorage.getItem('numbersProgressData') || '{}');
+            
+            // Check if there's any data
+            if (!progress.totalStats) {
+                // No data yet, show zeros
+                displayProgressData({
+                    totalStats: { correct: 0, incorrect: 0, total: 0 },
+                    levelStats: { 
+                        beginner: { correct: 0, total: 0 }, 
+                        intermediate: { correct: 0, total: 0 } 
+                    },
+                    firstUsed: 'Aún no has practicado'
+                });
+                return;
+            }
+            
+            displayProgressData(progress);
+        }
+
+        function displayProgressData(progress) {
+            // Display total stats
+            const totalCorrect = progress.totalStats.correct;
+            const totalIncorrect = progress.totalStats.incorrect;
+            const totalQuestions = progress.totalStats.total;
+            const totalAccuracy = totalQuestions > 0 ? 
+                Math.round((totalCorrect / totalQuestions) * 100) : 0;
+            
+            document.getElementById('total-correct-display').textContent = totalCorrect;
+            document.getElementById('total-incorrect-display').textContent = totalIncorrect;
+            document.getElementById('total-questions-display').textContent = totalQuestions;
+            document.getElementById('total-accuracy-display').textContent = totalAccuracy + '%';
+            
+            // Display level stats
+            const beginnerStats = progress.levelStats.beginner;
+            const intermediateStats = progress.levelStats.intermediate;
+            
+            const beginnerAccuracy = beginnerStats.total > 0 ? 
+                Math.round((beginnerStats.correct / beginnerStats.total) * 100) : 0;
+            const intermediateAccuracy = intermediateStats.total > 0 ? 
+                Math.round((intermediateStats.correct / intermediateStats.total) * 100) : 0;
+            
+            document.getElementById('beginner-accuracy').textContent = beginnerAccuracy + '%';
+            document.getElementById('beginner-stats').textContent = 
+                `${beginnerStats.correct}/${beginnerStats.total} correctas`;
+                
+            document.getElementById('intermediate-accuracy').textContent = intermediateAccuracy + '%';
+            document.getElementById('intermediate-stats').textContent = 
+                `${intermediateStats.correct}/${intermediateStats.total} correctas`;
+            
+            // Display first used date
+            const firstUsed = progress.firstUsed || 'Información no disponible';
+            document.getElementById('first-used-display').textContent = firstUsed;
+            
+            console.log('📊 Progress data displayed:', progress.totalStats);
+        }
         function switchToLearnMode() {
             currentMode = 'learn';
             learnMode.style.display = 'block';
             practiceSelection.style.display = 'none';
             practiceMode.style.display = 'none';
+            document.getElementById('progress-screen').style.display = 'none';
             hideFeedback();
         }
 
         function configurePracticeInterface(questionType) {
             if (questionType === 'multiple-choice') {
+                // Mostrar interfaz de opción múltiple
                 multipleChoicePractice.style.display = 'block';
                 audioOnlyPractice.style.display = 'none';
                 
+               // Mostrar botones de audio también en múltiple
+                document.getElementById('audio-controls').style.display = 'flex';
+
+                // Mostrar botones de audio también en múltiple
+                document.getElementById('audio-controls').style.display = 'flex';
+
+                // 🎯 Actualizar estado del botón al mostrar controles
+                updateAudioButtonState();
+                
+                // Mostrar el número y cambiar instrucción
                 practiceNumberDisplay.style.display = 'block';
-                document.querySelector('#practice-mode p').textContent = 'Selecciona la palabra correcta:';
+                practiceNumberDisplay.style.opacity = '1';
                 
+                
+                // Crear botones de opción múltiple
                 createMultipleChoiceButtons();
+                } else if (questionType === 'audio-only') {
+        // Mostrar interfaz de solo audio usando la misma interfaz múltiple
+        multipleChoicePractice.style.display = 'block';
+        audioOnlyPractice.style.display = 'none';
+        
+        // Mostrar botones de audio
+        document.getElementById('audio-controls').style.display = 'flex';
+        
+        // Ocultar el número y cambiar instrucción
+        practiceNumberDisplay.style.opacity = '0';
+        
+        // Crear botones de números en la misma interfaz
+        createAudioChoiceButtons();
                 
-            } else if (questionType === 'audio-only') {
-                multipleChoicePractice.style.display = 'block';
-                audioOnlyPractice.style.display = 'none';
                 
-                practiceNumberDisplay.style.display = 'none';
-                document.querySelector('#practice-mode p').textContent = 'Escucha y elige el número correcto:';
+                // Ocultar el número y cambiar instrucción
+              practiceNumberDisplay.style.opacity = '0';
+               // document.querySelector('#practice-mode p').textContent = 'Escucha y elige el número correcto:';
                 
+                // Crear botones de números en la misma interfaz
                 createAudioChoiceButtons();
-                setTimeout(() => playPracticeNumberAudio(), 500);
+                       
+               
             }
         }
 
@@ -671,109 +1112,104 @@
             learnMode.style.display = 'none';
             practiceSelection.style.display = 'none';
             practiceMode.style.display = 'block';
+            document.getElementById('progress-screen').style.display = 'none';
             
+            // 📊 Reset stats for new practice session
             resetSessionStats();
             
-            if (practiceAvailableNumbers.length === 0) {
-                practiceAvailableNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                practiceUsedNumbers = [];
-            }
+            // Asegurar que el sistema anti-repetición esté listo con el nivel actual
+            practiceAvailableNumbers = getNumberRange();
+            practiceUsedNumbers = [];
             
             practiceNumber = generateRandomNumber();
             practiceNumberDisplay.textContent = practiceNumber;
+
+            // 🎯 Resetear botón a Estado 1 para nueva sesión
+            resetAudioButtonToListenState();
             
+            // Configurar interfaz según el tipo de práctica
             configurePracticeInterface(practiceType);
             hideFeedback();
+            
+            // Auto-play inicial solo para Solo Audio
+            if (practiceType === 'audio-only') {
+            setTimeout(() => {
+            speakNumber(practiceNumber);
+            }, 500);
+    }
         }
 
         function handleMultipleChoiceAnswer(selectedWord) {
             const correctAnswer = numbers[practiceNumber].word.toLowerCase();
             
             if (selectedWord.toLowerCase() === correctAnswer) {
-                updateSessionStats(true);
-                showCelebrationAnimation();
-                showFeedback('✅ ¡Correcto! ¡Excelente!', true);
+                updateSessionStats(true); // 📊 Track correct answer
+                showCelebrationAnimation(); // 🎉 Show celebration!
+                
             } else {
-                updateSessionStats(false);
-                showFeedback(`❌ ¡No del todo! La respuesta correcta es "${correctAnswer}"`, false);
+                updateSessionStats(false); // 📊 Track incorrect answer
+                showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
+                showCorrectAnswer(correctAnswer);
+
+            
             }
             
+            // ⏰ SIEMPRE continuar después de 2 segundos
             setTimeout(() => {
                 practiceNumber = generateRandomNumber();
                 practiceNumberDisplay.textContent = practiceNumber;
-                configurePracticeInterface(practiceType);
+               configurePracticeInterface(practiceType);
+                resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
                 hideFeedback();
-                // Auto-play del nuevo número
-                speakNumber(practiceNumber);
-            }, 1500);
-        }
+               }, 2000);
+      }
 
         function handleAudioOnlyAnswer(selectedNumber) {
             if (selectedNumber === practiceNumber) {
-                updateSessionStats(true);
-                showCelebrationAnimation();
-                showFeedback('✅ ¡Correcto! ¡Excelente oído!', true);
+                updateSessionStats(true); // 📊 Track correct answer
+                showCelebrationAnimation(); // 🎉 Show celebration!
             } else {
-                updateSessionStats(false);
-                showFeedback(`❌ ¡No del todo! El número correcto era "${practiceNumber}"`, false);
+                updateSessionStats(false); // 📊 Track incorrect answer
+                showIncorrectAnimation(); // 🎯 Show shake animation for incorrect answer
+                showCorrectAnswer(numbers[practiceNumber].word.toLowerCase());
             }
-            
-            setTimeout(() => {
-                practiceNumber = generateRandomNumber();
-                practiceNumberDisplay.textContent = practiceNumber;
-                configurePracticeInterface(practiceType);
-                hideFeedback();// Auto-play del nuevo número
-                speakNumber(practiceNumber);
-            }, 1500);
-        }
 
-        function playPracticeNumberAudio() {
-            speakNumber(practiceNumber);
-        }
+            
+    setTimeout(() => {
+        practiceNumber = generateRandomNumber();
+        practiceNumberDisplay.textContent = practiceNumber;
+        resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
+        configurePracticeInterface(practiceType);
+        hideFeedback();
+    }, 2000);
+}
+            
+          // ⏰ SIEMPRE continuar después de 1.5 segundos
+setTimeout(() => {
+    practiceNumber = generateRandomNumber();
+    practiceNumberDisplay.textContent = practiceNumber;
+    resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
+    configurePracticeInterface(practiceType);
+    hideFeedback();
+}, 1500);
+
+       function playPracticeNumberAudio() {
+    unlockAudio(); // Asegurar unlock antes de audio automático
+    setTimeout(() => {
+        speakNumber(practiceNumber);
+    }, 150); // Pequeño delay para Chrome mobile autoplay
+}
 
         function startMultipleChoicePractice() {
             practiceType = 'multiple-choice';
-            practiceModeLabel.textContent = '👆 Opción Múltiple';
+            practiceModeLabel.textContent = '👆🏼 Opción Múltiple';
             switchToPracticeMode();
-            speakNumber(practiceNumber);
-            function startMultipleChoicePractice() {
-    practiceType = 'multiple-choice';
-    practiceModeLabel.textContent = '🔥 Opción Múltiple';
-    switchToPracticeMode();
-    
-    // Auto-play del primer número
-    speakNumber(practiceNumber);
-}
         }
 
         function startAudioOnlyPractice() {
             practiceType = 'audio-only';
             practiceModeLabel.textContent = '🎧 Práctica Solo Audio';
             switchToPracticeMode();
-            function startAudioOnlyPractice() {
-    practiceType = 'audio-only';
-    practiceModeLabel.textContent = '🎧 Práctica Solo Audio';
-    switchToPracticeMode();
-    
-    // Auto-play del primer número
-    speakNumber(practiceNumber);
-}
-        }
-
-        // 🔄 PRUEBA DE CONEXIÓN AL SERVIDOR
-        async function testServerConnection() {
-            try {
-                const response = await fetch(`${SERVER_URL}/health`);
-                if (response.ok) {
-                    azureStatusEl.textContent = '✅ Servidor Azure conectado';
-                    console.log('✅ Servidor Azure funcionando');
-                } else {
-                    throw new Error('Servidor no responde');
-                }
-            } catch (error) {
-                azureStatusEl.textContent = '⚠️ Servidor offline - usando TTS navegador';
-                console.log('⚠️ Servidor Azure no disponible:', error.message);
-            }
         }
 
         // Event Listeners
@@ -785,24 +1221,68 @@
         });
 
         nextBtn.addEventListener('click', () => {
-            if (currentNumber < 10) {
+            const maxNum = getMaxNumber();
+            if (currentNumber < maxNum) {
                 currentNumber++;
                 updateDisplay();
             }
         });
 
-        speakBtn.addEventListener('click', () => speakNumber(currentNumber));
+        speakBtn.addEventListener('click', () => {
+            // Cambiar a gris
+            speakBtn.style.background = '#9CA3AF';
+            speakBtn.style.transform = 'scale(0.95)';
+            
+            speakNumber(currentNumber);
+            
+            // Volver al color original después de 2 segundos
+            setTimeout(() => {
+                speakBtn.style.background = '';
+                speakBtn.style.transform = '';
+            }, 2000);
+        });
+
+        // Level selection event listeners
+        beginnerBtn.addEventListener('click', () => switchLevel('beginner'));
+        intermediateBtn.addEventListener('click', () => switchLevel('intermediate'));
+
         startPracticeBtn.addEventListener('click', showPracticeSelection);
         multipleChoiceBtn.addEventListener('click', startMultipleChoicePractice);
         audioOnlyBtn.addEventListener('click', startAudioOnlyPractice);
         backFromSelectionBtn.addEventListener('click', switchToLearnMode);
         backToLearnBtn.addEventListener('click', switchToLearnMode);
 
-        // 🚀 INICIALIZAR LA APP
-        updateDisplay();
         
-        // Probar conexión con el servidor al cargar
-        testServerConnection();
+        if (repeatBtn) {
+    repeatBtn.addEventListener('click', () => {
+        console.log('🔄 Botón de audio clickeado!');
+        
+        // 🎯 Cambiar a Estado 2 después del primer click
+        if (!hasListenedToCurrentNumber) {
+            hasListenedToCurrentNumber = true;
+            updateAudioButtonState();
+        }
+        
+        speakNumber(practiceNumber);
+    });
+}
+
+
+ 
+
+        // Inicializar la app
+        updateLevelDisplay();
+        updateDisplay();   
+       // Initialize progress screen event listeners
+        const viewProgressBtn = document.getElementById('progress-icon');
+        const backFromProgressBtn = document.getElementById('back-from-progress-btn');
+        
+        if (viewProgressBtn) {
+            viewProgressBtn.addEventListener('click', showProgressScreen);
+        }
+        if (backFromProgressBtn) {
+            backFromProgressBtn.addEventListener('click', switchToLearnMode);
+        }
     </script>
 </body>
 </html>
