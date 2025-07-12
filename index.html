@@ -208,7 +208,7 @@
         <div class="max-w-md mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden fade-in">
             <div class="learning-gradient p-5 text-center">
             <div class="progress-indicator" id="progress-icon" title="Ver Progreso">📊</div>
-               <div class="version-indicator" id="version-display">Build: 1.0.54</div>
+               <div class="version-indicator" id="version-display">Build: 1.0.55</div>
                 <h1 class="text-2xl font-bold text-white mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Números en Inglés</h1>
                 <p id="subtitle" class="text-white opacity-90 text-sm" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">¡Aprende los números del 0 al 10 con estilo!</p>
             </div>
@@ -309,7 +309,8 @@
                         </button>
                     </div>
                     
-                    
+                      <!-- Total Progress Content -->
+                <div id="total-progress-content">              
                     <!-- Total Stats Display -->
                     <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
                         <h3 class="text-lg font-bold text-gray-800 mb-3">🎯 Estadísticas Generales</h3>
@@ -353,6 +354,7 @@
                             </div>
                         </div>
                     </div>
+               </div>
                     
                      <!-- First Used -->
                     <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
@@ -364,7 +366,60 @@
                     </div>
                 </div>
                  
+                </div>
 
+                <!-- Daily Progress Content (Hidden by default) -->
+                <div id="daily-progress-content" style="display: none;">
+                    <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">📅 Progreso de Hoy</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-green-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-green-800" id="today-correct-display">0</div>
+                                <div class="text-sm text-green-600">✅ Correctas Hoy</div>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-red-800" id="today-incorrect-display">0</div>
+                                <div class="text-sm text-red-600">❌ Incorrectas Hoy</div>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-blue-800" id="today-total-display">0</div>
+                                <div class="text-sm text-blue-600">📊 Total Hoy</div>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-purple-800" id="today-accuracy-display">0%</div>
+                                <div class="text-sm text-purple-600">🎯 Precisión Hoy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekly Progress Content (Hidden by default) -->
+                <div id="weekly-progress-content" style="display: none;">
+                    <div class="bg-white bg-opacity-80 rounded-2xl p-3 mb-3">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">📊 Progreso de Esta Semana</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-green-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-green-800" id="week-correct-display">0</div>
+                                <div class="text-sm text-green-600">✅ Correctas</div>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-red-800" id="week-incorrect-display">0</div>
+                                <div class="text-sm text-red-600">❌ Incorrectas</div>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-blue-800" id="week-total-display">0</div>
+                                <div class="text-sm text-blue-600">📊 Total</div>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-xl text-center">
+                                <div class="text-2xl font-bold text-purple-800" id="week-accuracy-display">0%</div>
+                                <div class="text-sm text-purple-600">🎯 Precisión</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Progress Content (rename existing content) -->
+                <div id="total-progress-content">
                 <div class="text-center">
                     <button id="back-from-progress-btn" class="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 font-medium text-sm">
                         ← Volver al Inicio
@@ -1291,6 +1346,96 @@ setTimeout(() => {
         }
         if (backFromProgressBtn) {
             backFromProgressBtn.addEventListener('click', switchToLearnMode);
+        }
+
+    // 📊 PROGRESS NAVIGATION SYSTEM
+        let currentProgressView = 'daily'; // Start with daily view
+        
+        function switchProgressView(viewType) {
+            // Hide all content sections
+            document.getElementById('daily-progress-content').style.display = 'none';
+            document.getElementById('weekly-progress-content').style.display = 'none';
+            document.getElementById('total-progress-content').style.display = 'none';
+            
+            // Reset all button styles
+            document.getElementById('daily-progress-btn').className = 'px-4 py-2 rounded-xl font-bold text-sm bg-gray-400 text-white';
+            document.getElementById('weekly-progress-btn').className = 'px-4 py-2 rounded-xl font-bold text-sm bg-gray-400 text-white';
+            document.getElementById('total-progress-btn').className = 'px-4 py-2 rounded-xl font-bold text-sm bg-gray-400 text-white';
+            
+            // Show selected content and highlight button
+            if (viewType === 'daily') {
+                document.getElementById('daily-progress-content').style.display = 'block';
+                document.getElementById('daily-progress-btn').className = 'px-4 py-2 rounded-xl font-bold text-sm bg-blue-500 text-white';
+                loadDailyProgress();
+            } else if (viewType === 'weekly') {
+                document.getElementById('weekly-progress-content').style.display = 'block';
+                document.getElementById('weekly-progress-btn').className = 'px-4 py-2 rounded-xl font-bold text-sm bg-blue-500 text-white';
+                loadWeeklyProgress();
+            } else if (viewType === 'total') {
+                document.getElementById('total-progress-content').style.display = 'block';
+                document.getElementById('total-progress-btn').className = 'px-4 py-2 rounded-xl font-bold text-sm bg-blue-500 text-white';
+                loadProgressData(); // Use existing function
+            }
+            
+            currentProgressView = viewType;
+        }
+        
+        function loadDailyProgress() {
+            const today = new Date().toISOString().split('T')[0];
+            const progress = JSON.parse(localStorage.getItem('numbersProgressData') || '{}');
+            
+            // Get today's stats or default to 0
+            const todayStats = progress.dailyStats && progress.dailyStats[today] ? 
+                progress.dailyStats[today] : { correct: 0, incorrect: 0, total: 0 };
+            
+            const accuracy = todayStats.total > 0 ? 
+                Math.round((todayStats.correct / todayStats.total) * 100) : 0;
+            
+            // Update display
+            document.getElementById('today-correct-display').textContent = todayStats.correct;
+            document.getElementById('today-incorrect-display').textContent = todayStats.incorrect;
+            document.getElementById('today-total-display').textContent = todayStats.total;
+            document.getElementById('today-accuracy-display').textContent = accuracy + '%';
+        }
+        
+        function loadWeeklyProgress() {
+            const progress = JSON.parse(localStorage.getItem('numbersProgressData') || '{}');
+            
+            // Calculate last 7 days
+            let weekCorrect = 0, weekIncorrect = 0, weekTotal = 0;
+            
+            for (let i = 0; i < 7; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                if (progress.dailyStats && progress.dailyStats[dateStr]) {
+                    const dayStats = progress.dailyStats[dateStr];
+                    weekCorrect += dayStats.correct;
+                    weekIncorrect += dayStats.incorrect;
+                    weekTotal += dayStats.total;
+                }
+            }
+            
+            const accuracy = weekTotal > 0 ? Math.round((weekCorrect / weekTotal) * 100) : 0;
+            
+            // Update display 
+            document.getElementById('week-correct-display').textContent = weekCorrect;
+            document.getElementById('week-incorrect-display').textContent = weekIncorrect;
+            document.getElementById('week-total-display').textContent = weekTotal;
+            document.getElementById('week-accuracy-display').textContent = accuracy + '%';
+        } 
+        // 📊 PROGRESS NAVIGATION EVENT LISTENERS
+        document.getElementById('daily-progress-btn').addEventListener('click', () => switchProgressView('daily'));
+        document.getElementById('weekly-progress-btn').addEventListener('click', () => switchProgressView('weekly'));
+        document.getElementById('total-progress-btn').addEventListener('click', () => switchProgressView('total'));
+        
+        // Initialize with daily view when progress screen loads
+        const progressIcon = document.getElementById('progress-icon');
+        if (progressIcon) {
+            progressIcon.addEventListener('click', () => {
+                setTimeout(() => switchProgressView('daily'), 100);
+            });
         }
     </script>
 </body>
