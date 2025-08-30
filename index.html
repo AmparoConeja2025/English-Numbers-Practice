@@ -1254,12 +1254,17 @@ function resetAudioButtonToListenState() {
 
             
     setTimeout(() => {
-        practiceNumber = generateRandomNumber();
-        practiceNumberDisplay.textContent = practiceNumber;
-        resetAudioButtonToListenState(); // 🎯 Resetear botón a Estado 1
-        configurePracticeInterface(practiceType);
-        hideFeedback();
-    }, 2000);
+    practiceNumber = generateRandomNumber();
+    practiceNumberDisplay.textContent = practiceNumber;
+    resetAudioButtonToListenState();
+    configurePracticeInterface(practiceType);
+    hideFeedback();
+    // Auto-play audio for next number, only in audio-only mode
+    if (practiceType === 'audio-only') {
+        speakNumber(practiceNumber);
+    }
+}, 2000);
+
 }
             
           // ⏰ SIEMPRE continuar después de 1.5 segundos
@@ -1473,4 +1478,4 @@ setTimeout(() => {
         }
     </script>
 </body>
-</html>
+</html>1
